@@ -2,7 +2,7 @@ package checkspec;
 
 import java.util.concurrent.ThreadFactory;
 
-public class DaemonThreadFactory implements ThreadFactory {
+class DaemonThreadFactory implements ThreadFactory {
 
 	@Override
 	public Thread newThread(Runnable r) {
