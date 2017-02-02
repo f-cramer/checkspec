@@ -1,6 +1,7 @@
 package checkspec;
 
-import static checkspec.ClassUtils.getName;
+import static checkspec.util.ClassUtils.getName;
+import static checkspec.util.MemberUtils.getVisibility;
 import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.NATIVE;
@@ -22,69 +23,76 @@ import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-import checkspec.report.ErrorReport;
+import checkspec.report.ClassReport;
+import checkspec.report.MethodReport;
+import checkspec.report.Report;
+import checkspec.util.Visibility;
 
-public class StaticChecker {
+class StaticChecker {
 
-	public static Class<?> getClass(String className) {
-		try {
-			return Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-	}
+	public static ClassReport checkImplements(Class<?> clazz, Class<?> spec) {
+		ClassReport report = new ClassReport(spec, clazz);
 
-	public static ErrorReport checkMethods(Class<?> actual, Class<?> spec) {
-		ErrorReport report = ErrorReport.success();
-		Arrays.stream(spec.getDeclaredMethods()).parallel().sorted(Comparator.comparing(Method::getName)).map(e -> checkMethod(actual, e)).forEachOrdered(report::add);
+		report.addEntries(checkModifiers(clazz, spec));
+		report.addEntries(checkFields(clazz, spec));
+		report.addEntries(checkMethods(clazz, spec));
+
 		return report;
 	}
 
-	private static ErrorReport checkMethod(Class<?> actual, Method method) {
+	public static ClassReport checkMethods(Class<?> actual, Class<?> spec) {
+		ClassReport report = new ClassReport(spec, actual);
+
+		// @formatter:off
+		Arrays.stream(spec.getDeclaredMethods()).parallel()
+	                      .sorted(Comparator.comparing(Method::getName))
+	                      .map(e -> checkMethod(actual, e))
+	                      .forEachOrdered(report::add);
+		// @formatter:on
+		return report;
+	}
+
+	private static MethodReport checkMethod(Class<?> actual, Method method) {
 		String methodName = method.getName();
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
-		String parameterList = toParameterList(parameterTypes);
-
-		ErrorReport report = ErrorReport.success(String.format("method %s(%s)", methodName, parameterList));
-
 		Class<?> methodReturnType = method.getReturnType();
-		String methodReturnTypeName = getName(methodReturnType);
 
 		try {
 			Method actualMethod = actual.getDeclaredMethod(methodName, parameterTypes);
 			Class<?> actualMethodReturnType = actualMethod.getReturnType();
 			String actualMethodReturnTypeName = getName(actualMethodReturnType);
 
+			MethodReport report = new MethodReport(method, actualMethod);
+
 			if (actualMethodReturnType != methodReturnType) {
-				String format = "should have return type \"%s\" instead of \"%s\"";
-				String errorMessage = String.format(format, methodReturnTypeName, actualMethodReturnTypeName);
-				report.addError(errorMessage);
+				boolean compatible = org.apache.commons.lang3.ClassUtils.isAssignable(actualMethodReturnType, methodReturnType);
+				String format = "returns " + (compatible ? "compatible" : "incompatible") + " type \"%s\"";
+				report.addError(String.format(format, actualMethodReturnTypeName));
 			}
 
 			report.addEntries(checkVisibility(actualMethod, method));
 			report.addEntries(checkModifiers(actualMethod, method));
+
+			return report;
 		} catch (NoSuchMethodException | SecurityException ex) {
 			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel().filter(e -> e.getName().equals(methodName)).collect(Collectors.toList());
 
 			if (methodsWithEqualName.isEmpty()) {
-				String format = "was not found";
-				String errorMessage = String.format(format, methodName, parameterList);
-				report.addError(errorMessage);
+				return new MethodReport(method);
 			} else {
-				String format = "but method with equal name but different parameter list: \"%s(%s)\"";
-
 				Method actualMethod = methodsWithEqualName.parallelStream().min(createMethodComparator(method)).get();
-				String errorMessage = String.format(format, actualMethod.getName(), toParameterList(actualMethod.getParameterTypes()));
-				report.addError(errorMessage);
+
+				MethodReport report = new MethodReport(method, actualMethod);
+				report.addEntries(checkMethodParameters(actualMethod.getParameters(), method.getParameters()));
+
+				return report;
 			}
 		}
-
-		return report;
 	}
 
-	private static ErrorReport checkMethodParameters(Parameter[] actual, Parameter[] spec) {
-		ErrorReport report = ErrorReport.success();
+	private static Report<?> checkMethodParameters(Parameter[] actual, Parameter[] spec) {
+		Report<?> report = Report.success();
 
 		int actualLength = actual.length;
 		int specLength = spec.length;
@@ -95,28 +103,32 @@ public class StaticChecker {
 				Class<?> actualType = actual[i].getType();
 
 				if (actualType != specType) {
-					report.addError(String.format("parameter %d of type \"%s\" does not match the required type \"%s\"", i + 1, getName(actualType), getName(specType)));
+					boolean compatible = org.apache.commons.lang3.ClassUtils.isAssignable(specType, actualType);
+					String format = "parameter %d has " + (compatible ? "compatible" : "incompatible") + " type \"%s\"";
+					report.addError(String.format(format, i + 1, getName(actualType)));
 				}
 			}
 		} else {
-			report.addError(Math.abs(actualLength - specLength), String.format("parameter could should be %s but is %s", specLength, actualLength));
+			report.addError(Math.abs(actualLength - specLength), String.format("parameter count should be %s but is %s", specLength, actualLength));
 		}
 
 		return report;
 	}
 
-	public static ErrorReport checkFields(Class<?> clazz, Class<?> interf) {
-		ErrorReport report = ErrorReport.success();
+	public static Report<?> checkFields(Class<?> clazz, Class<?> interf) {
+		Report<?> report = Report.success();
 		Arrays.stream(interf.getDeclaredFields()).parallel().map(e -> checkField(clazz, e)).forEachOrdered(report::addEntries);
 		return report;
 	}
 
-	private static ErrorReport checkField(Class<?> clazz, Field field) {
+	private static Report<?> checkField(Class<?> clazz, Field field) {
 		String fieldName = field.getName();
-		ErrorReport report = ErrorReport.success(String.format("field %s", fieldName));
 
 		Class<?> fieldType = field.getType();
 		String fieldTypeName = getName(fieldType);
+		Visibility fieldVisibility = getVisibility(field.getModifiers());
+
+		Report<?> report = Report.success(String.format("%s %s %s", fieldVisibility, fieldTypeName, fieldName));
 
 		try {
 			Field actualField = clazz.getDeclaredField(fieldName);
@@ -135,25 +147,25 @@ public class StaticChecker {
 		return report;
 	}
 
-	public static ErrorReport checkModifiers(Class<?> actual, Class<?> spec) {
+	public static Report<?> checkModifiers(Class<?> actual, Class<?> spec) {
 		return checkModifiers(actual.getModifiers(), spec.getModifiers(), !spec.isInterface() || actual.isInterface());
 	}
 
-	public static ErrorReport checkVisibility(Class<?> actual, Class<?> spec) {
+	public static Report<?> checkVisibility(Class<?> actual, Class<?> spec) {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers());
 	}
 
-	public static ErrorReport checkModifiers(Member actual, Member spec) {
+	public static Report<?> checkModifiers(Member actual, Member spec) {
 		boolean checkAbstract = !spec.getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
 		return checkModifiers(actual.getModifiers(), spec.getModifiers(), checkAbstract);
 	}
 
-	public static ErrorReport checkVisibility(Member actual, Member spec) {
+	public static Report<?> checkVisibility(Member actual, Member spec) {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers());
 	}
 
-	private static ErrorReport checkModifiers(int actual, int spec, boolean checkAbstract) {
-		ErrorReport report = ErrorReport.success();
+	private static Report<?> checkModifiers(int actual, int spec, boolean checkAbstract) {
+		Report<?> report = Report.success();
 
 		if (checkAbstract) {
 			report.addEntries(checkModifier(actual, spec, Modifier::isAbstract, ABSTRACT));
@@ -169,51 +181,36 @@ public class StaticChecker {
 		return report;
 	}
 
-	public static ErrorReport checkVisibility(int actual, int spec) {
+	public static Report<?> checkVisibility(int actual, int spec) {
 		Visibility actualVisibility = getVisibility(actual);
 		Visibility specVisibility = getVisibility(spec);
 
 		if (actualVisibility != specVisibility) {
-			if (actualVisibility == Visibility.DEFAULT) {
-				return ErrorReport.error(String.format("should have visibility \"%s\"", specVisibility));
+			if (specVisibility == Visibility.DEFAULT) {
+				return Report.error("should not have any visibilty modifier");
+			} else {
+				return Report.error(String.format("should have visibility \"%s\"", specVisibility));
 			}
-			return ErrorReport.error(String.format("should have visibility \"%s\" instead of \"%s\"", specVisibility, actualVisibility));
 		}
 
-		return ErrorReport.success();
+		return Report.success();
 	}
 
-	private static Visibility getVisibility(int modifiers) {
-		if (Modifier.isPrivate(modifiers)) {
-			return Visibility.PRIVATE;
-		} else if (Modifier.isProtected(modifiers)) {
-			return Visibility.PROTECTED;
-		} else if (Modifier.isPublic(modifiers)) {
-			return Visibility.PUBLIC;
-		} else {
-			return Visibility.DEFAULT;
-		}
-	}
-
-	private static ErrorReport checkModifier(int actual, int spec, IntFunction<Boolean> function, javax.lang.model.element.Modifier modifier) {
+	private static Report<?> checkModifier(int actual, int spec, IntFunction<Boolean> function, javax.lang.model.element.Modifier modifier) {
 		boolean actualRes = function.apply(actual);
 		Boolean specRes = function.apply(spec);
 
 		if (specRes && !actualRes) {
 			String format = "should have modifier \"%s\"";
-			return ErrorReport.error("", String.format(format, modifier));
+			return Report.error("", String.format(format, modifier));
 		}
 
 		if (!specRes && actualRes) {
 			String format = "should not have modifier \"%s\"";
-			return ErrorReport.error("", String.format(format, modifier));
+			return Report.error("", String.format(format, modifier));
 		}
 
-		return ErrorReport.success();
-	}
-
-	private static String toParameterList(Class<?>[] parameterTypes) {
-		return Arrays.stream(parameterTypes).parallel().map(ClassUtils::getName).collect(Collectors.joining(", "));
+		return Report.success();
 	}
 
 	private static Comparator<Method> createMethodComparator(Method method) {

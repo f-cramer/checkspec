@@ -2,7 +2,7 @@ package test;
 
 public class CalcImpl {
 
-	public int add(int a, int b) {
+	public int addI(int a, int b) {
 		return a + b;
 	}
 

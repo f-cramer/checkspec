@@ -1,6 +1,6 @@
 package test;
 
-import checkspec.Spec;
+import checkspec.annotation.Spec;
 
 @Spec
 public interface Calc {

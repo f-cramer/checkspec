@@ -1,8 +1,8 @@
-package checkspec;
+package checkspec.util;
 
 import java.util.Locale;
 
-enum Visibility {
+public enum Visibility {
 
 	DEFAULT, PRIVATE, PROTECTED, PUBLIC;
 

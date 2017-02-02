@@ -2,17 +2,13 @@ package test;
 
 public abstract class AlternateCalcImpl {
 
-	public abstract int add(int a, int b);
+	public abstract int add(String a, int b);
 
-	int subtract(int a, int b) {
-		return a;
+	public int multiply(int a, int b) {
+		return a * b;
 	}
 
-	public double multiply(int a, int b) {
-		return a;
-	}
-
-	public Object divide(int a, int b) {
+	public Integer divide(int a, int b) {
 		return null;
 	}
 }
