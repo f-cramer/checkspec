@@ -1,4 +1,4 @@
-package test;
+package checkspec.test;
 
 import checkspec.annotation.Spec;
 

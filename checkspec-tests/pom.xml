@@ -2,37 +2,24 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec</artifactId>
+	<artifactId>checkspec-tests</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec-api</artifactId>
+			<artifactId>checkspec</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>de.cramer.checkspec</groupId>
+			<artifactId>checkspec-test-files</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.objenesis</groupId>
-			<artifactId>objenesis</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -42,5 +29,5 @@
 		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>CheckSpec</name>
+	<name>CheckSpec Tests</name>
 </project>

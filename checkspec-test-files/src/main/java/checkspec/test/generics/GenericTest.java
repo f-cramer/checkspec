@@ -1,4 +1,4 @@
-package test.generics;
+package checkspec.test.generics;
 
 import checkspec.annotation.Spec;
 

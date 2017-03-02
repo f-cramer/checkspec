@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 
 	private final T specObject;
@@ -53,7 +54,10 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 
 	@Override
 	public int getScore() {
-		return lines.parallelStream().mapToInt(ReportLine::getScore).sum();
+		int linesSum = lines.parallelStream().mapToInt(ReportLine::getScore).sum();
+		int subReportsSum = getSubReports().parallelStream().mapToInt(Report::getScore).sum();
+		
+		return linesSum + subReportsSum;
 	}
 
 	protected void addSubReport(Report<?> subReport) {
@@ -92,7 +96,15 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 
 	@Override
 	public int compareTo(Report<?> report) {
-		Objects.requireNonNull(report, "report");
-		return Integer.compare(getScore(), report.getScore());
+		if (report == null) {
+			return 1;
+		}
+		
+		int cmp = Integer.compare(getScore(), report.getScore());
+		if (cmp != 0) {
+			return cmp;
+		}
+		
+		return title.compareToIgnoreCase(report.getTitle());
 	}
 }

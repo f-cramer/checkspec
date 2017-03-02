@@ -1,8 +1,8 @@
-package test;
+package checkspec.test;
 
 public class CalcImpl {
 
-	public int addI(int a, int b) {
+	public int add(int a, int b) {
 		return a + b;
 	}
 

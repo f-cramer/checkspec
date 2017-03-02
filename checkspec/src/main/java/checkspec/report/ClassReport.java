@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
 public class ClassReport extends Report<Class<?>> {
 
 	private List<FieldReport> fieldReports = new ArrayList<>();
@@ -59,7 +62,12 @@ public class ClassReport extends Report<Class<?>> {
 	public Class<?> getImplementingClass() {
 		return super.getImplementingObject();
 	}
-
+	
+	public boolean hasAnyImplementation() {
+		List<Report<?>> subReports = getSubReports();
+		return subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.getImplementingObject() != null);
+	}
+	
 	@Override
 	protected void addSubReport(Report<?> report) {
 		if (report instanceof FieldReport) {

@@ -1,6 +1,7 @@
 package checkspec.util;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,5 +32,9 @@ public class MethodUtils {
 	public static String getParameterList(Method method) {
 		Objects.requireNonNull(method);
 		return Arrays.stream(method.getParameterTypes()).parallel().map(ClassUtils::getName).collect(Collectors.joining(", "));
+	}
+	
+	public static boolean isAbstract(Method method) {
+		return Modifier.isAbstract(method.getModifiers());
 	}
 }

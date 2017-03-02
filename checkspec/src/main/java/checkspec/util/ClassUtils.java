@@ -34,7 +34,7 @@ public class ClassUtils {
 	public static Stream<Class<?>> getClassAsStream(String className) {
 		try {
 			return Stream.of(Class.forName(className));
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
 			return Stream.empty();
 		}
 	}

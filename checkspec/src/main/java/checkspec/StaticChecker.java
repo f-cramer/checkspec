@@ -47,6 +47,7 @@ class StaticChecker {
 		Arrays.stream(spec.getDeclaredMethods()).parallel()
 	                      .sorted(Comparator.comparing(Method::getName))
 	                      .map(e -> checkMethod(actual, e))
+	                      .filter(e -> e != null)
 	                      .forEachOrdered(report::add);
 		// @formatter:on
 		return report;
@@ -88,6 +89,8 @@ class StaticChecker {
 
 				return report;
 			}
+		} catch (NoClassDefFoundError e) {
+			return null;
 		}
 	}
 

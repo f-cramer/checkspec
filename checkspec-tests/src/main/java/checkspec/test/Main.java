@@ -1,6 +1,5 @@
-package checkspec;
+package checkspec.test;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -9,18 +8,25 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.objenesis.Objenesis;
+import org.objenesis.ObjenesisStd;
+
+import checkspec.CheckSpec;
+import checkspec.MethodInvocationHandler;
 import checkspec.gui.CheckSpecFrame;
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
 import checkspec.report.output.ConsoleOutputter;
 import checkspec.report.output.Outputter;
+import checkspec.test.generics.GenericTestImpl;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
-import test.Calc;
-import test.generics.GenericTestImpl;
+import javassist.util.proxy.ProxyFactory;
 
 public class Main {
+	
+	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) {
 		Class<?> class1 = GenericTestImpl.class;
@@ -46,11 +52,19 @@ public class Main {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T createProxy(Class<?> clazz, InvocationHandler handler) {
-		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, handler);
+	public static <T> T createProxy(Class<?> clazz, MethodInvocationHandler handler) {
+		if (clazz.isInterface()) {
+			return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, handler);
+		} else {
+			ProxyFactory factory = new ProxyFactory();
+			factory.setSuperclass(clazz);
+			factory.setFilter(e -> !MethodUtils.isAbstract(e));
+			Class<?> proxyClass = factory.createClass();
+			return (T) OBJENESIS.newInstance(proxyClass);
+		}
 	}
 
-	private static InvocationHandler createInvocationHandler(Class<?> spec, SpecReport report) {
+	private static MethodInvocationHandler createInvocationHandler(Class<?> spec, SpecReport report) {
 		final List<ClassReport> classReports = report.getClassReports();
 		if (classReports.isEmpty()) {
 			String format = "no implementation of \"%s\" could be found";

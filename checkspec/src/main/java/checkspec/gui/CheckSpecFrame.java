@@ -8,6 +8,7 @@ import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -38,7 +39,8 @@ public class CheckSpecFrame extends JFrame {
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 
-		add(getErrorReportTreeView(report), constraints);
+		add(new JScrollPane(getErrorReportTreeView(report)), constraints);
+//		add(getErrorReportTreeView(report), constraints);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -96,7 +98,7 @@ public class CheckSpecFrame extends JFrame {
 	}
 
 	@RequiredArgsConstructor
-	private class CustomTreeCellRenderer implements TreeCellRenderer {
+	private static class CustomTreeCellRenderer implements TreeCellRenderer {
 
 		private final TreeCellRenderer delegate;
 

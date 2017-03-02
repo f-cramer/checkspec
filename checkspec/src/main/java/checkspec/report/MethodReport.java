@@ -4,6 +4,9 @@ import static checkspec.util.MethodUtils.createString;
 
 import java.lang.reflect.Method;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
 public class MethodReport extends Report<Method> {
 
 	public MethodReport(Method specMethod) {
@@ -33,7 +36,7 @@ public class MethodReport extends Report<Method> {
 	@Override
 	public int getScore() {
 		if (getImplementingObject() == null) {
-			return 1;
+			return 10;
 		} else {
 			return super.getScore();
 		}

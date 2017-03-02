@@ -1,4 +1,4 @@
-package test.generics;
+package checkspec.test.generics;
 
 public class GenericTestImpl implements GenericTest<String> {
 
