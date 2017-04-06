@@ -2,6 +2,7 @@ package checkspec.util;
 
 import java.util.stream.Stream;
 
+import checkspec.spring.ResolvableType;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -12,6 +13,10 @@ public class ClassUtils {
 		ClassType type = getType(clazz);
 		String name = getName(clazz);
 		return String.format("%s %s %s", visibility, type, name);
+	}
+	
+	public static String getName(ResolvableType type) {
+		return getName(type.getRawClass());
 	}
 
 	public static String getName(Class<?> clazz) {
@@ -62,4 +67,21 @@ public class ClassUtils {
 	public static Visibility getVisibility(Class<?> clazz) {
 		return MemberUtils.getVisibility(clazz.getModifiers());
 	}
+	
+
+    public static boolean isAssignable(ResolvableType cls, final ResolvableType toClass) {
+        if (toClass == null) {
+            return false;
+        }
+        // have to check for null, as isAssignableFrom doesn't
+        if (cls == null) {
+            return !toClass.getRawClass().isPrimitive();
+        }
+        
+        if (toClass.isAssignableFrom(cls)) {
+        	return true;
+        }
+        
+        return org.apache.commons.lang3.ClassUtils.isAssignable(cls.getRawClass(), toClass.getRawClass());
+    }
 }

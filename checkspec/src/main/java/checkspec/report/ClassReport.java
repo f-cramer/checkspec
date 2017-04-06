@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import checkspec.spring.ResolvableType;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
@@ -76,6 +77,9 @@ public class ClassReport extends Report<Class<?>> {
 			add((ConstructorReport) report);
 		} else if (report instanceof MethodReport) {
 			add((MethodReport) report);
+		} else {
+			ResolvableType type = ResolvableType.forClass(report.getClass());
+			throw new IllegalArgumentException(String.format("cannot add report of type \"%s\" to class report", type));
 		}
 	}
 }

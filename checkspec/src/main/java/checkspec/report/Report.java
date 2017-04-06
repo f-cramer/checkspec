@@ -2,7 +2,9 @@ package checkspec.report;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -18,74 +20,49 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 	private final T implementingObject;
 
 	private final String title;
-	private final List<ReportLine> lines = new ArrayList<>();
+	private final List<ReportProblem> problems = new ArrayList<>();
 
-	protected Report(T specObject, T implementingObject, String title, ReportLine... lines) {
+	protected Report(T specObject, T implementingObject, String title, ReportProblem... problems) {
 		this.specObject = specObject;
 		this.implementingObject = implementingObject;
 		this.title = title;
-		this.lines.addAll(Arrays.asList(lines));
+		this.problems.addAll(Arrays.asList(problems));
 	}
 
-	public List<ReportLine> getLines() {
-		return Collections.unmodifiableList(lines);
+	public List<ReportProblem> getLines() {
+		return Collections.unmodifiableList(problems);
 	}
 
 	public List<Report<?>> getSubReports() {
 		return Collections.emptyList();
 	}
 
-	public void add(@Nonnull ReportLine entry) {
-		lines.add(entry);
+	public void addSubReports(@Nonnull List<? extends Report<?>> reports) {
+		reports.parallelStream().forEachOrdered(this::addSubReport);
 	}
-
-	public void addEntries(@Nonnull Report<?> report) {
-		report.getSubReports().parallelStream().forEachOrdered(this::addSubReport);
-		lines.addAll(report.getLines());
+	
+	public void addProblem(@Nonnull ReportProblem entry) {
+		problems.add(entry);
 	}
-
-	public void addError(@Nonnull String content) {
-		addError(1, content);
+	
+	public void addProblems(@Nonnull Collection<ReportProblem> probs) {
+		problems.addAll(probs);
 	}
-
-	public void addError(int score, @Nonnull String content) {
-		lines.add(new ReportLine(score, content));
+	
+	public Type getType() {
+		getSubReports().parallelStream().map(Report::getType).max(Comparator.naturalOrder());
 	}
-
+	
 	@Override
 	public int getScore() {
-		int linesSum = lines.parallelStream().mapToInt(ReportLine::getScore).sum();
+		int problemsSum = problems.parallelStream().mapToInt(ReportProblem::getScore).sum();
 		int subReportsSum = getSubReports().parallelStream().mapToInt(Report::getScore).sum();
 		
-		return linesSum + subReportsSum;
+		return problemsSum + subReportsSum;
 	}
 
 	protected void addSubReport(Report<?> subReport) {
 		throw new UnsupportedOperationException();
-	}
-
-	public static Report<?> success() {
-		return success("");
-	}
-
-	public static Report<?> success(@Nonnull String title) {
-		return new Report<>(null, null, title);
-	}
-
-	public static Report<?> error(@Nonnull String report) {
-		return error("", report);
-	}
-
-	public static Report<?> error(@Nonnull String title, @Nonnull String report) {
-		return error(title, 1, report);
-	}
-
-	public static Report<?> error(int score, @Nonnull String report) {
-		return error("", score, report);
-	}
-
-	public static Report<?> error(@Nonnull String title, int score, @Nonnull String report) {
-		return new Report<>(null, null, title, new ReportLine(score, report));
 	}
 
 	@Override
@@ -106,5 +83,9 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 		}
 		
 		return title.compareToIgnoreCase(report.getTitle());
+	}
+	
+	public enum Type {
+		SUCCESS, WARNING, ERROR
 	}
 }

@@ -17,7 +17,7 @@ import javax.swing.tree.TreeCellRenderer;
 import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportEntry;
-import checkspec.report.ReportLine;
+import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
 import lombok.RequiredArgsConstructor;
 
@@ -69,7 +69,7 @@ public class CheckSpecFrame extends JFrame {
 	private MutableTreeNode createNode(Report<?> report) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(report);
 
-		for (ReportLine e : report.getLines()) {
+		for (ReportProblem e : report.getLines()) {
 			node.add(createNode(e));
 		}
 
@@ -79,7 +79,7 @@ public class CheckSpecFrame extends JFrame {
 		return node;
 	}
 
-	private MutableTreeNode createNode(ReportLine line) {
+	private MutableTreeNode createNode(ReportProblem line) {
 		return new DefaultMutableTreeNode(line, false);
 	}
 

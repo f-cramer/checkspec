@@ -60,7 +60,9 @@ public class Main {
 			factory.setSuperclass(clazz);
 			factory.setFilter(e -> !MethodUtils.isAbstract(e));
 			Class<?> proxyClass = factory.createClass();
-			return (T) OBJENESIS.newInstance(proxyClass);
+			T proxy = (T) OBJENESIS.newInstance(proxyClass);
+			((javassist.util.proxy.Proxy) proxy).setHandler(handler);
+			return proxy;
 		}
 	}
 
