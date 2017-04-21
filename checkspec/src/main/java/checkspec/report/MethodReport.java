@@ -1,6 +1,8 @@
 package checkspec.report;
 
 import static checkspec.util.MethodUtils.createString;
+import static checkspec.util.MessageUtils.bestFitting;
+import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Method;
 
@@ -27,9 +29,9 @@ public class MethodReport extends Report<Method> {
 
 	private static String toString(Method specMethod, Method implementingMethod) {
 		if (implementingMethod == null) {
-			return String.format("%s - missing", createString(specMethod));
+			return missing(createString(specMethod));
 		} else {
-			return String.format("%s - best fitting for \"%s\"", createString(implementingMethod), createString(specMethod));
+			return bestFitting(createString(implementingMethod), createString(specMethod));
 		}
 	}
 

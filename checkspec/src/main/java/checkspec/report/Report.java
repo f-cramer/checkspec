@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -38,26 +39,29 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 	}
 
 	public void addSubReports(@Nonnull List<? extends Report<?>> reports) {
-		reports.parallelStream().forEachOrdered(this::addSubReport);
+		reports.forEach(this::addSubReport);
 	}
-	
+
 	public void addProblem(@Nonnull ReportProblem entry) {
 		problems.add(entry);
 	}
-	
+
 	public void addProblems(@Nonnull Collection<ReportProblem> probs) {
 		problems.addAll(probs);
 	}
-	
-	public Type getType() {
-		getSubReports().parallelStream().map(Report::getType).max(Comparator.naturalOrder());
+
+	public ProblemType getType() {
+		Stream<ProblemType> reportTypes = getSubReports().parallelStream().map(Report::getType);
+		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(ReportProblem.Type::toProblemType);
+		
+		return Stream.concat(reportTypes, problemTypes).max(Comparator.naturalOrder()).orElse(ProblemType.SUCCESS);
 	}
-	
+
 	@Override
 	public int getScore() {
 		int problemsSum = problems.parallelStream().mapToInt(ReportProblem::getScore).sum();
 		int subReportsSum = getSubReports().parallelStream().mapToInt(Report::getScore).sum();
-		
+
 		return problemsSum + subReportsSum;
 	}
 
@@ -76,16 +80,12 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 		if (report == null) {
 			return 1;
 		}
-		
+
 		int cmp = Integer.compare(getScore(), report.getScore());
 		if (cmp != 0) {
 			return cmp;
 		}
-		
+
 		return title.compareToIgnoreCase(report.getTitle());
-	}
-	
-	public enum Type {
-		SUCCESS, WARNING, ERROR
 	}
 }

@@ -25,17 +25,17 @@ import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
 
 public class Main {
-	
+
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) {
 		Class<?> class1 = GenericTestImpl.class;
 		Class<?>[] interfaces = class1.getClass().getInterfaces();
 		System.out.println(Arrays.toString(interfaces));
-		
+
 		CheckSpec checkSpec = new CheckSpec();
 		Class<Calc> clazz = Calc.class;
-		
+
 		SpecReport report = checkSpec.checkSpec(clazz);
 
 		try {

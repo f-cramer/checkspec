@@ -1,6 +1,8 @@
 package checkspec.report;
 
 import static checkspec.util.ConstructorUtils.createString;
+import static checkspec.util.MessageUtils.bestFitting;
+import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
 
@@ -24,9 +26,9 @@ public class ConstructorReport extends Report<Constructor<?>> {
 
 	private static String toString(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
 		if (implementingConstructor == null) {
-			return String.format("implementation for \"%s\" is missing", createString(specConstructor));
+			return missing(createString(specConstructor));
 		} else {
-			return String.format("\"%s\" is best fitting for \"%s\"", createString(implementingConstructor), createString(specConstructor));
+			return bestFitting(createString(implementingConstructor), createString(specConstructor));
 		}
 	}
 

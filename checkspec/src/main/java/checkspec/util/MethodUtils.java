@@ -33,7 +33,7 @@ public class MethodUtils {
 		Objects.requireNonNull(method);
 		return Arrays.stream(method.getParameterTypes()).parallel().map(ClassUtils::getName).collect(Collectors.joining(", "));
 	}
-	
+
 	public static boolean isAbstract(Method method) {
 		return Modifier.isAbstract(method.getModifiers());
 	}

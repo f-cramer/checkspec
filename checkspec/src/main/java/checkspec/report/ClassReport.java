@@ -1,14 +1,11 @@
 package checkspec.report;
 
-import static checkspec.util.ClassUtils.getName;
-import static checkspec.util.ClassUtils.getType;
-import static checkspec.util.ClassUtils.getVisibility;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import checkspec.spring.ResolvableType;
+import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
@@ -19,7 +16,8 @@ public class ClassReport extends Report<Class<?>> {
 	private List<MethodReport> methodReports = new ArrayList<>();
 
 	public ClassReport(Class<?> specClass, Class<?> implementingClass) {
-		super(specClass, implementingClass, String.format("%s %s %s", getVisibility(implementingClass), getType(implementingClass), getName(implementingClass)));
+		super(specClass, implementingClass, String.format("%s %s %s", ClassUtils.getVisibility(implementingClass),
+				ClassUtils.getType(implementingClass), ClassUtils.getName(implementingClass)));
 	}
 
 	@Override
@@ -63,12 +61,12 @@ public class ClassReport extends Report<Class<?>> {
 	public Class<?> getImplementingClass() {
 		return super.getImplementingObject();
 	}
-	
+
 	public boolean hasAnyImplementation() {
 		List<Report<?>> subReports = getSubReports();
 		return subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.getImplementingObject() != null);
 	}
-	
+
 	@Override
 	protected void addSubReport(Report<?> report) {
 		if (report instanceof FieldReport) {

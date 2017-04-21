@@ -10,7 +10,7 @@ public class DependencyInjectionTests {
 
 	@Inject
 	private Calc calc;
-	
+
 	@Test
 	public void addTests() {
 		assertEquals(3, calc.add(1, 2));

@@ -40,7 +40,7 @@ public class CheckSpecFrame extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 
 		add(new JScrollPane(getErrorReportTreeView(report)), constraints);
-//		add(getErrorReportTreeView(report), constraints);
+		// add(getErrorReportTreeView(report), constraints);
 
 		pack();
 		setLocationRelativeTo(null);
@@ -103,7 +103,8 @@ public class CheckSpecFrame extends JFrame {
 		private final TreeCellRenderer delegate;
 
 		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
+				boolean hasFocus) {
 			Component component = delegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;

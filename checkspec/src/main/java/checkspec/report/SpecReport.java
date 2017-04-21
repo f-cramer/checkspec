@@ -14,7 +14,7 @@ public class SpecReport {
 
 	@NonNull
 	private final List<ClassReport> classReports;
-	
+
 	@Override
 	public String toString() {
 		return String.format("reports for specification %s", ClassUtils.getName(spec));

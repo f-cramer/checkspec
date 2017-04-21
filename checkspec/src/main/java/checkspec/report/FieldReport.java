@@ -1,6 +1,8 @@
 package checkspec.report;
 
 import static checkspec.util.FieldUtils.createString;
+import static checkspec.util.MessageUtils.bestFitting;
+import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Field;
 
@@ -16,9 +18,9 @@ public class FieldReport extends Report<Field> {
 
 	private static String toString(Field specField, Field implementingField) {
 		if (implementingField == null) {
-			return String.format("implementation for \"%s\" is missing", createString(specField));
+			return missing(createString(specField));
 		} else {
-			return String.format("\"%s\" is best fitting for \"%s\"", createString(implementingField), createString(specField));
+			return bestFitting(createString(implementingField), createString(specField));
 		}
 	}
 

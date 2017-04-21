@@ -19,8 +19,16 @@ public class ReportProblem implements ReportEntry {
 	public String toString() {
 		return score == 0 ? content : String.format("%s [%d]", content, score);
 	}
-	
+
+	@RequiredArgsConstructor
 	public static enum Type {
-		WARNING, ERROR
+		WARNING(ProblemType.WARNING), ERROR(ProblemType.ERROR);
+		
+		@Nonnull
+		private final ProblemType problemType;
+
+		public ProblemType toProblemType() {
+			return problemType;
+		}
 	}
 }
