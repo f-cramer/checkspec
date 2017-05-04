@@ -1,30 +1,23 @@
 package checkspec.report;
 
-import static checkspec.util.MethodUtils.createString;
 import static checkspec.util.MessageUtils.bestFitting;
 import static checkspec.util.MessageUtils.missing;
+import static checkspec.util.MethodUtils.createString;
 
 import java.lang.reflect.Method;
 
+import checkspec.type.MethodSpec;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class MethodReport extends Report<Method> {
+public class MethodReport extends Report<MethodSpec, Method> {
 
-	public MethodReport(Method specMethod) {
+	public MethodReport(MethodSpec specMethod) {
 		super(specMethod, null, null);
 	}
 
-	public MethodReport(Method specMethod, Method implementingMethod) {
+	public MethodReport(MethodSpec specMethod, Method implementingMethod) {
 		super(specMethod, implementingMethod, null);
-	}
-
-	public Method getImplementingMethod() {
-		return super.getImplementingObject();
-	}
-
-	public Method getSpecMethod() {
-		return super.getSpecObject();
 	}
 
 	private static String toString(Method specMethod, Method implementingMethod) {
@@ -37,7 +30,7 @@ public class MethodReport extends Report<Method> {
 
 	@Override
 	public int getScore() {
-		if (getImplementingObject() == null) {
+		if (getImplementation() == null) {
 			return 10;
 		} else {
 			return super.getScore();
@@ -46,11 +39,11 @@ public class MethodReport extends Report<Method> {
 
 	@Override
 	public String getTitle() {
-		Method specMethod = getSpecObject();
+		Method specMethod = getSpec().getRawElement();
 		if (isSuccess()) {
 			return createString(specMethod);
 		} else {
-			return toString(specMethod, getImplementingObject());
+			return toString(specMethod, getImplementation());
 		}
 	}
 }

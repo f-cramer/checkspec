@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import checkspec.type.Visibility;
+
 public class ConstructorUtils {
 
 	public static String createString(Constructor<?> constructor) {

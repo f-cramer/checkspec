@@ -8,45 +8,45 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
+import checkspec.type.Spec;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-public class Report<T> implements Comparable<Report<?>>, ReportEntry {
+public class Report<T extends Spec<U>, U> implements Comparable<Report<?, ?>>, ReportEntry {
 
-	private final T specObject;
-	private final T implementingObject;
+	private final T spec;
+	private final U implementation;
 
 	private final String title;
 	private final List<ReportProblem> problems = new ArrayList<>();
 
-	protected Report(T specObject, T implementingObject, String title, ReportProblem... problems) {
-		this.specObject = specObject;
-		this.implementingObject = implementingObject;
+	protected Report(T spec, U implementation, String title, ReportProblem... problems) {
+		this.spec = spec;
+		this.implementation = implementation;
 		this.title = title;
 		this.problems.addAll(Arrays.asList(problems));
 	}
 
-	public List<ReportProblem> getLines() {
+	public List<ReportProblem> getProblems() {
 		return Collections.unmodifiableList(problems);
 	}
 
-	public List<Report<?>> getSubReports() {
+	public List<Report<?, ?>> getSubReports() {
 		return Collections.emptyList();
 	}
 
-	public void addSubReports(@Nonnull List<? extends Report<?>> reports) {
+	public void addSubReports(@NonNull List<? extends Report<?, ?>> reports) {
 		reports.forEach(this::addSubReport);
 	}
 
-	public void addProblem(@Nonnull ReportProblem entry) {
+	public void addProblem(@NonNull ReportProblem entry) {
 		problems.add(entry);
 	}
 
-	public void addProblems(@Nonnull Collection<ReportProblem> probs) {
+	public void addProblems(@NonNull Collection<ReportProblem> probs) {
 		problems.addAll(probs);
 	}
 
@@ -65,7 +65,7 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 		return problemsSum + subReportsSum;
 	}
 
-	protected void addSubReport(Report<?> subReport) {
+	protected void addSubReport(Report<?, ?> subReport) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -76,7 +76,7 @@ public class Report<T> implements Comparable<Report<?>>, ReportEntry {
 	}
 
 	@Override
-	public int compareTo(Report<?> report) {
+	public int compareTo(Report<?, ?> report) {
 		if (report == null) {
 			return 1;
 		}

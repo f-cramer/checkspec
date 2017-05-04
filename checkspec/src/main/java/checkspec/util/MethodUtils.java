@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import checkspec.type.Visibility;
+
 public class MethodUtils {
 
 	public static String createString(Method method) {

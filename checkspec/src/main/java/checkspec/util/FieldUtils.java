@@ -3,6 +3,8 @@ package checkspec.util;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
+import checkspec.type.Visibility;
+
 public class FieldUtils {
 
 	public static String createString(Field field) {

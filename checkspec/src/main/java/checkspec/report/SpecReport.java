@@ -2,6 +2,7 @@ package checkspec.report;
 
 import java.util.List;
 
+import checkspec.type.ClassSpec;
 import checkspec.util.ClassUtils;
 import lombok.NonNull;
 import lombok.Value;
@@ -10,13 +11,13 @@ import lombok.Value;
 public class SpecReport {
 
 	@NonNull
-	private final Class<?> spec;
+	private final ClassSpec spec;
 
 	@NonNull
 	private final List<ClassReport> classReports;
 
 	@Override
 	public String toString() {
-		return String.format("reports for specification %s", ClassUtils.getName(spec));
+		return String.format("reports for specification %s", ClassUtils.getName(spec.getRawElement()));
 	}
 }

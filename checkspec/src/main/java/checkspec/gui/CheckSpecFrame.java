@@ -66,14 +66,14 @@ public class CheckSpecFrame extends JFrame {
 		return node;
 	}
 
-	private MutableTreeNode createNode(Report<?> report) {
+	private MutableTreeNode createNode(Report<?, ?> report) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(report);
 
-		for (ReportProblem e : report.getLines()) {
+		for (ReportProblem e : report.getProblems()) {
 			node.add(createNode(e));
 		}
 
-		for (Report<?> e : report.getSubReports()) {
+		for (Report<?, ?> e : report.getSubReports()) {
 			node.add(createNode(e));
 		}
 		return node;
@@ -119,7 +119,7 @@ public class CheckSpecFrame extends JFrame {
 				if (userObject instanceof SpecReport) {
 					iconName = "report";
 				} else if (userObject instanceof ReportEntry) {
-					if (userObject instanceof Report<?> && ((Report<?>) userObject).getImplementingObject() == null) {
+					if (userObject instanceof Report<?, ?> && ((Report<?, ?>) userObject).getImplementation() == null) {
 						iconName = "failure";
 					} else if (((ReportEntry) userObject).isSuccess()) {
 						iconName = "success";

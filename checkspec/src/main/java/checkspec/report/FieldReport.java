@@ -6,13 +6,15 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Field;
 
-public class FieldReport extends Report<Field> {
+import checkspec.type.FieldSpec;
 
-	public FieldReport(Field specField) {
+public class FieldReport extends Report<FieldSpec, Field> {
+
+	public FieldReport(FieldSpec specField) {
 		super(specField, null, null);
 	}
 
-	public FieldReport(Field specField, Field implementingField) {
+	public FieldReport(FieldSpec specField, Field implementingField) {
 		super(specField, implementingField, null);
 	}
 
@@ -26,7 +28,7 @@ public class FieldReport extends Report<Field> {
 
 	@Override
 	public int getScore() {
-		if (getImplementingObject() == null) {
+		if (getImplementation() == null) {
 			return 1;
 		} else {
 			return super.getScore();
@@ -35,11 +37,11 @@ public class FieldReport extends Report<Field> {
 
 	@Override
 	public String getTitle() {
-		Field specField = getSpecObject();
+		Field specField = getSpec().getRawElement();
 		if (isSuccess()) {
 			return createString(specField);
 		} else {
-			return toString(specField, getImplementingObject());
+			return toString(specField, getImplementation());
 		}
 	}
 }

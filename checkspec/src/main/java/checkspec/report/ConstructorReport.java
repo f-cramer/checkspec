@@ -6,22 +6,16 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
 
-public class ConstructorReport extends Report<Constructor<?>> {
+import checkspec.type.ConstructorSpec;
+
+public class ConstructorReport extends Report<ConstructorSpec, Constructor<?>> {
 
 	public ConstructorReport(Constructor<?> specConstructor) {
-		super(specConstructor, null, null);
+		super(ConstructorSpec.from(specConstructor), null, null);
 	}
 
 	public ConstructorReport(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
-		super(specConstructor, implementingConstructor, null);
-	}
-
-	public Constructor<?> getImplementingConstructor() {
-		return super.getImplementingObject();
-	}
-
-	public Constructor<?> getSpecConstructor() {
-		return super.getSpecObject();
+		super(ConstructorSpec.from(specConstructor), implementingConstructor, null);
 	}
 
 	private static String toString(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
@@ -34,7 +28,7 @@ public class ConstructorReport extends Report<Constructor<?>> {
 
 	@Override
 	public int getScore() {
-		if (getImplementingObject() == null) {
+		if (getImplementation() == null) {
 			return 1;
 		} else {
 			return super.getScore();
@@ -43,11 +37,11 @@ public class ConstructorReport extends Report<Constructor<?>> {
 
 	@Override
 	public String getTitle() {
-		Constructor<?> specConstructor = getSpecObject();
+		Constructor<?> specConstructor = getSpec().getRawElement();
 		if (isSuccess()) {
 			return createString(specConstructor);
 		} else {
-			return toString(specConstructor, getImplementingObject());
+			return toString(specConstructor, getImplementation());
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package checkspec.util;
+package checkspec.type;
 
 import java.util.Locale;
 

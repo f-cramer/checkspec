@@ -2,6 +2,8 @@ package checkspec.util;
 
 import java.lang.reflect.Modifier;
 
+import checkspec.type.Visibility;
+
 public class MemberUtils {
 
 	public static Visibility getVisibility(int modifiers) {

@@ -30,12 +30,17 @@ import checkspec.report.MethodReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
 import checkspec.spring.ResolvableType;
+import checkspec.type.ClassSpec;
+import checkspec.type.FieldSpec;
+import checkspec.type.MemberSpec;
+import checkspec.type.MethodSpec;
+import checkspec.type.ModifiersSpec;
+import checkspec.type.Visibility;
 import checkspec.util.ClassUtils;
-import checkspec.util.Visibility;
 
 class StaticChecker {
 
-	public static ClassReport checkImplements(Class<?> clazz, Class<?> spec) {
+	public static ClassReport checkImplements(Class<?> clazz, ClassSpec spec) {
 		ClassReport report = new ClassReport(spec, clazz);
 		
 		report.addProblems(checkModifiers(clazz, spec));
@@ -45,21 +50,21 @@ class StaticChecker {
 		return report;
 	}
 
-	public static List<MethodReport> checkMethods(Class<?> actual, Class<?> spec) {
+	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpec spec) {
 		// @formatter:off
 		return Arrays.stream(spec.getDeclaredMethods()).parallel()
-		             .sorted(Comparator.comparing(Method::getName))
+		             .sorted(Comparator.comparing(MethodSpec::getName))
 		             .map(e -> checkMethod(actual, e))
 		             .filter(e -> e != null)
 		             .collect(Collectors.toList());
 		// @formatter:on
 	}
 
-	private static MethodReport checkMethod(Class<?> actual, Method method) {
+	private static MethodReport checkMethod(Class<?> actual, MethodSpec method) {
 		String methodName = method.getName();
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
-		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method);
+		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
 		try {
 			Method actualMethod = actual.getDeclaredMethod(methodName, parameterTypes);
@@ -97,15 +102,15 @@ class StaticChecker {
 		}
 	}
 
-	private static List<ReportProblem> checkMethodParameters(Method actual, Method spec) {
+	private static List<ReportProblem> checkMethodParameters(Method actual, MethodSpec spec) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int actualLength = actual.getParameterCount();
-		int specLength = spec.getParameterCount();
+		int specLength = spec.getParameterTypes().length;
 
 		if (actualLength == specLength) {
 			for (int i = 0; i < actualLength; i++) {
-				ResolvableType specType = ResolvableType.forMethodParameter(spec, i);
+				ResolvableType specType = ResolvableType.forMethodParameter(spec.getRawElement(), i);
 				ResolvableType actualType = ResolvableType.forMethodParameter(actual, i);
 
 				if (actualType.getRawClass() != specType.getRawClass()) {
@@ -124,16 +129,16 @@ class StaticChecker {
 		return problems;
 	}
 
-	public static List<FieldReport> checkFields(Class<?> clazz, Class<?> interf) {
+	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpec spec) {
 		// @formatter:off
-		return Arrays.stream(interf.getDeclaredFields())
+		return Arrays.stream(spec.getDeclaredFields())
 		             .parallel()
 		             .map(e -> checkField(clazz, e))
 		             .collect(Collectors.toList());
 		// @formatter:on
 	}
 
-	private static FieldReport checkField(Class<?> clazz, Field field) {
+	private static FieldReport checkField(Class<?> clazz, FieldSpec field) {
 		String fieldName = field.getName();
 
 		Class<?> fieldType = field.getType();
@@ -158,21 +163,22 @@ class StaticChecker {
 		}
 	}
 
-	public static List<ReportProblem> checkModifiers(Class<?> actual, Class<?> spec) {
-		return checkModifiers(actual.getModifiers(), spec.getModifiers(), !spec.isInterface() || actual.isInterface());
+	public static List<ReportProblem> checkModifiers(Class<?> actual, ClassSpec spec) {
+		ModifiersSpec modifiersSpec = spec.getModifiers();
+		return checkModifiers(actual.getModifiers(), modifiersSpec.getModifiers(), !modifiersSpec.isInterface() || actual.isInterface());
 	}
 
-	public static Optional<ReportProblem> checkVisibility(Class<?> actual, Class<?> spec) {
-		return checkVisibility(actual.getModifiers(), spec.getModifiers());
+	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpec spec) {
+		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 
-	public static List<ReportProblem> checkModifiers(Member actual, Member spec) {
-		boolean checkAbstract = !spec.getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
-		return checkModifiers(actual.getModifiers(), spec.getModifiers(), checkAbstract);
+	public static List<ReportProblem> checkModifiers(Member actual, MemberSpec<?> spec) {
+		boolean checkAbstract = !spec.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
+		return checkModifiers(actual.getModifiers(), spec.getModifiers().getModifiers(), checkAbstract);
 	}
 
-	public static Optional<ReportProblem> checkVisibility(Member actual, Member spec) {
-		return checkVisibility(actual.getModifiers(), spec.getModifiers());
+	public static Optional<ReportProblem> checkVisibility(Member actual, MemberSpec<?> spec) {
+		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 
 	private static List<ReportProblem> checkModifiers(int actual, int spec, boolean checkAbstract) {
@@ -228,13 +234,13 @@ class StaticChecker {
 		return Optional.empty();
 	}
 
-	private static Comparator<Method> createMethodComparator(Method method) {
+	private static Comparator<Method> createMethodComparator(MethodSpec method) {
 		ToIntFunction<Method> heuristic = actual -> compareMethods(actual, method);
 		return Comparator.comparingInt(heuristic::applyAsInt);
 	}
 
-	private static int compareMethods(Method actual, Method spec) {
-		if (actual.equals(spec)) {
+	private static int compareMethods(Method actual, MethodSpec spec) {
+		if (actual.equals(spec.getRawElement())) {
 			return 0;
 		}
 

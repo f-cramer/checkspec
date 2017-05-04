@@ -21,6 +21,7 @@ import org.reflections.util.ConfigurationBuilder;
 import checkspec.annotation.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
+import checkspec.type.ClassSpec;
 import checkspec.util.ClassUtils;
 
 public class CheckSpec {
@@ -54,13 +55,14 @@ public class CheckSpec {
 		// @formatter:off
 		return REFLECTIONS.getTypesAnnotatedWith(Spec.class)
 		                  .parallelStream()
+		                  .map(ClassSpec::from)
 		                  .map(this::checkSpec)
 		                  .collect(Collectors.toList());
 		// @formatter:on
 	}
 
-	public SpecReport checkSpec(Class<?> spec) {
-		String specPackage = getPackage(spec);
+	public SpecReport checkSpec(ClassSpec spec) {
+		String specPackage = getPackage(spec.getRawElement());
 		
 		// @formatter:off
 		List<ClassReport> classReports = REFLECTIONS.getAllTypes()
