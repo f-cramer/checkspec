@@ -2,8 +2,8 @@ package checkspec.util;
 
 import java.util.stream.Stream;
 
+import checkspec.api.Visibility;
 import checkspec.spring.ResolvableType;
-import checkspec.type.Visibility;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

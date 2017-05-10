@@ -1,6 +1,7 @@
-package checkspec.type;
+package checkspec.spec;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,25 +10,29 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConstructorSpec implements MemberSpec<Constructor<?>> {
+public class ConstructorSpec implements Spec<Constructor<?>> {
 
 	@NonNull
 	private String name;
 	
 	@NonNull
-	private Class<?> declaringClass;
+	private ModifiersSpec modifiers;
 	
 	@NonNull
-	private ModifiersSpec modifiers;
+	private final VisibilitySpec visibility;
+	
+	@NonNull
+	private Parameter[] parameters;
 	
 	@NonNull
 	private Constructor<?> rawElement;
 	
 	public static ConstructorSpec from(Constructor<?> constructor) {
 		String name = constructor.getName();
-		Class<?> declaringClass = constructor.getDeclaringClass();
 		ModifiersSpec modifiers = ModifiersSpec.from(constructor.getModifiers());
+		VisibilitySpec visibility = VisibilitySpec.from(constructor.getModifiers(), constructor.getAnnotations());
+		Parameter[] parameters = constructor.getParameters();
 
-		return new ConstructorSpec(name, declaringClass, modifiers, constructor);
+		return new ConstructorSpec(name, modifiers, visibility, parameters, constructor);
 	}
 }

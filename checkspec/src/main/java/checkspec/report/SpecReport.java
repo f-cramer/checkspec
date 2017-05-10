@@ -2,7 +2,7 @@ package checkspec.report;
 
 import java.util.List;
 
-import checkspec.type.ClassSpec;
+import checkspec.spec.ClassSpec;
 import checkspec.util.ClassUtils;
 import lombok.NonNull;
 import lombok.Value;

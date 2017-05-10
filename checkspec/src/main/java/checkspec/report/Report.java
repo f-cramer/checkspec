@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import checkspec.type.Spec;
+import checkspec.spec.Spec;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;

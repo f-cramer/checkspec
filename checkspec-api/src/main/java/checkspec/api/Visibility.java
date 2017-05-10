@@ -1,10 +1,10 @@
-package checkspec.type;
+package checkspec.api;
 
 import java.util.Locale;
 
 public enum Visibility {
 
-	DEFAULT, PRIVATE, PROTECTED, PUBLIC;
+	INSIGNIFICANT, PACKAGE, PRIVATE, PROTECTED, PUBLIC;
 
 	@Override
 	public String toString() {

@@ -1,6 +1,6 @@
 package checkspec.test.generics;
 
-import checkspec.annotation.Spec;
+import checkspec.api.Spec;
 
 @Spec
 public interface GenericTest<T> {

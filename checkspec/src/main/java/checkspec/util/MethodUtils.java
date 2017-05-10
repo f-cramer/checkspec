@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import checkspec.type.Visibility;
+import checkspec.api.Visibility;
 
 public class MethodUtils {
 

@@ -6,7 +6,7 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
 
-import checkspec.type.ConstructorSpec;
+import checkspec.spec.ConstructorSpec;
 
 public class ConstructorReport extends Report<ConstructorSpec, Constructor<?>> {
 

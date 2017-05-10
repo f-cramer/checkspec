@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import checkspec.annotation.Inject;
+import checkspec.api.Inject;
 
 public class DependencyInjectionTests {
 

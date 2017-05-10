@@ -1,6 +1,7 @@
-package checkspec.type;
+package checkspec.spec;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class MethodSpec implements MemberSpec<Method> {
+public class MethodSpec implements Spec<Method> {
 
 	@NonNull
 	private String name;
@@ -18,10 +19,13 @@ public class MethodSpec implements MemberSpec<Method> {
 	private Class<?> returnType;
 	
 	@NonNull
-	private Class<?>[] parameterTypes;
+	private Parameter[] parameters;
 	
 	@NonNull
 	private ModifiersSpec modifiers;
+	
+	@NonNull
+	private VisibilitySpec visibility;
 	
 	@NonNull
 	private Method rawElement;
@@ -29,9 +33,10 @@ public class MethodSpec implements MemberSpec<Method> {
 	public static MethodSpec from(Method method) {
 		String name = method.getName();
 		Class<?> returnType = method.getReturnType();
-		Class<?>[] parameterTypes = method.getParameterTypes();
+		Parameter[] parameterTypes = method.getParameters();
 		ModifiersSpec modifiers = ModifiersSpec.from(method.getModifiers());
+		VisibilitySpec visibility = VisibilitySpec.from(method.getModifiers(), method.getAnnotations());
 
-		return new MethodSpec(name, returnType, parameterTypes, modifiers, method);
+		return new MethodSpec(name, returnType, parameterTypes, modifiers, visibility, method);
 	}
 }

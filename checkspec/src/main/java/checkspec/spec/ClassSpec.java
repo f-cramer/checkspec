@@ -1,4 +1,4 @@
-package checkspec.type;
+package checkspec.spec;
 
 import java.util.Arrays;
 
@@ -18,6 +18,9 @@ public class ClassSpec implements Spec<Class<?>> {
 	private final ModifiersSpec modifiers;
 	
 	@NonNull
+	private final VisibilitySpec visibility;
+	
+	@NonNull
 	private final FieldSpec[] declaredFields;
 	
 	@NonNull
@@ -32,10 +35,12 @@ public class ClassSpec implements Spec<Class<?>> {
 	public static ClassSpec from(Class<?> clazz) {
 		String name = clazz.getName();
 		ModifiersSpec modifiers = ModifiersSpec.from(clazz.getModifiers());
+		VisibilitySpec visibility = VisibilitySpec.from(clazz.getModifiers(), clazz.getAnnotations());
+		
 		FieldSpec[] declaredFields = Arrays.stream(clazz.getDeclaredFields()).parallel().map(FieldSpec::from).toArray(FieldSpec[]::new);
 		MethodSpec[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods()).parallel().map(MethodSpec::from).toArray(MethodSpec[]::new);
 		ConstructorSpec[] declaredConstructors = Arrays.stream(clazz.getDeclaredConstructors()).parallel().map(ConstructorSpec::from).toArray(ConstructorSpec[]::new);
 
-		return new ClassSpec(name, modifiers, declaredFields, declaredMethods, declaredConstructors, clazz);
+		return new ClassSpec(name, modifiers, visibility, declaredFields, declaredMethods, declaredConstructors, clazz);
 	}
 }

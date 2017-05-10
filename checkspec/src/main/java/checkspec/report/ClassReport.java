@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import checkspec.spec.ClassSpec;
 import checkspec.spring.ResolvableType;
-import checkspec.type.ClassSpec;
 import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 

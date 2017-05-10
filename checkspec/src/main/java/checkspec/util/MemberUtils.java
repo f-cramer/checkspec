@@ -2,7 +2,7 @@ package checkspec.util;
 
 import java.lang.reflect.Modifier;
 
-import checkspec.type.Visibility;
+import checkspec.api.Visibility;
 
 public class MemberUtils {
 
@@ -14,7 +14,7 @@ public class MemberUtils {
 		} else if (Modifier.isPublic(modifiers)) {
 			return Visibility.PUBLIC;
 		} else {
-			return Visibility.DEFAULT;
+			return Visibility.PACKAGE;
 		}
 	}
 }

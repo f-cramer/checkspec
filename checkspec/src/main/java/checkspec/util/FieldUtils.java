@@ -3,7 +3,7 @@ package checkspec.util;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import checkspec.type.Visibility;
+import checkspec.api.Visibility;
 
 public class FieldUtils {
 

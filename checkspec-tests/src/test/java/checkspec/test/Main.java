@@ -1,6 +1,5 @@
 package checkspec.test;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +18,8 @@ import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
 import checkspec.report.output.ConsoleOutputter;
 import checkspec.report.output.Outputter;
+import checkspec.spec.ClassSpec;
+import checkspec.spec.MethodSpec;
 import checkspec.test.generics.GenericTestImpl;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
@@ -36,7 +37,7 @@ public class Main {
 		CheckSpec checkSpec = new CheckSpec();
 		Class<Calc> clazz = Calc.class;
 
-		SpecReport report = checkSpec.checkSpec(clazz);
+		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
 
 		try {
 			Calc proxy = createProxy(clazz, createInvocationHandler(clazz, report));
@@ -78,27 +79,26 @@ public class Main {
 
 		try {
 			ClassReport classReport = classReports.get(0);
-			Class<?> implementingClass = classReport.getImplementingObject();
+			Class<?> implementingClass = classReport.getImplementation();
 			String implementationName = ClassUtils.getName(implementingClass);
 			Object implementation = implementingClass.newInstance();
 
 			// @formatter:off
-			Map<Method, MethodReport> methodReports = classReport.getMethodReports()
-			                                                     .parallelStream()
-			                                                     .map(e -> e)
-			                                                     .collect(Collectors.toMap(e -> e.getSpecObject(), Function.identity()));
+			Map<MethodSpec, MethodReport> methodReports = classReport.getMethodReports()
+			                                                         .parallelStream()
+			                                                         .collect(Collectors.toMap(e -> e.getSpec(), Function.identity()));
 			// @formatter:on
 
 			return (proxy, method, args) -> {
 				MethodReport actualMethod = methodReports.get(method);
 
-				if (actualMethod == null || actualMethod.getImplementingObject() == null) {
+				if (actualMethod == null || actualMethod.getImplementation() == null) {
 					String methodName = method.getName();
 					String parameterList = MethodUtils.getParameterList(method);
 					String format = "no implementation of %s#%s(%s) could be found in %s";
 					throw new UnsupportedOperationException(String.format(format, specName, methodName, parameterList, implementationName));
 				} else {
-					return actualMethod.getImplementingObject().invoke(implementation, args);
+					return actualMethod.getImplementation().invoke(implementation, args);
 				}
 			};
 		} catch (InstantiationException | IllegalAccessException e1) {

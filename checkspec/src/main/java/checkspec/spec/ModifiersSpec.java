@@ -1,6 +1,7 @@
-package checkspec.type;
+package checkspec.spec;
 
-import javassist.Modifier;
+import java.lang.reflect.Modifier;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,42 +12,6 @@ public class ModifiersSpec {
 	
 	private final int modifiers;
     
-    public boolean isPublic() {
-    	return Modifier.isPublic(modifiers);
-    }
-
-    public boolean isPrivate() {
-    	return Modifier.isPrivate(modifiers);
-    }
-
-    public boolean isProtected() {
-    	return Modifier.isProtected(modifiers);
-    }
-
-    public boolean isPackage() {
-    	return Modifier.isPackage(modifiers);
-    }
-    
-    public Visibility getType() {
-    	if (isPublic()) {
-    		return Visibility.PUBLIC;
-    	}
-    	
-    	if (isPrivate()) {
-    		return Visibility.PRIVATE;
-    	}
-    	
-    	if (isProtected()) {
-    		return Visibility.PROTECTED;
-    	}
-    	
-    	if (isPackage()) {
-    		return Visibility.DEFAULT;
-    	}
-    	
-    	return null;
-    }
-
     public boolean isStatic() {
     	return Modifier.isStatic(modifiers);
     }
@@ -70,17 +35,9 @@ public class ModifiersSpec {
     public boolean isNative() {
     	return Modifier.isNative(modifiers);
     }
-
+    
     public boolean isInterface() {
     	return Modifier.isInterface(modifiers);
-    }
-
-    public boolean isAnnotation() {
-    	return Modifier.isAnnotation(modifiers);
-    }
-
-    public boolean isEnum() {
-    	return Modifier.isEnum(modifiers);
     }
 
     public boolean isAbstract() {

@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,18 +25,18 @@ import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
+import checkspec.api.Visibility;
 import checkspec.report.ClassReport;
 import checkspec.report.FieldReport;
 import checkspec.report.MethodReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
+import checkspec.spec.ClassSpec;
+import checkspec.spec.FieldSpec;
+import checkspec.spec.MethodSpec;
+import checkspec.spec.ModifiersSpec;
+import checkspec.spec.Spec;
 import checkspec.spring.ResolvableType;
-import checkspec.type.ClassSpec;
-import checkspec.type.FieldSpec;
-import checkspec.type.MemberSpec;
-import checkspec.type.MethodSpec;
-import checkspec.type.ModifiersSpec;
-import checkspec.type.Visibility;
 import checkspec.util.ClassUtils;
 
 class StaticChecker {
@@ -63,7 +64,7 @@ class StaticChecker {
 	private static MethodReport checkMethod(Class<?> actual, MethodSpec method) {
 		String methodName = method.getName();
 
-		Class<?>[] parameterTypes = method.getParameterTypes();
+		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(Parameter::getType).toArray(Class[]::new);
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
 		try {
@@ -106,7 +107,7 @@ class StaticChecker {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int actualLength = actual.getParameterCount();
-		int specLength = spec.getParameterTypes().length;
+		int specLength = spec.getParameters().length;
 
 		if (actualLength == specLength) {
 			for (int i = 0; i < actualLength; i++) {
@@ -172,12 +173,12 @@ class StaticChecker {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 
-	public static List<ReportProblem> checkModifiers(Member actual, MemberSpec<?> spec) {
+	public static List<ReportProblem> checkModifiers(Member actual, Spec<? extends Member> spec) {
 		boolean checkAbstract = !spec.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
 		return checkModifiers(actual.getModifiers(), spec.getModifiers().getModifiers(), checkAbstract);
 	}
 
-	public static Optional<ReportProblem> checkVisibility(Member actual, MemberSpec<?> spec) {
+	public static Optional<ReportProblem> checkVisibility(Member actual, Spec<?> spec) {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 
@@ -204,7 +205,7 @@ class StaticChecker {
 
 		if (actualVisibility != specVisibility) {
 			ReportProblem problem;
-			if (specVisibility == Visibility.DEFAULT) {
+			if (specVisibility == Visibility.PACKAGE) {
 				problem = new ReportProblem(1, "should not have any visibility modifier", Type.ERROR);
 			} else {
 				problem = new ReportProblem(1, String.format("should have visibility \"%s\"", specVisibility), Type.ERROR);

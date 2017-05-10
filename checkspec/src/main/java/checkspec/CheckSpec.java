@@ -18,10 +18,10 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import checkspec.annotation.Spec;
+import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
-import checkspec.type.ClassSpec;
+import checkspec.spec.ClassSpec;
 import checkspec.util.ClassUtils;
 
 public class CheckSpec {
