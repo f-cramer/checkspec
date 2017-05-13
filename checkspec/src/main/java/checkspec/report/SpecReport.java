@@ -18,6 +18,6 @@ public class SpecReport {
 
 	@Override
 	public String toString() {
-		return String.format("reports for specification %s", ClassUtils.getName(spec.getRawElement()));
+		return String.format("Reports for specification %s", ClassUtils.getName(spec.getRawElement()));
 	}
 }

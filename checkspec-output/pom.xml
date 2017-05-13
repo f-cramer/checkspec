@@ -2,24 +2,29 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec-tests</artifactId>
+	<artifactId>checkspec-output</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec-output</artifactId>
+			<artifactId>checkspec</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec-test-files</artifactId>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>2.0.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+			<version>3.0.6.RELEASE</version>
 		</dependency>
 	</dependencies>
 
@@ -29,5 +34,4 @@
 		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>CheckSpec Tests</name>
 </project>

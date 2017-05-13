@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="style.css">
+</head>
+<body xmlns:th="">
+	<h1 th:text="${title}"></h1>
+	<table>
+		<tr th:each="row : ${rows}">
+			<td>
+				<span th:if="${row.mark}" th:text="${row.indentation}"></span>
+				<span th:if="${row.mark}" th:text="${row.mark.text}" th:classappend="${row.mark.className}"></span>
+				<span th:text="${row.text}"></span>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

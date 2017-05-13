@@ -1,5 +1,6 @@
 package checkspec.test;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
@@ -12,14 +13,13 @@ import org.objenesis.ObjenesisStd;
 
 import checkspec.CheckSpec;
 import checkspec.MethodInvocationHandler;
-import checkspec.gui.CheckSpecFrame;
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
 import checkspec.report.output.ConsoleOutputter;
 import checkspec.report.output.Outputter;
+import checkspec.report.output.html.HtmlOutputter;
 import checkspec.spec.ClassSpec;
-import checkspec.spec.MethodSpec;
 import checkspec.test.generics.GenericTestImpl;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
@@ -29,7 +29,7 @@ public class Main {
 
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Class<?> class1 = GenericTestImpl.class;
 		Class<?>[] interfaces = class1.getClass().getInterfaces();
 		System.out.println(Arrays.toString(interfaces));
@@ -48,8 +48,11 @@ public class Main {
 
 		Outputter outputter = new ConsoleOutputter();
 		outputter.output(report);
+		
+		outputter = new HtmlOutputter("C://Users/flori/Desktop/output");
+		outputter.output(report);
 
-		new CheckSpecFrame(report).setVisible(true);
+//		new CheckSpecFrame(report).setVisible(true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,9 +87,9 @@ public class Main {
 			Object implementation = implementingClass.newInstance();
 
 			// @formatter:off
-			Map<MethodSpec, MethodReport> methodReports = classReport.getMethodReports()
-			                                                         .parallelStream()
-			                                                         .collect(Collectors.toMap(e -> e.getSpec(), Function.identity()));
+			Map<Method, MethodReport> methodReports = classReport.getMethodReports()
+			                                                     .parallelStream()
+			                                                     .collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
 			// @formatter:on
 
 			return (proxy, method, args) -> {
