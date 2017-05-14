@@ -49,7 +49,7 @@ public class Main {
 		Outputter outputter = new ConsoleOutputter();
 		outputter.output(report);
 		
-		outputter = new HtmlOutputter("C://Users/flori/Desktop/output");
+		outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
 		outputter.output(report);
 
 //		new CheckSpecFrame(report).setVisible(true);

@@ -16,7 +16,7 @@ public class ConsoleOutputter implements Outputter {
 		System.out.println(toString(report));
 	}
 
-	private String toString(Report<?, ?> report) {
+	private static String toString(Report<?, ?> report) {
 		//@formatter:off
 		return report.getProblems()
 		             .parallelStream()
@@ -27,15 +27,17 @@ public class ConsoleOutputter implements Outputter {
 		//@formatter:on
 	}
 
-	private String toString(ClassReport report) {
-		//@formatter:off
+	private static String toString(ClassReport report) {
 		Stream<String> problems = report.getProblems().parallelStream().map(Object::toString);
 
+		//@formatter:off
 		Stream<String> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports())
-		                                     .parallel()
-		                                     .flatMap(List::stream)
-		                                     .map(this::toString);
+		                               .parallel()
+		                               .flatMap(List::stream)
+		                               .map(ConsoleOutputter::toString);
+		//@formatter:on
 
+		//@formatter:off
 		return Stream.concat(problems, reports)
 		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
 		             .trim()
@@ -43,11 +45,11 @@ public class ConsoleOutputter implements Outputter {
 		//@formatter:on
 	}
 
-	private String toString(SpecReport report) {
+	private static String toString(SpecReport report) {
 		//@formatter:off
 		return report.getClassReports()
 		             .parallelStream()
-		             .map(this::toString)
+		             .map(ConsoleOutputter::toString)
 		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
 		             .trim()
 		             .replace("\n", "\n\t");

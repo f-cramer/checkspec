@@ -9,7 +9,7 @@
 	<table>
 		<tr th:each="row : ${rows}">
 			<td>
-				<span th:if="${row.mark}" th:text="${row.indentation}"></span>
+				<span th:if="${row.mark && !row.indentation.isEmpty()}" th:text="${row.indentation}"></span>
 				<span th:if="${row.mark}" th:text="${row.mark.text}" th:classappend="${row.mark.className}"></span>
 				<span th:text="${row.text}"></span>
 			</td>
