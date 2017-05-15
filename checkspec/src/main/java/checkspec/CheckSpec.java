@@ -31,7 +31,7 @@ public class CheckSpec {
 
 	static {
 		Collection<URL> urls = Arrays.stream(System.getProperty("java.class.path").split(System.getProperty("path.separator")))
-		                             .filter(e -> !e.endsWith(".jar"))
+//		                             .filter(e -> !e.endsWith(".jar"))
 		                             .flatMap(CheckSpec::getUrlAsStream)
 		                             .peek(System.out::println)
 		                             .collect(Collectors.toSet());
@@ -42,8 +42,6 @@ public class CheckSpec {
 				.addUrls(urls)
 				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
 		// @formatter:on
-		
-
 
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
@@ -60,9 +58,14 @@ public class CheckSpec {
 		                  .collect(Collectors.toList());
 		// @formatter:on
 	}
-
+	
 	public SpecReport checkSpec(ClassSpec spec) {
-		String specPackage = getPackage(spec.getRawElement());
+		return checkSpec(spec, "");
+	}
+
+	public SpecReport checkSpec(ClassSpec spec, String packageName) {
+//		String specPackage = getPackage(spec.getRawElement());
+		String pkg = packageName.toLowerCase();
 		
 		// @formatter:off
 		List<ClassReport> classReports = REFLECTIONS.getAllTypes()
@@ -70,7 +73,8 @@ public class CheckSpec {
 		                                            .distinct()
 		                                            .peek(System.out::println)
 		                                            .filter(e -> !e.equals(spec.getName()))
-		                                            .filter(e -> !getPackage(e).startsWith(CHECK_SPEC_PACKAGE) || getPackage(e).startsWith(specPackage))
+		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
+//		                                            .filter(e -> !getPackage(e).startsWith(CHECK_SPEC_PACKAGE) || getPackage(e).startsWith(specPackage))
 		                                            .flatMap(ClassUtils::getClassAsStream)
 		                                            .map(e -> checkImplements(e, spec))
 		                                            .filter(ClassReport::hasAnyImplementation)

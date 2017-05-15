@@ -1,4 +1,4 @@
-package checkspec.gui;
+package checkspec.report.output.gui;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -8,6 +8,9 @@ import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,11 +24,13 @@ import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
 import lombok.RequiredArgsConstructor;
 
-public class CheckSpecFrame extends JFrame {
+class CheckSpecFrame extends JFrame {
 
 	private static final long serialVersionUID = -954917589134719758L;
+	
+	private static final JMenuBar menuBar = new JMenuBar();
 
-	public CheckSpecFrame(SpecReport report) {
+	public CheckSpecFrame(SpecReport report) {		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
@@ -44,6 +49,18 @@ public class CheckSpecFrame extends JFrame {
 
 		pack();
 		setLocationRelativeTo(null);
+
+		JMenu exportMenu = new JMenu("Export");
+		exportMenu.setMnemonic('E');
+		JMenuItem textExportItem = new JMenuItem("As Text");
+		textExportItem.setMnemonic('T');
+		exportMenu.add(textExportItem);
+		JMenuItem htmlExportItem = new JMenuItem("As HTML");
+		htmlExportItem.setMnemonic('H');
+		exportMenu.add(htmlExportItem);
+		
+		menuBar.add(exportMenu);
+		setJMenuBar(menuBar);
 	}
 
 	private Component getErrorReportTreeView(SpecReport report) {
@@ -111,7 +128,6 @@ public class CheckSpecFrame extends JFrame {
 
 			if (component instanceof JLabel) {
 				JLabel label = (JLabel) component;
-				label.setFont(label.getFont().deriveFont(24.0f));
 
 				String iconName = null;
 				Object userObject = node.getUserObject();

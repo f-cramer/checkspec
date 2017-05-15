@@ -1,8 +1,8 @@
 package checkspec.test;
 
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,11 +16,10 @@ import checkspec.MethodInvocationHandler;
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
-import checkspec.report.output.ConsoleOutputter;
 import checkspec.report.output.Outputter;
-import checkspec.report.output.html.HtmlOutputter;
+import checkspec.report.output.TextOutputter;
+import checkspec.report.output.gui.GuiOutputter;
 import checkspec.spec.ClassSpec;
-import checkspec.test.generics.GenericTestImpl;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
@@ -30,14 +29,12 @@ public class Main {
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) throws Exception {
-		Class<?> class1 = GenericTestImpl.class;
-		Class<?>[] interfaces = class1.getClass().getInterfaces();
-		System.out.println(Arrays.toString(interfaces));
-
+//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		
 		CheckSpec checkSpec = new CheckSpec();
 		Class<Calc> clazz = Calc.class;
 
-		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
+		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz), "checkspec.test");
 
 		try {
 			Calc proxy = createProxy(clazz, createInvocationHandler(clazz, report));
@@ -46,13 +43,14 @@ public class Main {
 			t.printStackTrace();
 		}
 
-		Outputter outputter = new ConsoleOutputter();
+		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out));
 		outputter.output(report);
 		
-		outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
-		outputter.output(report);
+//		outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
+//		outputter.output(report);
 
-//		new CheckSpecFrame(report).setVisible(true);
+		outputter = new GuiOutputter();
+		outputter.output(report);
 	}
 
 	@SuppressWarnings("unchecked")

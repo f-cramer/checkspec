@@ -1,5 +1,7 @@
 package checkspec.report.output;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -8,12 +10,18 @@ import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-public class ConsoleOutputter implements Outputter {
+@RequiredArgsConstructor
+public class TextOutputter implements Outputter {
 
+	@NonNull
+	private final Writer writer;
+	
 	@Override
-	public void output(SpecReport report) {
-		System.out.println(toString(report));
+	public void output(SpecReport report) throws IOException {
+		writer.write(toString(report));
 	}
 
 	private static String toString(Report<?, ?> report) {
@@ -34,7 +42,7 @@ public class ConsoleOutputter implements Outputter {
 		Stream<String> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports())
 		                               .parallel()
 		                               .flatMap(List::stream)
-		                               .map(ConsoleOutputter::toString);
+		                               .map(TextOutputter::toString);
 		//@formatter:on
 
 		//@formatter:off
@@ -49,7 +57,7 @@ public class ConsoleOutputter implements Outputter {
 		//@formatter:off
 		return report.getClassReports()
 		             .parallelStream()
-		             .map(ConsoleOutputter::toString)
+		             .map(TextOutputter::toString)
 		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
 		             .trim()
 		             .replace("\n", "\n\t");
