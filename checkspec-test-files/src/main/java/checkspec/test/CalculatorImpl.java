@@ -1,6 +1,6 @@
 package checkspec.test;
 
-public class CalcImpl {
+public class CalculatorImpl {
 
 	public int add(int a, int b) {
 		return a + b;

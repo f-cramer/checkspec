@@ -6,25 +6,16 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Field;
 
-import checkspec.spec.FieldSpec;
+import checkspec.spec.FieldSpecification;
 
-public class FieldReport extends Report<FieldSpec, Field> {
+public class FieldReport extends Report<FieldSpecification, Field> {
 
-	public FieldReport(FieldSpec specField) {
+	public FieldReport(FieldSpecification specField) {
 		super(specField, null, null);
 	}
 
-	public FieldReport(FieldSpec specField, Field implementingField) {
+	public FieldReport(FieldSpecification specField, Field implementingField) {
 		super(specField, implementingField, null);
-	}
-
-	@Override
-	public int getScore() {
-		if (getImplementation() == null) {
-			return 1;
-		} else {
-			return super.getScore();
-		}
 	}
 
 	@Override

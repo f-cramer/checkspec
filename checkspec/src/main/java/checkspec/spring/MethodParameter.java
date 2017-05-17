@@ -45,7 +45,7 @@ import java.util.Map;
  * @since 2.0
  * @see org.springframework.core.annotation.SynthesizingMethodParameter
  */
-public class MethodParameter {
+class MethodParameter {
 
 	private static final Class<?> javaUtilOptionalClass;
 

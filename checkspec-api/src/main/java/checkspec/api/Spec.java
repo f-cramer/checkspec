@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD })
 public @interface Spec {
 
 	/**
@@ -15,4 +15,6 @@ public @interface Spec {
 	boolean value() default true;
 
 	Visibility[] visibility() default {};
+	
+	Modifiers modifiers() default @Modifiers;
 }

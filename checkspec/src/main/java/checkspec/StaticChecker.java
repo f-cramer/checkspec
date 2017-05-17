@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -30,18 +29,21 @@ import checkspec.report.FieldReport;
 import checkspec.report.MethodReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.ClassSpec;
-import checkspec.spec.FieldSpec;
-import checkspec.spec.MethodSpec;
-import checkspec.spec.ModifiersSpec;
+import checkspec.spec.ClassSpecification;
+import checkspec.spec.FieldSpecification;
+import checkspec.spec.MethodParameterSpecification;
+import checkspec.spec.MethodSpecification;
+import checkspec.spec.ModifiersSpecification;
+import checkspec.spec.ModifiersSpecification.State;
 import checkspec.spec.Specification;
-import checkspec.spring.MethodParameter;
+import checkspec.spec.VisibilitySpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
+import checkspec.util.FieldUtils;
 
 class StaticChecker {
 
-	public static ClassReport checkImplements(Class<?> clazz, ClassSpec spec) {
+	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
 		ClassReport report = new ClassReport(spec, clazz);
 
 		report.addProblems(checkModifiers(clazz, spec));
@@ -51,20 +53,20 @@ class StaticChecker {
 		return report;
 	}
 
-	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpec spec) {
+	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpecification spec) {
 		// @formatter:off
 		return Arrays.stream(spec.getDeclaredMethods()).parallel()
-		             .sorted(Comparator.comparing(MethodSpec::getName))
+		             .sorted(Comparator.comparing(MethodSpecification::getName))
 		             .map(e -> checkMethod(actual, e))
 		             .filter(e -> e != null)
 		             .collect(Collectors.toList());
 		// @formatter:on
 	}
 
-	private static MethodReport checkMethod(Class<?> actual, MethodSpec method) {
+	private static MethodReport checkMethod(Class<?> actual, MethodSpecification method) {
 		String methodName = method.getName();
 
-		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(MethodParameter::get).toArray(Class[]::new);
+		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(MethodParameterSpecification::getType).map(ResolvableType::getRawClass).toArray(Class[]::new);
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
 		try {
@@ -86,7 +88,7 @@ class StaticChecker {
 			report.addProblems(checkModifiers(actualMethod, method));
 
 			return report;
-		} catch (NoSuchMethodException | SecurityException ex) {
+		} catch (NoSuchMethodException ex) {
 			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel().filter(e -> e.getName().equals(methodName)).collect(Collectors.toList());
 
 			if (methodsWithEqualName.isEmpty()) {
@@ -104,7 +106,7 @@ class StaticChecker {
 		}
 	}
 
-	private static List<ReportProblem> checkMethodParameters(Method actual, MethodSpec spec) {
+	private static List<ReportProblem> checkMethodParameters(Method actual, MethodSpecification spec) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int actualLength = actual.getParameterCount();
@@ -131,7 +133,7 @@ class StaticChecker {
 		return problems;
 	}
 
-	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpec spec) {
+	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
 		// @formatter:off
 		return Arrays.stream(spec.getDeclaredFields())
 		             .parallel()
@@ -140,76 +142,79 @@ class StaticChecker {
 		// @formatter:on
 	}
 
-	private static FieldReport checkField(Class<?> clazz, FieldSpec field) {
+	private static FieldReport checkField(Class<?> clazz, FieldSpecification field) {
 		String fieldName = field.getName();
 
-		Class<?> fieldType = field.getType();
+		ResolvableType fieldType = field.getType();
 		String fieldTypeName = getName(fieldType);
 
 		try {
 			Field actualField = clazz.getDeclaredField(fieldName);
-			Class<?> actualFieldType = actualField.getType();
+			ResolvableType actualFieldType = FieldUtils.getType(actualField);
 			String actualFieldTypeName = getName(actualFieldType);
 
 			FieldReport report = new FieldReport(field, actualField);
 
-			if (actualFieldType != fieldType) {
+			if (!actualFieldType.equals(fieldType)) {
 				String format = "has type of \"%s\" rather than \"%s\"";
 				String message = String.format(format, actualFieldTypeName, fieldTypeName);
 				report.addProblem(new ReportProblem(1, message, Type.WARNING));
 			}
 
 			return report;
-		} catch (NoSuchFieldException | SecurityException ex) {
+		} catch (NoSuchFieldException e) {
 			return new FieldReport(field);
 		}
 	}
 
-	public static List<ReportProblem> checkModifiers(Class<?> actual, ClassSpec spec) {
-		ModifiersSpec modifiersSpec = spec.getModifiers();
-		return checkModifiers(actual.getModifiers(), modifiersSpec.getModifiers(), !modifiersSpec.isInterface() || actual.isInterface());
+	public static List<ReportProblem> checkModifiers(Class<?> actual, ClassSpecification spec) {
+		ModifiersSpecification modifiersSpec = spec.getModifiers();
+		return checkModifiers(actual.getModifiers(), modifiersSpec, !modifiersSpec.isInterface() || actual.isInterface());
 	}
 
-	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpec spec) {
-		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
+	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpecification spec) {
+		return checkVisibility(actual.getModifiers(), spec.getVisibility());
 	}
 
 	public static List<ReportProblem> checkModifiers(Member actual, Specification<? extends Member> spec) {
 		boolean checkAbstract = !spec.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
-		return checkModifiers(actual.getModifiers(), spec.getModifiers().getModifiers(), checkAbstract);
+		return checkModifiers(actual.getModifiers(), spec.getModifiers(), checkAbstract);
 	}
 
 	public static Optional<ReportProblem> checkVisibility(Member actual, Specification<?> spec) {
-		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
+		return checkVisibility(actual.getModifiers(), spec.getVisibility());
 	}
 
-	private static List<ReportProblem> checkModifiers(int actual, int spec, boolean checkAbstract) {
+	private static List<ReportProblem> checkModifiers(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
 
 		if (checkAbstract) {
-			problems.add(checkModifier(actual, spec, Modifier::isAbstract, ABSTRACT));
+			problems.add(checkModifier(Modifier.isAbstract(actual), spec.isAbstract(), ABSTRACT));
 		}
-		problems.add(checkModifier(actual, spec, Modifier::isFinal, FINAL));
-		problems.add(checkModifier(actual, spec, Modifier::isNative, NATIVE));
-		problems.add(checkModifier(actual, spec, Modifier::isStatic, STATIC));
-		problems.add(checkModifier(actual, spec, Modifier::isStrict, STRICTFP));
-		problems.add(checkModifier(actual, spec, Modifier::isSynchronized, SYNCHRONIZED));
-		problems.add(checkModifier(actual, spec, Modifier::isTransient, TRANSIENT));
-		problems.add(checkModifier(actual, spec, Modifier::isVolatile, VOLATILE));
+		problems.add(checkModifier(Modifier.isFinal(actual), spec.isFinal(), FINAL));
+		problems.add(checkModifier(Modifier.isNative(actual), spec.isNative(), NATIVE));
+		problems.add(checkModifier(Modifier.isStatic(actual), spec.isStatic(), STATIC));
+		problems.add(checkModifier(Modifier.isStrict(actual), spec.isStrict(), STRICTFP));
+		problems.add(checkModifier(Modifier.isSynchronized(actual), spec.isSynchronized(), SYNCHRONIZED));
+		problems.add(checkModifier(Modifier.isTransient(actual), spec.isTransient(), TRANSIENT));
+		problems.add(checkModifier(Modifier.isVolatile(actual), spec.isVolatile(), VOLATILE));
 
 		return problems.parallelStream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 	}
 
-	public static Optional<ReportProblem> checkVisibility(int actual, int spec) {
-		Visibility actualVisibility = getVisibility(actual);
-		Visibility specVisibility = getVisibility(spec);
+	public static Optional<ReportProblem> checkVisibility(int actualModifiers, VisibilitySpecification spec) {
+		Visibility actualVisibility = getVisibility(actualModifiers);
 
-		if (actualVisibility != specVisibility) {
+		if (!spec.matches(actualVisibility)) {
 			ReportProblem problem;
-			if (specVisibility == Visibility.PACKAGE) {
+			Visibility[] visibilities = spec.getVisibilities();
+			if (visibilities.length == 1 && visibilities[0] == Visibility.PACKAGE) {
 				problem = new ReportProblem(1, "should not have any visibility modifier", Type.ERROR);
+			} else if (visibilities.length == 1) {
+				problem = new ReportProblem(1, String.format("should have visibility \"%s\"", visibilities[0]), Type.ERROR);
 			} else {
-				problem = new ReportProblem(1, String.format("should have visibility \"%s\"", specVisibility), Type.ERROR);
+				String visibilityString = Arrays.stream(visibilities).map(Visibility::toString).collect(Collectors.joining(", "));
+				problem = new ReportProblem(1, String.format("should have any of the following visibilities: \"\"", visibilityString), Type.ERROR);
 			}
 			return Optional.of(problem);
 		}
@@ -217,17 +222,14 @@ class StaticChecker {
 		return Optional.empty();
 	}
 
-	private static Optional<ReportProblem> checkModifier(int actual, int spec, IntFunction<Boolean> function, javax.lang.model.element.Modifier modifier) {
-		boolean actualRes = function.apply(actual);
-		Boolean specRes = function.apply(spec);
-
-		if (specRes && !actualRes) {
+	private static Optional<ReportProblem> checkModifier(boolean actual, State spec, javax.lang.model.element.Modifier modifier) {
+		if (spec == State.TRUE && !spec.matches(actual)) {
 			String format = "should have modifier \"%s\"";
 			ReportProblem problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
 			return Optional.of(problem);
 		}
 
-		if (!specRes && actualRes) {
+		if (spec == State.FALSE && !spec.matches(actual)) {
 			String format = "should not have modifier \"%s\"";
 			ReportProblem problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
 			return Optional.of(problem);
@@ -236,12 +238,12 @@ class StaticChecker {
 		return Optional.empty();
 	}
 
-	private static Comparator<Method> createMethodComparator(MethodSpec method) {
+	private static Comparator<Method> createMethodComparator(MethodSpecification method) {
 		ToIntFunction<Method> heuristic = actual -> compareMethods(actual, method);
 		return Comparator.comparingInt(heuristic::applyAsInt);
 	}
 
-	private static int compareMethods(Method actual, MethodSpec spec) {
+	private static int compareMethods(Method actual, MethodSpecification spec) {
 		if (actual.equals(spec.getRawElement())) {
 			return 0;
 		}

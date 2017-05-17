@@ -9,7 +9,7 @@ import checkspec.api.Inject;
 public class DependencyInjectionTests {
 
 	@Inject
-	private Calc calc;
+	private Calculator calc;
 
 	@Test
 	public void addTests() {

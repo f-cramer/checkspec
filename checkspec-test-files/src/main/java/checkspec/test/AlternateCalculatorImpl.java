@@ -1,6 +1,6 @@
 package checkspec.test;
 
-public abstract class AlternateCalcImpl {
+public abstract class AlternateCalculatorImpl {
 
 	public abstract int add(String a, int b);
 

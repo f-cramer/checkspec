@@ -1,19 +1,18 @@
 package checkspec.api;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public @interface Modifiers {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
-public @interface FieldSpec {
+	State isAbstract() default State.NOT_SPECIFIED;
 
 	State isFinal() default State.NOT_SPECIFIED;
+	
+	State isNative() default State.NOT_SPECIFIED;
 
 	State isStatic() default State.NOT_SPECIFIED;
 
 	State isStrict() default State.NOT_SPECIFIED;
+	
+	State isSynchronized() default State.NOT_SPECIFIED;
 
 	State isVolatile() default State.NOT_SPECIFIED;
 

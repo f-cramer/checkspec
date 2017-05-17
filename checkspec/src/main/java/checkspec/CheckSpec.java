@@ -20,7 +20,7 @@ import org.reflections.util.ConfigurationBuilder;
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
-import checkspec.spec.ClassSpec;
+import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
 
 public class CheckSpec {
@@ -106,21 +106,21 @@ public class CheckSpec {
 		// @formatter:off
 		return REFLECTIONS.getTypesAnnotatedWith(Spec.class)
 		                  .parallelStream()
-		                  .map(ClassSpec::from)
+		                  .map(ClassSpecification::from)
 		                  .map(this::checkSpec)
 		                  .collect(Collectors.toList());
 		// @formatter:on
 	}
 
-	public SpecReport checkSpec(ClassSpec spec) {
+	public SpecReport checkSpec(ClassSpecification spec) {
 		return checkSpec(spec, "");
 	}
 
-	public SpecReport checkSpec(ClassSpec spec, Class<?> basePackage) {
+	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage) {
 		return checkSpec(spec, ClassUtils.getPackage(basePackage));
 	}
 
-	public SpecReport checkSpec(ClassSpec spec, String basePackageName) {
+	public SpecReport checkSpec(ClassSpecification spec, String basePackageName) {
 		// String specPackage = getPackage(spec.getRawElement());
 		String pkg = basePackageName.toLowerCase();
 
@@ -128,7 +128,6 @@ public class CheckSpec {
 		List<ClassReport> classReports = REFLECTIONS.getAllTypes()
 		                                            .parallelStream()
 		                                            .distinct()
-		                                            .peek(System.out::println)
 		                                            .filter(e -> !e.equals(spec.getName()))
 		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
 		                                            .flatMap(ClassUtils::getClassAsStream)

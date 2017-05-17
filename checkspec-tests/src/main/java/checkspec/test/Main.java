@@ -19,7 +19,7 @@ import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.TextOutputter;
 import checkspec.report.output.gui.GuiOutputter;
-import checkspec.spec.ClassSpec;
+import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
@@ -32,13 +32,13 @@ public class Main {
 		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
-		Class<Calc> clazz = Calc.class;
+		Class<Calculator> clazz = Calculator.class;
 
-		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz), Main.class);
+		SpecReport report = checkSpec.checkSpec(ClassSpecification.from(clazz), Main.class);
 		// SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
 
 		try {
-			Calc proxy = createProxy(clazz, createInvocationHandler(clazz, report));
+			Calculator proxy = createProxy(clazz, createInvocationHandler(clazz, report));
 			System.out.println(proxy.add(1, 2));
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -81,7 +81,7 @@ public class Main {
 
 		try {
 			ClassReport classReport = classReports.get(0);
-			Class<?> implementingClass = classReport.getImplementation();
+			Class<?> implementingClass = classReport.getImplementation().getRawClass();
 			String implementationName = ClassUtils.getName(implementingClass);
 			Object implementation = implementingClass.newInstance();
 

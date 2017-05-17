@@ -65,10 +65,14 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 
 	@Override
 	public int getScore() {
-		int problemsSum = problems.parallelStream().mapToInt(ReportProblem::getScore).sum();
-		int subReportsSum = getSubReports().parallelStream().mapToInt(Report::getScore).sum();
-
-		return problemsSum + subReportsSum;
+		if (getImplementation() == null) {
+			return 10;
+		} else {
+			int problemsSum = problems.parallelStream().mapToInt(ReportProblem::getScore).sum();
+			int subReportsSum = getSubReports().parallelStream().mapToInt(Report::getScore).sum();
+			
+			return problemsSum + subReportsSum;
+		}
 	}
 
 	protected void addSubReport(Report<?, ?> subReport) {

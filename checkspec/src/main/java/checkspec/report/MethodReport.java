@@ -6,27 +6,18 @@ import static checkspec.util.MethodUtils.createString;
 
 import java.lang.reflect.Method;
 
-import checkspec.spec.MethodSpec;
+import checkspec.spec.MethodSpecification;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class MethodReport extends Report<MethodSpec, Method> {
+public class MethodReport extends Report<MethodSpecification, Method> {
 
-	public MethodReport(MethodSpec specMethod) {
+	public MethodReport(MethodSpecification specMethod) {
 		super(specMethod, null, null);
 	}
 
-	public MethodReport(MethodSpec specMethod, Method implementingMethod) {
+	public MethodReport(MethodSpecification specMethod, Method implementingMethod) {
 		super(specMethod, implementingMethod, null);
-	}
-
-	@Override
-	public int getScore() {
-		if (getImplementation() == null) {
-			return 10;
-		} else {
-			return super.getScore();
-		}
 	}
 
 	@Override

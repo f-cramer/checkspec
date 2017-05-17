@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class FieldSpec implements Specification<Field> {
+public class FieldSpecification implements Specification<Field> {
 
 	@NonNull
 	private String name;
@@ -20,20 +20,20 @@ public class FieldSpec implements Specification<Field> {
 	private ResolvableType type;
 
 	@NonNull
-	private ModifiersSpec modifiers;
+	private ModifiersSpecification modifiers;
 
 	@NonNull
-	private VisibilitySpec visibility;
+	private VisibilitySpecification visibility;
 
 	@NonNull
 	private Field rawElement;
 
-	public static FieldSpec from(Field field) {
+	public static FieldSpecification from(Field field) {
 		String name = field.getName();
 		ResolvableType type = FieldUtils.getType(field);
-		ModifiersSpec modifiers = ModifiersSpec.from(field.getModifiers());
-		VisibilitySpec visibility = VisibilitySpec.from(field.getModifiers(), field.getAnnotations());
+		ModifiersSpecification modifiers = ModifiersSpecification.from(field.getModifiers(), field.getAnnotations());
+		VisibilitySpecification visibility = VisibilitySpecification.from(field.getModifiers(), field.getAnnotations());
 
-		return new FieldSpec(name, type, modifiers, visibility, field);
+		return new FieldSpecification(name, type, modifiers, visibility, field);
 	}
 }

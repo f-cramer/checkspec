@@ -6,7 +6,7 @@ public interface Specification<Raw> {
 
 	public Raw getRawElement();
 
-	public ModifiersSpec getModifiers();
+	public ModifiersSpecification getModifiers();
 
-	public VisibilitySpec getVisibility();
+	public VisibilitySpecification getVisibility();
 }

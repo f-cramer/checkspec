@@ -3,7 +3,7 @@ package checkspec.test;
 import checkspec.api.Spec;
 
 @Spec
-public interface Calc {
+public interface Calculator {
 
 	int add(int a, int b);
 

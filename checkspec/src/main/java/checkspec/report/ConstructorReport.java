@@ -6,22 +6,22 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
 
-import checkspec.spec.ConstructorSpec;
+import checkspec.spec.ConstructorSpecification;
 
-public class ConstructorReport extends Report<ConstructorSpec, Constructor<?>> {
+public class ConstructorReport extends Report<ConstructorSpecification, Constructor<?>> {
 
 	public ConstructorReport(Constructor<?> specConstructor) {
-		super(ConstructorSpec.from(specConstructor), null, null);
+		super(ConstructorSpecification.from(specConstructor), null, null);
 	}
 
 	public ConstructorReport(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
-		super(ConstructorSpec.from(specConstructor), implementingConstructor, null);
+		super(ConstructorSpecification.from(specConstructor), implementingConstructor, null);
 	}
 
 	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
-			return 1;
+			return 10;
 		} else {
 			return super.getScore();
 		}

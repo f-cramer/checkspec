@@ -7,11 +7,13 @@ import java.util.Optional;
 import checkspec.api.Spec;
 import checkspec.api.Visibility;
 import checkspec.util.MemberUtils;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
-public class VisibilitySpec {
+public class VisibilitySpecification {
 
 	@NonNull
 	private final Visibility[] visibilities;
@@ -20,7 +22,7 @@ public class VisibilitySpec {
 		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.INSIGNIFICANT || e == visibility);
 	}
 
-	public static VisibilitySpec from(int modifiers, Annotation[] annotations) {
+	public static VisibilitySpecification from(int modifiers, Annotation[] annotations) {
 		//@formatter:off
 		Optional<Visibility[]> specs = Arrays.stream(annotations)
 		                                     .filter(e -> e instanceof Spec)
@@ -29,6 +31,6 @@ public class VisibilitySpec {
 		                                     .map(Spec::visibility);
 		//@formatter:on
 
-		return new VisibilitySpec(specs.orElseGet(() -> new Visibility[] { MemberUtils.getVisibility(modifiers) }));
+		return new VisibilitySpecification(specs.orElseGet(() -> new Visibility[] { MemberUtils.getVisibility(modifiers) }));
 	}
 }

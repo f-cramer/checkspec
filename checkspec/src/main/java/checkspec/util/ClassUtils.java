@@ -29,9 +29,9 @@ public class ClassUtils {
 		return type.toString();
 	}
 
-	// public static String getName(Class<?> clazz) {
-	// return getName(ResolvableType.forClass(clazz));
-	// }
+	public static String getName(Class<?> clazz) {
+		return getName(ResolvableType.forClass(clazz));
+	}
 
 	public static Class<?> getClass(String className) {
 		try {
@@ -53,9 +53,9 @@ public class ClassUtils {
 		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());
 	}
 
-//	public static String getPackage(Class<?> clazz) {
-//		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
-//	}
+	public static String getPackage(Class<?> clazz) {
+		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
+	}
 
 	public static String getPackage(String className) {
 		return org.apache.commons.lang3.ClassUtils.getPackageName(className);
