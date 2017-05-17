@@ -18,7 +18,7 @@ public class TextOutputter implements Outputter {
 
 	@NonNull
 	private final Writer writer;
-	
+
 	@Override
 	public void output(SpecReport report) throws IOException {
 		writer.write(toString(report));

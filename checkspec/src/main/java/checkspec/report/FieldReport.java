@@ -18,14 +18,6 @@ public class FieldReport extends Report<FieldSpec, Field> {
 		super(specField, implementingField, null);
 	}
 
-	private static String toString(Field specField, Field implementingField) {
-		if (implementingField == null) {
-			return missing(createString(specField));
-		} else {
-			return bestFitting(createString(implementingField), createString(specField));
-		}
-	}
-
 	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
@@ -38,10 +30,12 @@ public class FieldReport extends Report<FieldSpec, Field> {
 	@Override
 	public String getTitle() {
 		Field specField = getSpec().getRawElement();
-		if (isSuccess()) {
+		if (getImplementation() == null) {
+			return missing(createString(specField));
+		} else if (getType() == ProblemType.SUCCESS) {
 			return createString(specField);
 		} else {
-			return toString(specField, getImplementation());
+			return bestFitting(createString(getImplementation()), createString(specField));
 		}
 	}
 }

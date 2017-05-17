@@ -29,12 +29,13 @@ public class Main {
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) throws Exception {
-//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		
-		CheckSpec checkSpec = new CheckSpec();
+		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
 		Class<Calc> clazz = Calc.class;
 
-		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz), "checkspec.test");
+		SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz), Main.class);
+		// SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
 
 		try {
 			Calc proxy = createProxy(clazz, createInvocationHandler(clazz, report));
@@ -45,9 +46,9 @@ public class Main {
 
 		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out));
 		outputter.output(report);
-		
-//		outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
-//		outputter.output(report);
+
+		// outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
+		// outputter.output(report);
 
 		outputter = new GuiOutputter();
 		outputter.output(report);

@@ -8,7 +8,7 @@ public class MessageUtils {
 	public static String missing(String expected) {
 		return String.format(MISSING, expected);
 	}
-	
+
 	public static String bestFitting(String actual, String expected) {
 		return String.format(BEST_FITTING, actual, expected);
 	}

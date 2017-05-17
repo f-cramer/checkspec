@@ -22,7 +22,7 @@ public class ReportProblem implements ReportEntry {
 	@RequiredArgsConstructor
 	public static enum Type {
 		WARNING(ProblemType.WARNING), ERROR(ProblemType.ERROR);
-		
+
 		@NonNull
 		private final ProblemType problemType;
 

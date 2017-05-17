@@ -20,14 +20,6 @@ public class MethodReport extends Report<MethodSpec, Method> {
 		super(specMethod, implementingMethod, null);
 	}
 
-	private static String toString(Method specMethod, Method implementingMethod) {
-		if (implementingMethod == null) {
-			return missing(createString(specMethod));
-		} else {
-			return bestFitting(createString(implementingMethod), createString(specMethod));
-		}
-	}
-
 	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
@@ -40,10 +32,12 @@ public class MethodReport extends Report<MethodSpec, Method> {
 	@Override
 	public String getTitle() {
 		Method specMethod = getSpec().getRawElement();
-		if (isSuccess()) {
+		if (getImplementation() == null) {
+			return missing(createString(specMethod));
+		} else if (getType() == ProblemType.SUCCESS) {
 			return createString(specMethod);
 		} else {
-			return toString(specMethod, getImplementation());
+			return bestFitting(createString(getImplementation()), createString(specMethod));
 		}
 	}
 }

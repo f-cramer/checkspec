@@ -24,9 +24,11 @@ import java.util.Map;
 /**
  * Miscellaneous object utility methods.
  *
- * <p>Mainly for internal use within the framework.
+ * <p>
+ * Mainly for internal use within the framework.
  *
- * <p>Thanks to Alex Ruiz for contributing several enhancements to this class!
+ * <p>
+ * Thanks to Alex Ruiz for contributing several enhancements to this class!
  *
  * @author Juergen Hoeller
  * @author Keith Donald
@@ -51,11 +53,12 @@ abstract class ObjectUtils {
 	private static final String EMPTY_ARRAY = ARRAY_START + ARRAY_END;
 	private static final String ARRAY_ELEMENT_SEPARATOR = ", ";
 
-
 	/**
-	 * Return whether the given throwable is a checked exception:
-	 * that is, neither a RuntimeException nor an Error.
-	 * @param ex the throwable to check
+	 * Return whether the given throwable is a checked exception: that is,
+	 * neither a RuntimeException nor an Error.
+	 * 
+	 * @param ex
+	 *            the throwable to check
 	 * @return whether the throwable is a checked exception
 	 * @see java.lang.Exception
 	 * @see java.lang.RuntimeException
@@ -68,8 +71,11 @@ abstract class ObjectUtils {
 	/**
 	 * Check whether the given exception is compatible with the specified
 	 * exception types, as declared in a throws clause.
-	 * @param ex the exception to check
-	 * @param declaredExceptions the exception types declared in the throws clause
+	 * 
+	 * @param ex
+	 *            the exception to check
+	 * @param declaredExceptions
+	 *            the exception types declared in the throws clause
 	 * @return whether the given exception is compatible
 	 */
 	public static boolean isCompatibleWithThrowsClause(Throwable ex, Class<?>... declaredExceptions) {
@@ -87,18 +93,22 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Determine whether the given object is an array:
-	 * either an Object array or a primitive array.
-	 * @param obj the object to check
+	 * Determine whether the given object is an array: either an Object array or
+	 * a primitive array.
+	 * 
+	 * @param obj
+	 *            the object to check
 	 */
 	public static boolean isArray(Object obj) {
 		return (obj != null && obj.getClass().isArray());
 	}
 
 	/**
-	 * Determine whether the given array is empty:
-	 * i.e. {@code null} or of zero length.
-	 * @param array the array to check
+	 * Determine whether the given array is empty: i.e. {@code null} or of zero
+	 * length.
+	 * 
+	 * @param array
+	 *            the array to check
 	 * @see #isEmpty(Object)
 	 */
 	public static boolean isEmpty(Object[] array) {
@@ -107,16 +117,20 @@ abstract class ObjectUtils {
 
 	/**
 	 * Determine whether the given object is empty.
-	 * <p>This method supports the following object types.
+	 * <p>
+	 * This method supports the following object types.
 	 * <ul>
 	 * <li>{@code Array}: considered empty if its length is zero</li>
 	 * <li>{@link CharSequence}: considered empty if its length is zero</li>
 	 * <li>{@link Collection}: delegates to {@link Collection#isEmpty()}</li>
 	 * <li>{@link Map}: delegates to {@link Map#isEmpty()}</li>
 	 * </ul>
-	 * <p>If the given object is non-null and not one of the aforementioned
+	 * <p>
+	 * If the given object is non-null and not one of the aforementioned
 	 * supported types, this method returns {@code false}.
-	 * @param obj the object to check
+	 * 
+	 * @param obj
+	 *            the object to check
 	 * @return {@code true} if the object is {@code null} or <em>empty</em>
 	 * @since 4.2
 	 * @see ObjectUtils#isEmpty(Object[])
@@ -150,9 +164,12 @@ abstract class ObjectUtils {
 
 	/**
 	 * Check whether the given array contains the given element.
-	 * @param array the array to check (may be {@code null},
-	 * in which case the return value will always be {@code false})
-	 * @param element the element to check for
+	 * 
+	 * @param array
+	 *            the array to check (may be {@code null}, in which case the
+	 *            return value will always be {@code false})
+	 * @param element
+	 *            the element to check for
 	 * @return whether the element has been found in the given array
 	 */
 	public static boolean containsElement(Object[] array, Object element) {
@@ -168,10 +185,14 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Check whether the given array of enum constants contains a constant with the given name,
-	 * ignoring case when determining a match.
-	 * @param enumValues the enum values to check, typically the product of a call to MyEnum.values()
-	 * @param constant the constant name to find (must not be null or empty string)
+	 * Check whether the given array of enum constants contains a constant with
+	 * the given name, ignoring case when determining a match.
+	 * 
+	 * @param enumValues
+	 *            the enum values to check, typically the product of a call to
+	 *            MyEnum.values()
+	 * @param constant
+	 *            the constant name to find (must not be null or empty string)
 	 * @return whether the constant has been found in the given array
 	 */
 	public static boolean containsConstant(Enum<?>[] enumValues, String constant) {
@@ -179,17 +200,21 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Check whether the given array of enum constants contains a constant with the given name.
-	 * @param enumValues the enum values to check, typically the product of a call to MyEnum.values()
-	 * @param constant the constant name to find (must not be null or empty string)
-	 * @param caseSensitive whether case is significant in determining a match
+	 * Check whether the given array of enum constants contains a constant with
+	 * the given name.
+	 * 
+	 * @param enumValues
+	 *            the enum values to check, typically the product of a call to
+	 *            MyEnum.values()
+	 * @param constant
+	 *            the constant name to find (must not be null or empty string)
+	 * @param caseSensitive
+	 *            whether case is significant in determining a match
 	 * @return whether the constant has been found in the given array
 	 */
 	public static boolean containsConstant(Enum<?>[] enumValues, String constant, boolean caseSensitive) {
 		for (Enum<?> candidate : enumValues) {
-			if (caseSensitive ?
-					candidate.toString().equals(constant) :
-					candidate.toString().equalsIgnoreCase(constant)) {
+			if (caseSensitive ? candidate.toString().equals(constant) : candidate.toString().equalsIgnoreCase(constant)) {
 				return true;
 			}
 		}
@@ -198,11 +223,18 @@ abstract class ObjectUtils {
 
 	/**
 	 * Case insensitive alternative to {@link Enum#valueOf(Class, String)}.
-	 * @param <E> the concrete Enum type
-	 * @param enumValues the array of all Enum constants in question, usually per Enum.values()
-	 * @param constant the constant to get the enum value of
-	 * @throws IllegalArgumentException if the given constant is not found in the given array
-	 * of enum values. Use {@link #containsConstant(Enum[], String)} as a guard to avoid this exception.
+	 * 
+	 * @param <E>
+	 *            the concrete Enum type
+	 * @param enumValues
+	 *            the array of all Enum constants in question, usually per
+	 *            Enum.values()
+	 * @param constant
+	 *            the constant to get the enum value of
+	 * @throws IllegalArgumentException
+	 *             if the given constant is not found in the given array of enum
+	 *             values. Use {@link #containsConstant(Enum[], String)} as a
+	 *             guard to avoid this exception.
 	 */
 	public static <E extends Enum<?>> E caseInsensitiveValueOf(E[] enumValues, String constant) {
 		for (E candidate : enumValues) {
@@ -210,24 +242,24 @@ abstract class ObjectUtils {
 				return candidate;
 			}
 		}
-		throw new IllegalArgumentException(
-				String.format("constant [%s] does not exist in enum type %s",
-						constant, enumValues.getClass().getComponentType().getName()));
+		throw new IllegalArgumentException(String.format("constant [%s] does not exist in enum type %s", constant, enumValues.getClass().getComponentType().getName()));
 	}
 
 	/**
 	 * Append the given object to the given array, returning a new array
 	 * consisting of the input array contents plus the given object.
-	 * @param array the array to append to (can be {@code null})
-	 * @param obj the object to append
+	 * 
+	 * @param array
+	 *            the array to append to (can be {@code null})
+	 * @param obj
+	 *            the object to append
 	 * @return the new array (of the same component type; never {@code null})
 	 */
 	public static <A, O extends A> A[] addObjectToArray(A[] array, O obj) {
 		Class<?> compType = Object.class;
 		if (array != null) {
 			compType = array.getClass().getComponentType();
-		}
-		else if (obj != null) {
+		} else if (obj != null) {
 			compType = obj.getClass();
 		}
 		int newArrLength = (array != null ? array.length + 1 : 1);
@@ -241,13 +273,16 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Convert the given array (which may be a primitive array) to an
-	 * object array (if necessary of primitive wrapper objects).
-	 * <p>A {@code null} source value will be converted to an
-	 * empty Object array.
-	 * @param source the (potentially primitive) array
+	 * Convert the given array (which may be a primitive array) to an object
+	 * array (if necessary of primitive wrapper objects).
+	 * <p>
+	 * A {@code null} source value will be converted to an empty Object array.
+	 * 
+	 * @param source
+	 *            the (potentially primitive) array
 	 * @return the corresponding object array (never {@code null})
-	 * @throws IllegalArgumentException if the parameter is not an array
+	 * @throws IllegalArgumentException
+	 *             if the parameter is not an array
 	 */
 	public static Object[] toObjectArray(Object source) {
 		if (source instanceof Object[]) {
@@ -271,18 +306,21 @@ abstract class ObjectUtils {
 		return newArray;
 	}
 
-
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	// Convenience methods for content-based equality/hash-code handling
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
 	/**
-	 * Determine if the given objects are equal, returning {@code true} if
-	 * both are {@code null} or {@code false} if only one is {@code null}.
-	 * <p>Compares arrays with {@code Arrays.equals}, performing an equality
-	 * check based on the array elements rather than the array reference.
-	 * @param o1 first Object to compare
-	 * @param o2 second Object to compare
+	 * Determine if the given objects are equal, returning {@code true} if both
+	 * are {@code null} or {@code false} if only one is {@code null}.
+	 * <p>
+	 * Compares arrays with {@code Arrays.equals}, performing an equality check
+	 * based on the array elements rather than the array reference.
+	 * 
+	 * @param o1
+	 *            first Object to compare
+	 * @param o2
+	 *            second Object to compare
 	 * @return whether the given objects are equal
 	 * @see Object#equals(Object)
 	 * @see java.util.Arrays#equals
@@ -304,10 +342,14 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Compare the given arrays with {@code Arrays.equals}, performing an equality
-	 * check based on the array elements rather than the array reference.
-	 * @param o1 first array to compare
-	 * @param o2 second array to compare
+	 * Compare the given arrays with {@code Arrays.equals}, performing an
+	 * equality check based on the array elements rather than the array
+	 * reference.
+	 * 
+	 * @param o1
+	 *            first array to compare
+	 * @param o2
+	 *            second array to compare
 	 * @return whether the given objects are equal
 	 * @see #nullSafeEquals(Object, Object)
 	 * @see java.util.Arrays#equals
@@ -345,10 +387,10 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return as hash code for the given object; typically the value of
-	 * {@code Object#hashCode()}}. If the object is an array,
-	 * this method will delegate to any of the {@code nullSafeHashCode}
-	 * methods for arrays in this class. If the object is {@code null},
-	 * this method returns 0.
+	 * {@code Object#hashCode()}}. If the object is an array, this method will
+	 * delegate to any of the {@code nullSafeHashCode} methods for arrays in
+	 * this class. If the object is {@code null}, this method returns 0.
+	 * 
 	 * @see Object#hashCode()
 	 * @see #nullSafeHashCode(Object[])
 	 * @see #nullSafeHashCode(boolean[])
@@ -397,8 +439,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(Object[] array) {
 		if (array == null) {
@@ -412,8 +454,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(boolean[] array) {
 		if (array == null) {
@@ -427,8 +469,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(byte[] array) {
 		if (array == null) {
@@ -442,8 +484,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(char[] array) {
 		if (array == null) {
@@ -457,8 +499,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(double[] array) {
 		if (array == null) {
@@ -472,8 +514,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(float[] array) {
 		if (array == null) {
@@ -487,8 +529,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(int[] array) {
 		if (array == null) {
@@ -502,8 +544,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(long[] array) {
 		if (array == null) {
@@ -517,8 +559,8 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a hash code based on the contents of the specified array.
-	 * If {@code array} is {@code null}, this method returns 0.
+	 * Return a hash code based on the contents of the specified array. If
+	 * {@code array} is {@code null}, this method returns 0.
 	 */
 	public static int nullSafeHashCode(short[] array) {
 		if (array == null) {
@@ -533,6 +575,7 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return the same value as {@link Boolean#hashCode()}}.
+	 * 
 	 * @see Boolean#hashCode()
 	 */
 	public static int hashCode(boolean bool) {
@@ -541,6 +584,7 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return the same value as {@link Double#hashCode()}}.
+	 * 
 	 * @see Double#hashCode()
 	 */
 	public static int hashCode(double dbl) {
@@ -549,6 +593,7 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return the same value as {@link Float#hashCode()}}.
+	 * 
 	 * @see Float#hashCode()
 	 */
 	public static int hashCode(float flt) {
@@ -557,22 +602,24 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return the same value as {@link Long#hashCode()}}.
+	 * 
 	 * @see Long#hashCode()
 	 */
 	public static int hashCode(long lng) {
 		return (int) (lng ^ (lng >>> 32));
 	}
 
-
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	// Convenience methods for toString output
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
 	/**
 	 * Return a String representation of an object's overall identity.
-	 * @param obj the object (may be {@code null})
-	 * @return the object's identity as String representation,
-	 * or an empty String if the object was {@code null}
+	 * 
+	 * @param obj
+	 *            the object (may be {@code null})
+	 * @return the object's identity as String representation, or an empty
+	 *         String if the object was {@code null}
 	 */
 	public static String identityToString(Object obj) {
 		if (obj == null) {
@@ -583,7 +630,9 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a hex String form of an object's identity hash code.
-	 * @param obj the object
+	 * 
+	 * @param obj
+	 *            the object
 	 * @return the object's identity code in hex notation
 	 */
 	public static String getIdentityHexString(Object obj) {
@@ -591,11 +640,14 @@ abstract class ObjectUtils {
 	}
 
 	/**
-	 * Return a content-based String representation if {@code obj} is
-	 * not {@code null}; otherwise returns an empty String.
-	 * <p>Differs from {@link #nullSafeToString(Object)} in that it returns
-	 * an empty String rather than "null" for a {@code null} value.
-	 * @param obj the object to build a display String for
+	 * Return a content-based String representation if {@code obj} is not
+	 * {@code null}; otherwise returns an empty String.
+	 * <p>
+	 * Differs from {@link #nullSafeToString(Object)} in that it returns an
+	 * empty String rather than "null" for a {@code null} value.
+	 * 
+	 * @param obj
+	 *            the object to build a display String for
 	 * @return a display String representation of {@code obj}
 	 * @see #nullSafeToString(Object)
 	 */
@@ -608,8 +660,11 @@ abstract class ObjectUtils {
 
 	/**
 	 * Determine the class name for the given object.
-	 * <p>Returns {@code "null"} if {@code obj} is {@code null}.
-	 * @param obj the object to introspect (may be {@code null})
+	 * <p>
+	 * Returns {@code "null"} if {@code obj} is {@code null}.
+	 * 
+	 * @param obj
+	 *            the object to introspect (may be {@code null})
 	 * @return the corresponding class name
 	 */
 	public static String nullSafeClassName(Object obj) {
@@ -618,9 +673,12 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the specified Object.
-	 * <p>Builds a String representation of the contents in case of an array.
+	 * <p>
+	 * Builds a String representation of the contents in case of an array.
 	 * Returns {@code "null"} if {@code obj} is {@code null}.
-	 * @param obj the object to build a String representation for
+	 * 
+	 * @param obj
+	 *            the object to build a String representation for
 	 * @return a String representation of {@code obj}
 	 */
 	public static String nullSafeToString(Object obj) {
@@ -663,11 +721,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(Object[] array) {
@@ -682,8 +743,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append(String.valueOf(array[i]));
@@ -694,11 +754,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(boolean[] array) {
@@ -713,8 +776,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 
@@ -726,11 +788,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(byte[] array) {
@@ -745,8 +810,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append(array[i]);
@@ -757,11 +821,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(char[] array) {
@@ -776,8 +843,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append("'").append(array[i]).append("'");
@@ -788,11 +854,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(double[] array) {
@@ -807,8 +876,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 
@@ -820,11 +888,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(float[] array) {
@@ -839,8 +910,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 
@@ -852,11 +922,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(int[] array) {
@@ -871,8 +944,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append(array[i]);
@@ -883,11 +955,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(long[] array) {
@@ -902,8 +977,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append(array[i]);
@@ -914,11 +988,14 @@ abstract class ObjectUtils {
 
 	/**
 	 * Return a String representation of the contents of the specified array.
-	 * <p>The String representation consists of a list of the array's elements,
+	 * <p>
+	 * The String representation consists of a list of the array's elements,
 	 * enclosed in curly braces ({@code "{}"}). Adjacent elements are separated
 	 * by the characters {@code ", "} (a comma followed by a space). Returns
 	 * {@code "null"} if {@code array} is {@code null}.
-	 * @param array the array to build a String representation for
+	 * 
+	 * @param array
+	 *            the array to build a String representation for
 	 * @return a String representation of {@code array}
 	 */
 	public static String nullSafeToString(short[] array) {
@@ -933,8 +1010,7 @@ abstract class ObjectUtils {
 		for (int i = 0; i < length; i++) {
 			if (i == 0) {
 				sb.append(ARRAY_START);
-			}
-			else {
+			} else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
 			sb.append(array[i]);

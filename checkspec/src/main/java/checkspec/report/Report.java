@@ -8,14 +8,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import checkspec.spec.Spec;
+import checkspec.report.ReportProblem.Type;
+import checkspec.spec.Specification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-public class Report<T extends Spec<U>, U> implements Comparable<Report<?, ?>>, ReportEntry {
+public class Report<T extends Specification<U>, U> implements Comparable<Report<?, ?>>, ReportEntry {
 
 	private final T spec;
 	private final U implementation;
@@ -52,9 +53,14 @@ public class Report<T extends Spec<U>, U> implements Comparable<Report<?, ?>>, R
 
 	public ProblemType getType() {
 		Stream<ProblemType> reportTypes = getSubReports().parallelStream().map(Report::getType);
-		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(ReportProblem.Type::toProblemType);
-		
-		return Stream.concat(reportTypes, problemTypes).max(Comparator.naturalOrder()).orElse(ProblemType.SUCCESS);
+		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(Type::toProblemType);
+
+		//@formatter:off
+		return Stream.concat(reportTypes, problemTypes)
+		             .parallel()
+		             .max(Comparator.naturalOrder())
+		             .orElseGet(() -> getImplementation() == null ? ProblemType.ERROR : ProblemType.SUCCESS);
+		//@formatter:on
 	}
 
 	@Override

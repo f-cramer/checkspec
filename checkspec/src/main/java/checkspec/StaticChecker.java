@@ -15,7 +15,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,7 +34,8 @@ import checkspec.spec.ClassSpec;
 import checkspec.spec.FieldSpec;
 import checkspec.spec.MethodSpec;
 import checkspec.spec.ModifiersSpec;
-import checkspec.spec.Spec;
+import checkspec.spec.Specification;
+import checkspec.spring.MethodParameter;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 
@@ -43,7 +43,7 @@ class StaticChecker {
 
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpec spec) {
 		ClassReport report = new ClassReport(spec, clazz);
-		
+
 		report.addProblems(checkModifiers(clazz, spec));
 		report.addSubReports(checkFields(clazz, spec));
 		report.addSubReports(checkMethods(clazz, spec));
@@ -64,7 +64,7 @@ class StaticChecker {
 	private static MethodReport checkMethod(Class<?> actual, MethodSpec method) {
 		String methodName = method.getName();
 
-		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(Parameter::getType).toArray(Class[]::new);
+		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(MethodParameter::get).toArray(Class[]::new);
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
 		try {
@@ -81,7 +81,8 @@ class StaticChecker {
 				report.addProblem(new ReportProblem(1, String.format(format, actualMethodReturnTypeName), type));
 			}
 
-			checkVisibility(actualMethod, method).ifPresent(report::addProblem);;
+			checkVisibility(actualMethod, method).ifPresent(report::addProblem);
+			;
 			report.addProblems(checkModifiers(actualMethod, method));
 
 			return report;
@@ -151,13 +152,13 @@ class StaticChecker {
 			String actualFieldTypeName = getName(actualFieldType);
 
 			FieldReport report = new FieldReport(field, actualField);
-			
+
 			if (actualFieldType != fieldType) {
 				String format = "has type of \"%s\" rather than \"%s\"";
 				String message = String.format(format, actualFieldTypeName, fieldTypeName);
 				report.addProblem(new ReportProblem(1, message, Type.WARNING));
 			}
-			
+
 			return report;
 		} catch (NoSuchFieldException | SecurityException ex) {
 			return new FieldReport(field);
@@ -173,12 +174,12 @@ class StaticChecker {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 
-	public static List<ReportProblem> checkModifiers(Member actual, Spec<? extends Member> spec) {
+	public static List<ReportProblem> checkModifiers(Member actual, Specification<? extends Member> spec) {
 		boolean checkAbstract = !spec.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
 		return checkModifiers(actual.getModifiers(), spec.getModifiers().getModifiers(), checkAbstract);
 	}
 
-	public static Optional<ReportProblem> checkVisibility(Member actual, Spec<?> spec) {
+	public static Optional<ReportProblem> checkVisibility(Member actual, Specification<?> spec) {
 		return checkVisibility(actual.getModifiers(), spec.getModifiers().getModifiers());
 	}
 

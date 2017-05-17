@@ -10,7 +10,7 @@ import lombok.Value;
 @Value
 @RequiredArgsConstructor
 public final class Row {
-	
+
 	private static final String NO_BREAK_SPACE = "\u00a0";
 	private static final String INDENTATION = Strings.repeat(NO_BREAK_SPACE, 4);
 
@@ -18,14 +18,14 @@ public final class Row {
 	private final int indent;
 	private final Mark mark;
 	private final String text;
-	
+
 	public final String getIndentation() {
 		return Strings.repeat(INDENTATION, indent);
 	}
-	
+
 	public Row withIncreasedIndent() {
 		return new Row(indent + 1, mark, text);
 	}
-	
+
 	public static final Row EMPTY = new Row(0, null, NO_BREAK_SPACE);
 }

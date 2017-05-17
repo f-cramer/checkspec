@@ -28,13 +28,13 @@ public class HtmlOutputter implements Outputter {
 
 	private static final String DIR_IS_NO_DIR = "file %s is not a directory";
 	private static final TemplateEngine ENGINE;
-	
+
 	static {
 		ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
 		resolver.setTemplateMode(TemplateMode.HTML);
 		resolver.setPrefix("/checkspec/report/output/template/");
 		resolver.setSuffix(".html");
-		
+
 		ENGINE = new TemplateEngine();
 		ENGINE.setTemplateResolver(resolver);
 	}
@@ -60,25 +60,25 @@ public class HtmlOutputter implements Outputter {
 	@Override
 	public void output(SpecReport report) throws IOException {
 		List<Row> rows = getRows(report);
-		
+
 		Context context = new Context();
 		context.setVariable("title", report.toString());
 		context.setVariable("rows", rows.subList(0, rows.size() - 1));
-		
+
 		Path index = directory.resolve("index.html");
 		try (Writer writer = Files.newBufferedWriter(index)) {
 			ENGINE.process("index", context, writer);
 		}
-		
+
 		copyElements(directory);
 	}
-	
+
 	private static void copyElements(Path directory) throws IOException {
 		Path style = directory.resolve("style.css");
 		InputStream styleStream = HtmlOutputter.class.getResourceAsStream("style.css");
 		Files.copy(styleStream, style, StandardCopyOption.REPLACE_EXISTING);
 	}
-	
+
 	private static Stream<Row> getRows(Report<?, ?> report) {
 		//@formatter:off
 		return Stream.concat(
@@ -88,7 +88,7 @@ public class HtmlOutputter implements Outputter {
 		          .map(e -> new Row(1, getMark(e), e.toString())));
 		//@formatter:on
 	}
-	
+
 	private static Stream<Row> getRows(ClassReport report) {
 		//@formatter:off
 		Stream<Row> head = Stream.of(new Row(0, getMark(report), report.toString()));
@@ -116,22 +116,25 @@ public class HtmlOutputter implements Outputter {
 		             .collect(Collectors.toList());
 		//@formatter:on
 	}
-	
+
 	private static Mark getMark(ReportProblem problem) {
 		return getMark(problem.getType().toProblemType());
 	}
-	
+
 	private static Mark getMark(Report<?, ?> report) {
 		return getMark(report.getType());
 	}
-	
+
 	private static Mark getMark(ProblemType type) {
 		switch (type) {
-		case SUCCESS: return Mark.SUCCESS;
-		case ERROR: return Mark.ERROR;
-		case WARNING: return Mark.WARNING;
+		case SUCCESS:
+			return Mark.SUCCESS;
+		case ERROR:
+			return Mark.ERROR;
+		case WARNING:
+			return Mark.WARNING;
 		}
-		
+
 		throw new IllegalArgumentException();
 	}
 }

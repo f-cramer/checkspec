@@ -18,14 +18,6 @@ public class ConstructorReport extends Report<ConstructorSpec, Constructor<?>> {
 		super(ConstructorSpec.from(specConstructor), implementingConstructor, null);
 	}
 
-	private static String toString(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
-		if (implementingConstructor == null) {
-			return missing(createString(specConstructor));
-		} else {
-			return bestFitting(createString(implementingConstructor), createString(specConstructor));
-		}
-	}
-
 	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
@@ -38,10 +30,12 @@ public class ConstructorReport extends Report<ConstructorSpec, Constructor<?>> {
 	@Override
 	public String getTitle() {
 		Constructor<?> specConstructor = getSpec().getRawElement();
-		if (isSuccess()) {
+		if (getImplementation() == null) {
+			return missing(createString(specConstructor));
+		} else if (getType() == ProblemType.SUCCESS) {
 			return createString(specConstructor);
 		} else {
-			return toString(specConstructor, getImplementation());
+			return bestFitting(createString(getImplementation()), createString(specConstructor));
 		}
 	}
 }

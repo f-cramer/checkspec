@@ -1,11 +1,12 @@
 package checkspec.util;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import checkspec.api.Visibility;
+import checkspec.spring.ResolvableType;
 
 public class ConstructorUtils {
 
@@ -26,6 +27,13 @@ public class ConstructorUtils {
 
 	public static String getParameterList(Constructor<?> constructor) {
 		Objects.requireNonNull(constructor);
-		return Arrays.stream(constructor.getParameterTypes()).parallel().map(ClassUtils::getName).collect(Collectors.joining(", "));
+
+		//@formatter:off
+		return IntStream.range(0, constructor.getParameterCount())
+		                .parallel()
+		                .mapToObj(i -> ResolvableType.forConstructorParameter(constructor, i))
+		                .map(ClassUtils::getName)
+		                .collect(Collectors.joining(", "));
+		//@formatter:on
 	}
 }

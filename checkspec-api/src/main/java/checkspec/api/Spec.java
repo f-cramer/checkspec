@@ -13,6 +13,6 @@ public @interface Spec {
 	 * @return if the annotated element is part of the specification
 	 */
 	boolean value() default true;
-	
+
 	Visibility[] visibility() default {};
 }

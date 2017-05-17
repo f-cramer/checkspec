@@ -4,7 +4,13 @@ import java.util.Locale;
 
 public enum Visibility {
 
-	INSIGNIFICANT, PACKAGE, PRIVATE, PROTECTED, PUBLIC;
+	INSIGNIFICANT, PACKAGE {
+		@Override
+		public String toString() {
+			return "";
+		}
+	},
+	PRIVATE, PROTECTED, PUBLIC;
 
 	@Override
 	public String toString() {

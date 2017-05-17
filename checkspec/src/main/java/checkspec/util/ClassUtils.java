@@ -9,25 +9,29 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ClassUtils {
 
-	public static String toString(Class<?> clazz) {
-		Visibility visibility = getVisibility(clazz);
-		ClassType type = getType(clazz);
-		String name = getName(clazz);
-		return String.format("%s %s %s", visibility, type, name);
+	private static String TO_STRING_FORMAT = "%s %s %s";
+
+	public static String toString(ResolvableType type) {
+		Visibility visibility = getVisibility(type);
+		ClassType classType = getType(type);
+		String name = getName(type);
+		return String.format(TO_STRING_FORMAT, visibility, classType, name);
 	}
+
+	 public static String toString(Class<?> clazz) {
+		 return toString(ResolvableType.forClass(clazz));
+	 }
 
 	public static String getName(ResolvableType type) {
-		return getName(type.getRawClass());
-	}
-
-	public static String getName(Class<?> clazz) {
-		String pkg = org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
-		if (!pkg.isEmpty()) {
-			pkg = pkg + ".";
+		if (type.isArray()) {
+			return getName(type.getComponentType()) + "[]";
 		}
-
-		return pkg + org.apache.commons.lang3.ClassUtils.getShortCanonicalName(clazz);
+		return type.toString();
 	}
+
+	// public static String getName(Class<?> clazz) {
+	// return getName(ResolvableType.forClass(clazz));
+	// }
 
 	public static Class<?> getClass(String className) {
 		try {
@@ -44,16 +48,21 @@ public class ClassUtils {
 			return Stream.empty();
 		}
 	}
-
-	public static String getPackage(Class<?> clazz) {
-		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
+	
+	public static String getPackage(ResolvableType type) {
+		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());
 	}
+
+//	public static String getPackage(Class<?> clazz) {
+//		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
+//	}
 
 	public static String getPackage(String className) {
 		return org.apache.commons.lang3.ClassUtils.getPackageName(className);
 	}
 
-	public static ClassType getType(Class<?> clazz) {
+	public static ClassType getType(ResolvableType type) {
+		Class<?> clazz = type.getRawClass();
 		if (clazz.isEnum()) {
 			return ClassType.ENUM;
 		} else if (clazz.isAnnotation()) {
@@ -65,9 +74,25 @@ public class ClassUtils {
 		}
 	}
 
-	public static Visibility getVisibility(Class<?> clazz) {
-		return MemberUtils.getVisibility(clazz.getModifiers());
+	// public static ClassType getType(Class<?> clazz) {
+	// if (clazz.isEnum()) {
+	// return ClassType.ENUM;
+	// } else if (clazz.isAnnotation()) {
+	// return ClassType.ANNOTATION;
+	// } else if (clazz.isInterface()) {
+	// return ClassType.INTERFACE;
+	// } else {
+	// return ClassType.CLASS;
+	// }
+	// }
+
+	public static Visibility getVisibility(ResolvableType type) {
+		return MemberUtils.getVisibility(type.getRawClass().getModifiers());
 	}
+
+	// public static Visibility getVisibility(Class<?> clazz) {
+	// return MemberUtils.getVisibility(clazz.getModifiers());
+	// }
 
 	public static boolean isAssignable(ResolvableType cls, final ResolvableType toClass) {
 		if (toClass == null) {

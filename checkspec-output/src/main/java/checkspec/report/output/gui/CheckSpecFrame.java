@@ -18,8 +18,8 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import checkspec.report.ClassReport;
+import checkspec.report.ProblemType;
 import checkspec.report.Report;
-import checkspec.report.ReportEntry;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +27,10 @@ import lombok.RequiredArgsConstructor;
 class CheckSpecFrame extends JFrame {
 
 	private static final long serialVersionUID = -954917589134719758L;
-	
+
 	private static final JMenuBar menuBar = new JMenuBar();
 
-	public CheckSpecFrame(SpecReport report) {		
+	public CheckSpecFrame(SpecReport report) {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
@@ -58,7 +58,7 @@ class CheckSpecFrame extends JFrame {
 		JMenuItem htmlExportItem = new JMenuItem("As HTML");
 		htmlExportItem.setMnemonic('H');
 		exportMenu.add(htmlExportItem);
-		
+
 		menuBar.add(exportMenu);
 		setJMenuBar(menuBar);
 	}
@@ -120,8 +120,7 @@ class CheckSpecFrame extends JFrame {
 		private final TreeCellRenderer delegate;
 
 		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
-				boolean hasFocus) {
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			Component component = delegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
@@ -134,13 +133,26 @@ class CheckSpecFrame extends JFrame {
 
 				if (userObject instanceof SpecReport) {
 					iconName = "report";
-				} else if (userObject instanceof ReportEntry) {
-					if (userObject instanceof Report<?, ?> && ((Report<?, ?>) userObject).getImplementation() == null) {
-						iconName = "failure";
-					} else if (((ReportEntry) userObject).isSuccess()) {
-						iconName = "success";
-					} else {
-						iconName = "exclamation_mark";
+				} else {
+					ProblemType type = null;
+					if (userObject instanceof ReportProblem) {
+						type = ((ReportProblem) userObject).getType().toProblemType();
+					} else if (userObject instanceof Report) {
+						type = ((Report<?, ?>) userObject).getType();
+					}
+
+					if (type != null) {
+						switch (type) {
+						case SUCCESS:
+							iconName = "success";
+							break;
+						case WARNING:
+							iconName = "exclamation_mark";
+							break;
+						case ERROR:
+							iconName = "failure";
+							break;
+						}
 					}
 				}
 

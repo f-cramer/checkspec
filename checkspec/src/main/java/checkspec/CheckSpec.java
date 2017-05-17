@@ -6,7 +6,6 @@ import static checkspec.util.ClassUtils.getPackage;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,16 +25,56 @@ import checkspec.util.ClassUtils;
 
 public class CheckSpec {
 
-	private static final String CHECK_SPEC_PACKAGE = CheckSpec.class.getPackage().getName();
-	private static final Reflections REFLECTIONS;
+	private static final String JAVA_CLASS_PATH = "java.class.path";
+	private static final String PATH_SEPARATOR = "path.separator";
 
-	static {
-		Collection<URL> urls = Arrays.stream(System.getProperty("java.class.path").split(System.getProperty("path.separator")))
-//		                             .filter(e -> !e.endsWith(".jar"))
-		                             .flatMap(CheckSpec::getUrlAsStream)
-		                             .peek(System.out::println)
-		                             .collect(Collectors.toSet());
-		
+	private static volatile CheckSpec DEFAULT_INSTANCE;
+	private static final Object DEFAULT_SYNC = new Object();
+
+	private static volatile CheckSpec LIBRARY_LESS_INSTANCE;
+	private static final Object LIBRARY_LESS_SYNC = new Object();
+
+	public static CheckSpec getDefaultInstance() {
+		if (DEFAULT_INSTANCE == null) {
+			synchronized (DEFAULT_SYNC) {
+				if (DEFAULT_INSTANCE == null) {
+					//@formatter:off
+					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH)
+					                                 .split(System.getProperty(PATH_SEPARATOR)))
+                                       .flatMap(CheckSpec::getUrlAsStream)
+                                       .toArray(URL[]::new);
+					//@formatter:on
+					DEFAULT_INSTANCE = new CheckSpec(urls);
+				}
+			}
+		}
+		return DEFAULT_INSTANCE;
+	}
+
+	public static CheckSpec getInstanceForClassPathWithoutJars() {
+		if (LIBRARY_LESS_INSTANCE == null) {
+			synchronized (LIBRARY_LESS_SYNC) {
+				if (LIBRARY_LESS_INSTANCE == null) {
+					//@formatter:off
+					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH)
+					                                 .split(System.getProperty(PATH_SEPARATOR)))
+					                   .filter(e -> !e.endsWith(".jar"))
+                                       .flatMap(CheckSpec::getUrlAsStream)
+                                       .toArray(URL[]::new);
+					//@formatter:on
+					LIBRARY_LESS_INSTANCE = new CheckSpec(urls);
+				}
+			}
+		}
+		return LIBRARY_LESS_INSTANCE;
+	}
+
+	public static CheckSpec getInstanceForClassPath(URL[] classPathEntries) {
+		return new CheckSpec(classPathEntries);
+	}
+
+	private static Reflections createReflections(URL[] urls) {
+
 		// @formatter:off
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
@@ -46,7 +85,21 @@ public class CheckSpec {
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
 		configuration.setExecutorService(threadPool);
-		REFLECTIONS = new Reflections(configuration);
+		return new Reflections(configuration);
+	}
+
+	private static Stream<URL> getUrlAsStream(String path) {
+		try {
+			return Stream.of(new File(path).toURI().toURL());
+		} catch (Exception e) {
+			return Stream.empty();
+		}
+	}
+
+	private final Reflections REFLECTIONS;
+
+	private CheckSpec(URL[] urls) {
+		REFLECTIONS = createReflections(urls);
 	}
 
 	public List<SpecReport> checkSpec() {
@@ -58,15 +111,19 @@ public class CheckSpec {
 		                  .collect(Collectors.toList());
 		// @formatter:on
 	}
-	
+
 	public SpecReport checkSpec(ClassSpec spec) {
 		return checkSpec(spec, "");
 	}
 
-	public SpecReport checkSpec(ClassSpec spec, String packageName) {
-//		String specPackage = getPackage(spec.getRawElement());
-		String pkg = packageName.toLowerCase();
-		
+	public SpecReport checkSpec(ClassSpec spec, Class<?> basePackage) {
+		return checkSpec(spec, ClassUtils.getPackage(basePackage));
+	}
+
+	public SpecReport checkSpec(ClassSpec spec, String basePackageName) {
+		// String specPackage = getPackage(spec.getRawElement());
+		String pkg = basePackageName.toLowerCase();
+
 		// @formatter:off
 		List<ClassReport> classReports = REFLECTIONS.getAllTypes()
 		                                            .parallelStream()
@@ -74,7 +131,6 @@ public class CheckSpec {
 		                                            .peek(System.out::println)
 		                                            .filter(e -> !e.equals(spec.getName()))
 		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
-//		                                            .filter(e -> !getPackage(e).startsWith(CHECK_SPEC_PACKAGE) || getPackage(e).startsWith(specPackage))
 		                                            .flatMap(ClassUtils::getClassAsStream)
 		                                            .map(e -> checkImplements(e, spec))
 		                                            .filter(ClassReport::hasAnyImplementation)
@@ -82,13 +138,5 @@ public class CheckSpec {
 		                                            .collect(Collectors.toList());
 		return new SpecReport(spec, classReports);
 		// @formatter:on
-	}
-	
-	private static Stream<URL> getUrlAsStream(String path) {
-		try {
-			return Stream.of(new File(path).toURI().toURL());
-		} catch (Exception e) {
-			return Stream.empty();
-		}
 	}
 }

@@ -12,14 +12,14 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class VisibilitySpec {
-	
+
 	@NonNull
-	private final Visibility[] visibilities; 
-	
+	private final Visibility[] visibilities;
+
 	public boolean matches(Visibility visibility) {
 		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.INSIGNIFICANT || e == visibility);
 	}
-	
+
 	public static VisibilitySpec from(int modifiers, Annotation[] annotations) {
 		//@formatter:off
 		Optional<Visibility[]> specs = Arrays.stream(annotations)
@@ -28,7 +28,7 @@ public class VisibilitySpec {
 		                                     .findAny()
 		                                     .map(Spec::visibility);
 		//@formatter:on
-	
-		return new VisibilitySpec(specs.orElseGet(() -> new Visibility[] {MemberUtils.getVisibility(modifiers)}));
+
+		return new VisibilitySpec(specs.orElseGet(() -> new Visibility[] { MemberUtils.getVisibility(modifiers) }));
 	}
 }

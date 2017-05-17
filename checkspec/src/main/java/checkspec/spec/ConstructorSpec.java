@@ -10,23 +10,23 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConstructorSpec implements Spec<Constructor<?>> {
+public class ConstructorSpec implements Specification<Constructor<?>> {
 
 	@NonNull
 	private String name;
-	
+
 	@NonNull
 	private ModifiersSpec modifiers;
-	
+
 	@NonNull
 	private final VisibilitySpec visibility;
-	
+
 	@NonNull
 	private Parameter[] parameters;
-	
+
 	@NonNull
 	private Constructor<?> rawElement;
-	
+
 	public static ConstructorSpec from(Constructor<?> constructor) {
 		String name = constructor.getName();
 		ModifiersSpec modifiers = ModifiersSpec.from(constructor.getModifiers());

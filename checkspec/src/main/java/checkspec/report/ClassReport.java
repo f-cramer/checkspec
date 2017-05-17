@@ -10,15 +10,14 @@ import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class ClassReport extends Report<ClassSpec, Class<?>> {
+public class ClassReport extends Report<ClassSpec, ResolvableType> {
 
 	private List<FieldReport> fieldReports = new ArrayList<>();
 	private List<ConstructorReport> constructorReports = new ArrayList<>();
 	private List<MethodReport> methodReports = new ArrayList<>();
 
 	public ClassReport(ClassSpec spec, Class<?> implementation) {
-		super(spec, implementation, String.format("%s %s %s", ClassUtils.getVisibility(implementation),
-				ClassUtils.getType(implementation), ClassUtils.getName(implementation)));
+		super(spec, ResolvableType.forClass(implementation), ClassUtils.toString(implementation));
 	}
 
 	@Override
