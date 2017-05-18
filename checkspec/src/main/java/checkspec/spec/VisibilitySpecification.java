@@ -2,7 +2,6 @@ package checkspec.spec;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.Optional;
 
 import checkspec.api.Spec;
 import checkspec.api.Visibility;
@@ -22,15 +21,14 @@ public class VisibilitySpecification {
 		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.INSIGNIFICANT || e == visibility);
 	}
 
-	public static VisibilitySpecification from(int modifiers, Annotation[] annotations) {
+	public VisibilitySpecification(int modifiers, Annotation[] annotations) {
 		//@formatter:off
-		Optional<Visibility[]> specs = Arrays.stream(annotations)
-		                                     .filter(e -> e instanceof Spec)
-		                                     .map(e -> (Spec) e)
-		                                     .findAny()
-		                                     .map(Spec::visibility);
+		visibilities = Arrays.stream(annotations)
+		                     .filter(e -> e instanceof Spec)
+		                     .map(e -> (Spec) e)
+		                     .findAny()
+		                     .map(Spec::visibility)
+		                     .orElseGet(() -> new Visibility[] { MemberUtils.getVisibility(modifiers) });
 		//@formatter:on
-
-		return new VisibilitySpecification(specs.orElseGet(() -> new Visibility[] { MemberUtils.getVisibility(modifiers) }));
 	}
 }

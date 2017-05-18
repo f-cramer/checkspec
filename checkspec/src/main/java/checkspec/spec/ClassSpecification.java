@@ -37,38 +37,36 @@ public class ClassSpecification implements Specification<ResolvableType> {
 	@NonNull
 	private final ResolvableType rawElement;
 
-	public static ClassSpecification from(Class<?> clazz) {
-		ResolvableType type = ResolvableType.forClass(clazz);
-		
-		String name = clazz.getName();
-		ModifiersSpecification modifiers = ModifiersSpecification.from(clazz.getModifiers(), clazz.getAnnotations());
-		VisibilitySpecification visibility = VisibilitySpecification.from(clazz.getModifiers(), clazz.getAnnotations());
+	public ClassSpecification(Class<?> clazz) {
+		rawElement = ResolvableType.forClass(clazz);
+
+		name = clazz.getName();
+		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
+		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
 
 		//@formatter:off
-		FieldSpecification[] declaredFields = Arrays.stream(clazz.getDeclaredFields())
-		                                            .parallel()
-		                                            .filter(ClassSpecification::isIncluded)
-		                                            .map(FieldSpecification::from)
-		                                            .toArray(FieldSpecification[]::new);
+		declaredFields = Arrays.stream(clazz.getDeclaredFields())
+		                                    .parallel()
+		                                    .filter(ClassSpecification::isIncluded)
+		                                    .map(FieldSpecification::new)
+		                                    .toArray(FieldSpecification[]::new);
 		//@formatter:on
 
 		//@formatter:off
-		MethodSpecification[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
-		                                              .parallel()
-		                                              .filter(ClassSpecification::isIncluded)
-		                                              .map(MethodSpecification::from)
-		                                              .toArray(MethodSpecification[]::new);
+		declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
+		                                     .parallel()
+		                                     .filter(ClassSpecification::isIncluded)
+		                                     .map(MethodSpecification::new)
+		                                     .toArray(MethodSpecification[]::new);
 		//@formatter:on
 
 		//@formatter:off
-		ConstructorSpecification[] declaredConstructors = Arrays.stream(clazz.getDeclaredConstructors())
-		                                                        .parallel()
-		                                                        .filter(ClassSpecification::isIncluded)
-		                                                        .map(ConstructorSpecification::from)
-		                                                        .toArray(ConstructorSpecification[]::new);
+		declaredConstructors = Arrays.stream(clazz.getDeclaredConstructors())
+		                                          .parallel()
+		                                          .filter(ClassSpecification::isIncluded)
+		                                          .map(ConstructorSpecification::new)
+		                                          .toArray(ConstructorSpecification[]::new);
 		//@formatter:on
-
-		return new ClassSpecification(name, modifiers, visibility, declaredFields, declaredMethods, declaredConstructors, type);
 	}
 
 	private static boolean isIncluded(Field field) {

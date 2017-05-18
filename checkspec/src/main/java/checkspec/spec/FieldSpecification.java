@@ -14,26 +14,25 @@ import lombok.RequiredArgsConstructor;
 public class FieldSpecification implements Specification<Field> {
 
 	@NonNull
-	private String name;
+	private final String name;
 
 	@NonNull
-	private ResolvableType type;
+	private final ResolvableType type;
 
 	@NonNull
-	private ModifiersSpecification modifiers;
+	private final ModifiersSpecification modifiers;
 
 	@NonNull
-	private VisibilitySpecification visibility;
+	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private Field rawElement;
+	private final Field rawElement;
 
-	public static FieldSpecification from(Field field) {
-		String name = field.getName();
-		ResolvableType type = FieldUtils.getType(field);
-		ModifiersSpecification modifiers = ModifiersSpecification.from(field.getModifiers(), field.getAnnotations());
-		VisibilitySpecification visibility = VisibilitySpecification.from(field.getModifiers(), field.getAnnotations());
-
-		return new FieldSpecification(name, type, modifiers, visibility, field);
+	public FieldSpecification(Field field) {
+		name = field.getName();
+		type = FieldUtils.getType(field);
+		modifiers = new ModifiersSpecification(field.getModifiers(), field.getAnnotations());
+		visibility = new VisibilitySpecification(field.getModifiers(), field.getAnnotations());
+		rawElement = field;
 	}
 }

@@ -22,6 +22,7 @@ public class TextOutputter implements Outputter {
 	@Override
 	public void output(SpecReport report) throws IOException {
 		writer.write(toString(report));
+		writer.flush();
 	}
 
 	private static String toString(Report<?, ?> report) {

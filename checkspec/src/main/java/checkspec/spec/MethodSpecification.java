@@ -14,37 +14,35 @@ import lombok.RequiredArgsConstructor;
 public class MethodSpecification implements Specification<Method> {
 
 	@NonNull
-	private String name;
+	private final String name;
 
 	@NonNull
-	private ResolvableType returnType;
+	private final ResolvableType returnType;
 
 	@NonNull
-	private MethodParameterSpecification[] parameters;
+	private final MethodParameterSpecification[] parameters;
 
 	@NonNull
-	private ModifiersSpecification modifiers;
+	private final ModifiersSpecification modifiers;
 
 	@NonNull
-	private VisibilitySpecification visibility;
+	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private Method rawElement;
+	private final Method rawElement;
 
-	public static MethodSpecification from(Method method) {
-
-		String name = method.getName();
-		ResolvableType returnType = ResolvableType.forMethodReturnType(method);
+	public MethodSpecification(Method method) {
+		name = method.getName();
+		returnType = ResolvableType.forMethodReturnType(method);
 
 		//@formatter:off
-		MethodParameterSpecification[] parameters = IntStream.range(0, method.getParameterCount())
-		                                            .mapToObj(i -> MethodParameterSpecification.from(method, i))
-		                                            .toArray(MethodParameterSpecification[]::new);
+		parameters = IntStream.range(0, method.getParameterCount())
+		                      .mapToObj(i -> new MethodParameterSpecification(method, i))
+		                      .toArray(MethodParameterSpecification[]::new);
 		//@formatter:on
 
-		ModifiersSpecification modifiers = ModifiersSpecification.from(method.getModifiers(), method.getAnnotations());
-		VisibilitySpecification visibility = VisibilitySpecification.from(method.getModifiers(), method.getAnnotations());
-
-		return new MethodSpecification(name, returnType, parameters, modifiers, visibility, method);
+		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
+		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());
+		rawElement = method;
 	}
 }

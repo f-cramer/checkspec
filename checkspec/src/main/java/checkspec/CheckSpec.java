@@ -106,7 +106,7 @@ public class CheckSpec {
 		// @formatter:off
 		return REFLECTIONS.getTypesAnnotatedWith(Spec.class)
 		                  .parallelStream()
-		                  .map(ClassSpecification::from)
+		                  .map(ClassSpecification::new)
 		                  .map(this::checkSpec)
 		                  .collect(Collectors.toList());
 		// @formatter:on

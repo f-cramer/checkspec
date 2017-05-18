@@ -1,8 +1,7 @@
 package checkspec.test.generics;
 
-public class GenericTestImpl implements GenericTest<String> {
+public class GenericTestImpl {
 
-	@Override
 	public void print(String t) {
 	}
 }

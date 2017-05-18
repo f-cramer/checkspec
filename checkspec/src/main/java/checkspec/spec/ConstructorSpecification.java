@@ -1,7 +1,7 @@
 package checkspec.spec;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
+import java.util.stream.IntStream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,26 +13,30 @@ import lombok.RequiredArgsConstructor;
 public class ConstructorSpecification implements Specification<Constructor<?>> {
 
 	@NonNull
-	private String name;
+	private final String name;
 
 	@NonNull
-	private ModifiersSpecification modifiers;
+	private final ModifiersSpecification modifiers;
 
 	@NonNull
 	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private Parameter[] parameters;
+	private final MethodParameterSpecification[] parameters;
 
 	@NonNull
-	private Constructor<?> rawElement;
+	private final Constructor<?> rawElement;
 
-	public static ConstructorSpecification from(Constructor<?> constructor) {
-		String name = constructor.getName();
-		ModifiersSpecification modifiers = ModifiersSpecification.from(constructor.getModifiers(), constructor.getAnnotations());
-		VisibilitySpecification visibility = VisibilitySpecification.from(constructor.getModifiers(), constructor.getAnnotations());
-		Parameter[] parameters = constructor.getParameters();
+	public ConstructorSpecification(Constructor<?> constructor) {
+		name = constructor.getName();
+		modifiers = new ModifiersSpecification(constructor.getModifiers(), constructor.getAnnotations());
+		visibility = new VisibilitySpecification(constructor.getModifiers(), constructor.getAnnotations());
+		rawElement = constructor;
 
-		return new ConstructorSpecification(name, modifiers, visibility, parameters, constructor);
+		//@formatter:off
+		parameters = IntStream.range(0, constructor.getParameterCount())
+		                      .mapToObj(i -> new MethodParameterSpecification(constructor, i))
+		                      .toArray(MethodParameterSpecification[]::new);
+		//@formatter:on
 	}
 }

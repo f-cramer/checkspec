@@ -1,5 +1,6 @@
 package checkspec.spec;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -22,11 +23,14 @@ public class MethodParameterSpecification {
 	@NonNull
 	private final Parameter rawElement;
 	
-	public static MethodParameterSpecification from(Method method, int parameterIndex) {
-		Parameter parameter = method.getParameters()[parameterIndex];
-		String name = parameter.getName();
-		ResolvableType type = ResolvableType.forMethodParameter(method, parameterIndex);
-		
-		return new MethodParameterSpecification(name, type, parameter);
+	public MethodParameterSpecification(Method method, int parameterIndex) {
+		type = ResolvableType.forMethodParameter(method, parameterIndex);
+		rawElement = method.getParameters()[parameterIndex];
+		name = rawElement.getName();
 	}
-}
+
+	public MethodParameterSpecification(Constructor<?> constructor, int parameterIndex) {
+		type = ResolvableType.forConstructorParameter(constructor, parameterIndex);
+		rawElement = constructor.getParameters()[parameterIndex];
+		name = rawElement.getName();
+	}}

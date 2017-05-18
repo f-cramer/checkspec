@@ -1,5 +1,6 @@
 package checkspec.report.output.html;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -42,7 +43,7 @@ public class HtmlOutputter implements Outputter {
 	private final Path directory;
 
 	public HtmlOutputter(Path directory) throws IOException {
-		if (Files.notExists(directory)) {
+		if (!Files.exists(directory)) {
 			Files.createDirectories(directory);
 		}
 
@@ -55,6 +56,10 @@ public class HtmlOutputter implements Outputter {
 
 	public HtmlOutputter(String dir) throws IOException {
 		this(Paths.get(dir));
+	}
+
+	public HtmlOutputter(File dir) throws IOException {
+		this(dir.toPath());
 	}
 
 	@Override
@@ -80,41 +85,28 @@ public class HtmlOutputter implements Outputter {
 	}
 
 	private static Stream<Row> getRows(Report<?, ?> report) {
-		//@formatter:off
-		return Stream.concat(
-			Stream.of(new Row(0, getMark(report), report.toString())),				
-			report.getProblems()
-		          .parallelStream()
-		          .map(e -> new Row(1, getMark(e), e.toString())));
-		//@formatter:on
+		// @formatter:off
+		return Stream.concat(Stream.of(new Row(0, getMark(report), report.toString())), report.getProblems().parallelStream().map(e -> new Row(1, getMark(e), e.toString())));
+		// @formatter:on
 	}
 
 	private static Stream<Row> getRows(ClassReport report) {
-		//@formatter:off
+		// @formatter:off
 		Stream<Row> head = Stream.of(new Row(0, getMark(report), report.toString()));
-		
-		Stream<Row> problems = report.getProblems()
-		                             .parallelStream()
-		                             .map(e -> new Row(1, getMark(e), e.toString()));
-		
-		Stream<Row> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports())
-		                            .parallel()
-		                            .flatMap(List::stream)
-		                            .flatMap(HtmlOutputter::getRows)
-		                            .map(Row::withIncreasedIndent);
+
+		Stream<Row> problems = report.getProblems().parallelStream().map(e -> new Row(1, getMark(e), e.toString()));
+
+		Stream<Row> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel().flatMap(List::stream).flatMap(HtmlOutputter::getRows)
+				.map(Row::withIncreasedIndent);
 
 		return Stream.concat(Stream.concat(head, Stream.concat(problems, reports)), Stream.of(Row.EMPTY));
-		//@formatter:on
+		// @formatter:on
 	}
 
 	private static List<Row> getRows(SpecReport report) {
-		//@formatter:off
-		return report.getClassReports()
-		             .parallelStream()
-		             .map(HtmlOutputter::getRows)
-		             .flatMap(Function.identity())
-		             .collect(Collectors.toList());
-		//@formatter:on
+		// @formatter:off
+		return report.getClassReports().parallelStream().map(HtmlOutputter::getRows).flatMap(Function.identity()).collect(Collectors.toList());
+		// @formatter:on
 	}
 
 	private static Mark getMark(ReportProblem problem) {

@@ -3,6 +3,9 @@ package checkspec.test;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,7 +22,9 @@ import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.TextOutputter;
 import checkspec.report.output.gui.GuiOutputter;
+import checkspec.report.output.html.HtmlOutputter;
 import checkspec.spec.ClassSpecification;
+import checkspec.test.generics.GenericTest;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
@@ -32,23 +37,21 @@ public class Main {
 		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
-		Class<Calculator> clazz = Calculator.class;
+		Class<?> clazz = GenericTest.class;
 
-		SpecReport report = checkSpec.checkSpec(ClassSpecification.from(clazz), Main.class);
+		SpecReport report = checkSpec.checkSpec(new ClassSpecification(clazz), Main.class);
 		// SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
-
-		try {
-			Calculator proxy = createProxy(clazz, createInvocationHandler(clazz, report));
-			System.out.println(proxy.add(1, 2));
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
 
 		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out));
 		outputter.output(report);
 
-		// outputter = new HtmlOutputter("C://Users/flori/OneDrive/output");
-		// outputter.output(report);
+		if (args.length > 0) {
+			Path path = Paths.get(args[0]);
+			if (Files.notExists(path) || Files.isDirectory(path)) {
+				 outputter = new HtmlOutputter(path);
+				 outputter.output(report);
+			}
+		}
 
 		outputter = new GuiOutputter();
 		outputter.output(report);
