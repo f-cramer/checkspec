@@ -14,9 +14,10 @@ public class FieldUtils {
 
 	public static String toString(Field field) {
 		Visibility visibility = getVisibility(field);
-		return String.format("%s %s %s", visibility, field.getName()).trim();
+		String typeName = getTypeName(field);
+		return String.format("%s %s %s", visibility, typeName, field.getName()).trim();
 	}
-	
+
 	public static ResolvableType getType(Field field) {
 		return ResolvableType.forField(field);
 	}
