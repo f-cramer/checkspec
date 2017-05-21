@@ -23,6 +23,7 @@ import checkspec.report.ProblemType;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
+import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
 
 public class HtmlOutputter implements Outputter {
@@ -63,7 +64,7 @@ public class HtmlOutputter implements Outputter {
 	}
 
 	@Override
-	public void output(SpecReport report) throws IOException {
+	public void output(SpecReport report) throws OutputException {
 		List<Row> rows = getRows(report);
 
 		Context context = new Context();
@@ -73,9 +74,10 @@ public class HtmlOutputter implements Outputter {
 		Path index = directory.resolve("index.html");
 		try (Writer writer = Files.newBufferedWriter(index)) {
 			ENGINE.process("index", context, writer);
+			copyElements(directory);
+		} catch (IOException e) {
+			throw new OutputException(e);
 		}
-
-		copyElements(directory);
 	}
 
 	private static void copyElements(Path directory) throws IOException {

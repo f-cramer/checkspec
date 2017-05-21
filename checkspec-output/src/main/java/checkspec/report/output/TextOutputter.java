@@ -20,9 +20,13 @@ public class TextOutputter implements Outputter {
 	private final Writer writer;
 
 	@Override
-	public void output(SpecReport report) throws IOException {
-		writer.write(toString(report));
-		writer.flush();
+	public void output(SpecReport report) throws OutputException {
+		try {
+			writer.write(toString(report));
+			writer.flush();
+		} catch (IOException e) {
+			throw new OutputException(e);
+		}
 	}
 
 	private static String toString(Report<?, ?> report) {

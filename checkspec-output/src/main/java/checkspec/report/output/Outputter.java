@@ -4,5 +4,5 @@ import checkspec.report.SpecReport;
 
 public interface Outputter {
 
-	void output(SpecReport report) throws Exception;
+	void output(SpecReport report) throws OutputException;
 }

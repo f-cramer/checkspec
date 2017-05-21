@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.UIManager;
+
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
@@ -24,7 +26,6 @@ import checkspec.report.output.TextOutputter;
 import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.spec.ClassSpecification;
-import checkspec.test.generics.GenericTest;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
@@ -34,10 +35,10 @@ public class Main {
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) throws Exception {
-		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
-		Class<?> clazz = GenericTest.class;
+		Class<?> clazz = Calculator.class;
 
 		SpecReport report = checkSpec.checkSpec(new ClassSpecification(clazz), Main.class);
 		// SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
@@ -48,8 +49,8 @@ public class Main {
 		if (args.length > 0) {
 			Path path = Paths.get(args[0]);
 			if (Files.notExists(path) || Files.isDirectory(path)) {
-				 outputter = new HtmlOutputter(path);
-				 outputter.output(report);
+				outputter = new HtmlOutputter(path);
+				outputter.output(report);
 			}
 		}
 
@@ -72,6 +73,7 @@ public class Main {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static MethodInvocationHandler createInvocationHandler(Class<?> spec, SpecReport report) {
 		final List<ClassReport> classReports = report.getClassReports();
 		if (classReports.isEmpty()) {
