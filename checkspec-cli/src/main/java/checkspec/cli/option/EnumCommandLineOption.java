@@ -3,46 +3,50 @@ package checkspec.cli.option;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
-import lombok.AccessLevel;
+import checkspec.cli.CommandLineException;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class EnumCommandLineOption<E extends Enum<E>> implements CommandLineOption<E> {
+public final class EnumCommandLineOption<E extends Enum<E>> extends TextCommandLineOption<E> {
 
 	private static final String CANNOT_PARSE_ENUM = "Cannot parse value \"%s\" for option \"%s\". Available values are %s.";
 	
-	@NonNull
-	private final Option option;
-
-	@NonNull
-	private final Class<E> clazz;
-
-	private final E defaultValue;
+	private EnumCommandLineOption(Option option, Class<E> clazz, E defaultValue) {
+		super(option, new EnumParser<>(option, clazz), clazz, defaultValue);
+	}
 	
-	@Override
-	public E parse(CommandLine commandLine) throws ParseException {
-		String value = commandLine.getOptionValue(option.getOpt(), defaultValue == null ? null : defaultValue.toString());
+	@RequiredArgsConstructor
+	private static class EnumParser<E> implements Parser<E> {
 		
-		return Arrays.stream(clazz.getEnumConstants())
-		             .filter(e -> e.toString().equalsIgnoreCase(value))
-		             .findAny()
-		             .orElseThrow(() -> createException(value));
+		@NonNull
+		private final Option option;
+		
+		@NonNull
+		private final Class<E> clazz;
+
+		@Override
+		public E parse(String value) throws CommandLineException {
+			return Arrays.stream(clazz.getEnumConstants())
+					.filter(e -> e.toString().equalsIgnoreCase(value))
+					.findAny()
+					.orElseThrow(() -> createException(value));
+		}
+
+		private CommandLineException createException(String value) {
+			return new CommandLineException(String.format(CANNOT_PARSE_ENUM, value, option.getOpt(), Arrays.stream(clazz.getEnumConstants()).map(e -> "\"" + e + "\"").collect(Collectors.joining(", "))));
+		}
 	}
 	
-
-	private ParseException createException(String value) {
-		return new ParseException(String.format(CANNOT_PARSE_ENUM, value, option.getOpt(), Arrays.stream(clazz.getEnumConstants()).map(e -> "\"" + e + "\"").collect(Collectors.joining(", "))));
-	}
-
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<E>> EnumCommandLineOption<E> of(Option option, @NonNull E defaultValue) {
 		return new EnumCommandLineOption<E>(option, (Class<E>) defaultValue.getClass(), defaultValue);
+	}
+	
+	public static <E extends Enum<E>> EnumCommandLineOption<E> of(Option option, @NonNull Class<E> clazz) {
+		return new EnumCommandLineOption<E>(option, clazz, null);
 	}
 }

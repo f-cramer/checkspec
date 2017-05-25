@@ -187,6 +187,7 @@
 	<modules>
 		<module>checkspec</module>
 		<module>checkspec-api</module>
+		<module>checkspec-cli</module>
 		<module>checkspec-output</module>
 		<module>checkspec-test-files</module>
 		<module>checkspec-tests</module>

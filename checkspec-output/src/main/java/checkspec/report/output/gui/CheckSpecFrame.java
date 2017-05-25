@@ -35,8 +35,8 @@ import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
-import checkspec.report.output.TextOutputter;
 import checkspec.report.output.html.HtmlOutputter;
+import checkspec.report.output.text.TextOutputter;
 import lombok.RequiredArgsConstructor;
 
 class CheckSpecFrame extends JFrame {

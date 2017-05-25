@@ -1,5 +1,6 @@
 package checkspec.util;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import checkspec.api.Visibility;
@@ -47,6 +48,26 @@ public class ClassUtils {
 		} catch (ClassNotFoundException | NoClassDefFoundError e) {
 			return Stream.empty();
 		}
+	}
+	
+	public Function<String, Class<?>> classSupplier(ClassLoader loader) {
+		return name -> {
+			try {
+				return loader.loadClass(name);
+			} catch (ClassNotFoundException e) {
+				return null;
+			}
+		};
+	}
+
+	public Function<String, Stream<Class<?>>> classStreamSupplier(ClassLoader loader) {
+		return name -> {
+			try {
+				return Stream.of(loader.loadClass(name));
+			} catch (ClassNotFoundException e) {
+				return Stream.empty();
+			}
+		};
 	}
 	
 	public static String getPackage(ResolvableType type) {

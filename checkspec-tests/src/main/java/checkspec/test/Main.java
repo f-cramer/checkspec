@@ -22,9 +22,9 @@ import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
-import checkspec.report.output.TextOutputter;
 import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
+import checkspec.report.output.text.TextOutputter;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
@@ -49,17 +49,27 @@ public class Main {
 		if (args.length > 0) {
 			Path path = Paths.get(args[0]);
 			if (Files.notExists(path) || Files.isDirectory(path)) {
-				outputter = new HtmlOutputter(path);
-				outputter.output(report);
+				if (Files.isWritable(path)) {
+					outputter = new HtmlOutputter(path);
+					outputter.output(report);
+				}
 			}
 		}
 
 		outputter = new GuiOutputter();
 		outputter.output(report);
+		
+		Calculator proxy = createProxy(report);
+		System.out.println(proxy.add(1, 2));
+	}
+	
+	private static <T> T createProxy(SpecReport report) {
+		MethodInvocationHandler handler = createInvocationHandler(report.getSpec().getRawElement().getRawClass(), report);
+		return createProxy(report.getSpec().getRawElement().getRawClass(), handler);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T createProxy(Class<?> clazz, MethodInvocationHandler handler) {
+	private static <T> T createProxy(Class<?> clazz, MethodInvocationHandler handler) {
 		if (clazz.isInterface()) {
 			return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, handler);
 		} else {
@@ -73,7 +83,6 @@ public class Main {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static MethodInvocationHandler createInvocationHandler(Class<?> spec, SpecReport report) {
 		final List<ClassReport> classReports = report.getClassReports();
 		if (classReports.isEmpty()) {
@@ -111,6 +120,5 @@ public class Main {
 		} catch (InstantiationException | IllegalAccessException e1) {
 			throw new IllegalArgumentException();
 		}
-
 	}
 }

@@ -14,6 +14,10 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.cramer.checkspec</groupId>
+			<artifactId>checkspec-output</artifactId>
+		</dependency>
 	</dependencies>
 
 	<parent>

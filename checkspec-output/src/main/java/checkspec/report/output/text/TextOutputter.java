@@ -1,4 +1,4 @@
-package checkspec.report.output;
+package checkspec.report.output.text;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -10,6 +10,8 @@ import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
+import checkspec.report.output.OutputException;
+import checkspec.report.output.Outputter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,7 @@ public class TextOutputter implements Outputter {
 	public void output(SpecReport report) throws OutputException {
 		try {
 			writer.write(toString(report));
+			writer.write('\n');
 			writer.flush();
 		} catch (IOException e) {
 			throw new OutputException(e);

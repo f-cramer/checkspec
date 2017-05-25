@@ -1,6 +1,7 @@
 package checkspec;
 
 import static checkspec.StaticChecker.checkImplements;
+import static checkspec.util.ClassUtils.classStreamSupplier;
 import static checkspec.util.ClassUtils.getPackage;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,7 +23,6 @@ import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
-import checkspec.util.ClassUtils;
 
 public class CheckSpec {
 
@@ -74,11 +75,10 @@ public class CheckSpec {
 	}
 
 	private static Reflections createReflections(URL[] urls) {
-
 		// @formatter:off
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
-				.addUrls(urls)
+				.setUrls(urls)
 				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
 		// @formatter:on
 
@@ -115,23 +115,35 @@ public class CheckSpec {
 	public SpecReport checkSpec(ClassSpecification spec) {
 		return checkSpec(spec, "");
 	}
-
-	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage) {
-		return checkSpec(spec, ClassUtils.getPackage(basePackage));
+	
+	public SpecReport checkSpec(ClassSpecification spec, ClassLoader classLoader) {
+		return checkSpec(spec, "", classLoader);
 	}
 
+	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage) {
+		return checkSpec(spec, getPackage(basePackage));
+	}
+	
 	public SpecReport checkSpec(ClassSpecification spec, String basePackageName) {
-		// String specPackage = getPackage(spec.getRawElement());
+		return checkSpec(spec, basePackageName, ClassLoader.getSystemClassLoader());
+	}
+	
+	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage, ClassLoader classLoader) {
+		return checkSpec(spec, getPackage(basePackage), classLoader);
+	}
+	
+	public SpecReport checkSpec(ClassSpecification spec, String basePackageName, ClassLoader classLoader) {
+		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
 		String pkg = basePackageName.toLowerCase();
-
+		
 		// @formatter:off
 		List<ClassReport> classReports = REFLECTIONS.getAllTypes()
 		                                            .parallelStream()
-		                                            .distinct()
 		                                            .filter(e -> !e.equals(spec.getName()))
 		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
-		                                            .flatMap(ClassUtils::getClassAsStream)
+		                                            .flatMap(loader)
 		                                            .map(e -> checkImplements(e, spec))
+		                                            .peek(System.out::println)
 		                                            .filter(ClassReport::hasAnyImplementation)
 		                                            .sorted()
 		                                            .collect(Collectors.toList());

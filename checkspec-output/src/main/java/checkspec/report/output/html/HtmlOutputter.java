@@ -1,13 +1,12 @@
 package checkspec.report.output.html;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -55,14 +54,6 @@ public class HtmlOutputter implements Outputter {
 		this.directory = directory;
 	}
 
-	public HtmlOutputter(String dir) throws IOException {
-		this(Paths.get(dir));
-	}
-
-	public HtmlOutputter(File dir) throws IOException {
-		this(dir.toPath());
-	}
-
 	@Override
 	public void output(SpecReport report) throws OutputException {
 		List<Row> rows = getRows(report);
@@ -72,7 +63,7 @@ public class HtmlOutputter implements Outputter {
 		context.setVariable("rows", rows.subList(0, rows.size() - 1));
 
 		Path index = directory.resolve("index.html");
-		try (Writer writer = Files.newBufferedWriter(index)) {
+		try (Writer writer = Files.newBufferedWriter(index, StandardOpenOption.CREATE)) {
 			ENGINE.process("index", context, writer);
 			copyElements(directory);
 		} catch (IOException e) {
