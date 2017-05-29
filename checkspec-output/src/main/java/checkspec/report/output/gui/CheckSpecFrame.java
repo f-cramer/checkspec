@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -148,7 +149,7 @@ class CheckSpecFrame extends JFrame {
 	}
 
 	@RequiredArgsConstructor
-	private static class CustomTreeCellRenderer implements TreeCellRenderer {
+	private class CustomTreeCellRenderer implements TreeCellRenderer {
 
 		private final TreeCellRenderer delegate;
 
@@ -173,20 +174,8 @@ class CheckSpecFrame extends JFrame {
 					} else if (userObject instanceof Report) {
 						type = ((Report<?, ?>) userObject).getType();
 					}
-
-					if (type != null) {
-						switch (type) {
-						case SUCCESS:
-							iconName = "success";
-							break;
-						case WARNING:
-							iconName = "exclamation_mark";
-							break;
-						case ERROR:
-							iconName = "failure";
-							break;
-						}
-					}
+					
+					iconName = type == null ? null : getIconName(type);
 				}
 
 				if (iconName != null) {
@@ -197,6 +186,19 @@ class CheckSpecFrame extends JFrame {
 
 			return component;
 		}
+	}
+	
+	private String getIconName(@Nonnull ProblemType type) {
+		switch (type) {
+		case SUCCESS:
+			return "success";
+		case WARNING:
+			return "exclamation_mark";
+		case ERROR:
+			return "failure";
+		}
+		
+		return null;
 	}
 
 	private abstract class AbstractExportMenuItem extends JMenuItem {

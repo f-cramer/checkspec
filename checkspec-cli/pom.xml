@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<artifactId>checkspec-cli</artifactId>
+	<name>CheckSpec CLI</name>
 
 	<dependencies>
 		<dependency>
@@ -11,14 +11,26 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
 			<artifactId>checkspec-output</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<configuration>
+					<transformers>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<mainClass>checkspec.cli.CommandLineInterface</mainClass>
+						</transformer>
+					</transformers>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<parent>
 		<groupId>de.cramer.checkspec</groupId>
@@ -26,5 +38,4 @@
 		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>CheckSpec API</name>
 </project>

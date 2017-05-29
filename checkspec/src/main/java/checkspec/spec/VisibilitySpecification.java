@@ -3,18 +3,19 @@ package checkspec.spec;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
+
 import checkspec.api.Spec;
 import checkspec.api.Visibility;
 import checkspec.util.MemberUtils;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 public class VisibilitySpecification {
 
-	@NonNull
+	@Nonnull
 	private final Visibility[] visibilities;
 
 	public boolean matches(Visibility visibility) {

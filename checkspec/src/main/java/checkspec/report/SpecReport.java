@@ -2,18 +2,19 @@ package checkspec.report;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
-import lombok.NonNull;
 import lombok.Value;
 
 @Value
 public class SpecReport {
 
-	@NonNull
+	@Nonnull
 	private final ClassSpecification spec;
 
-	@NonNull
+	@Nonnull
 	private final List<ClassReport> classReports;
 
 	@Override

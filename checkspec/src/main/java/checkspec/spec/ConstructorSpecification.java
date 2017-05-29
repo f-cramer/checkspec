@@ -3,28 +3,29 @@ package checkspec.spec;
 import java.lang.reflect.Constructor;
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
+
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConstructorSpecification implements Specification<Constructor<?>> {
 
-	@NonNull
+	@Nonnull
 	private final String name;
 
-	@NonNull
+	@Nonnull
 	private final ModifiersSpecification modifiers;
 
-	@NonNull
+	@Nonnull
 	private final VisibilitySpecification visibility;
 
-	@NonNull
+	@Nonnull
 	private final MethodParameterSpecification[] parameters;
 
-	@NonNull
+	@Nonnull
 	private final Constructor<?> rawElement;
 
 	public ConstructorSpecification(Constructor<?> constructor) {

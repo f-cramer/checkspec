@@ -1,7 +1,6 @@
 package checkspec;
 
 import static checkspec.StaticChecker.checkImplements;
-import static checkspec.util.ClassUtils.classStreamSupplier;
 import static checkspec.util.ClassUtils.getPackage;
 
 import java.io.File;
@@ -23,6 +22,7 @@ import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
+import checkspec.util.ClassUtils;
 
 public class CheckSpec {
 
@@ -133,7 +133,7 @@ public class CheckSpec {
 	}
 	
 	public SpecReport checkSpec(ClassSpecification spec, String basePackageName, ClassLoader classLoader) {
-		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
+		Function<String, Stream<Class<?>>> loader = ClassUtils.classStreamSupplier(classLoader);
 		String pkg = basePackageName.toLowerCase();
 		
 		// @formatter:off
@@ -143,7 +143,6 @@ public class CheckSpec {
 		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
 		                                            .flatMap(loader)
 		                                            .map(e -> checkImplements(e, spec))
-		                                            .peek(System.out::println)
 		                                            .filter(ClassReport::hasAnyImplementation)
 		                                            .sorted()
 		                                            .collect(Collectors.toList());

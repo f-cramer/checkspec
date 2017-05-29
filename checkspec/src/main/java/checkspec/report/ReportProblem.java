@@ -1,7 +1,8 @@
 package checkspec.report;
 
+import javax.annotation.Nonnull;
+
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
@@ -9,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 public class ReportProblem implements ReportEntry {
 
 	private final int score;
-	@NonNull
+	@Nonnull
 	private final String content;
-	@NonNull
+	@Nonnull
 	private final Type type;
 
 	@Override
@@ -23,7 +24,7 @@ public class ReportProblem implements ReportEntry {
 	public static enum Type {
 		WARNING(ProblemType.WARNING), ERROR(ProblemType.ERROR);
 
-		@NonNull
+		@Nonnull
 		private final ProblemType problemType;
 
 		public ProblemType toProblemType() {

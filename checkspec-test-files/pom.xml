@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>checkspec-test-files</artifactId>
+	<name>CheckSpec Test Files</name>
 
 	<dependencies>
 		<dependency>
@@ -17,5 +18,4 @@
 		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<name>CheckSpec Test Files</name>
 </project>

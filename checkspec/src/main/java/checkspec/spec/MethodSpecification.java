@@ -3,32 +3,33 @@ package checkspec.spec;
 import java.lang.reflect.Method;
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
+
 import checkspec.spring.ResolvableType;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MethodSpecification implements Specification<Method> {
 
-	@NonNull
+	@Nonnull
 	private final String name;
 
-	@NonNull
+	@Nonnull
 	private final ResolvableType returnType;
 
-	@NonNull
+	@Nonnull
 	private final MethodParameterSpecification[] parameters;
 
-	@NonNull
+	@Nonnull
 	private final ModifiersSpecification modifiers;
 
-	@NonNull
+	@Nonnull
 	private final VisibilitySpecification visibility;
 
-	@NonNull
+	@Nonnull
 	private final Method rawElement;
 
 	public MethodSpecification(Method method) {

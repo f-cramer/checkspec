@@ -5,36 +5,37 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
+
 import checkspec.api.Spec;
 import checkspec.spring.ResolvableType;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClassSpecification implements Specification<ResolvableType> {
 
-	@NonNull
+	@Nonnull
 	private final String name;
 
-	@NonNull
+	@Nonnull
 	private final ModifiersSpecification modifiers;
 
-	@NonNull
+	@Nonnull
 	private final VisibilitySpecification visibility;
 
-	@NonNull
+	@Nonnull
 	private final FieldSpecification[] declaredFields;
 
-	@NonNull
+	@Nonnull
 	private final MethodSpecification[] declaredMethods;
 
-	@NonNull
+	@Nonnull
 	private final ConstructorSpecification[] declaredConstructors;
 
-	@NonNull
+	@Nonnull
 	private final ResolvableType rawElement;
 
 	public ClassSpecification(Class<?> clazz) {

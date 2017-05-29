@@ -1,6 +1,6 @@
 package checkspec.cli;
 
-public enum OutputFormat {
+enum OutputFormat {
 	TEXT, HTML, GUI;
 	
 	@Override

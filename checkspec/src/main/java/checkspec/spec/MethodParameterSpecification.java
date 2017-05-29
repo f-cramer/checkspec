@@ -4,23 +4,24 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import javax.annotation.Nonnull;
+
 import checkspec.spring.ResolvableType;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MethodParameterSpecification {
 
-	@NonNull
+	@Nonnull
 	private final String name;
 
-	@NonNull
+	@Nonnull
 	private final ResolvableType type;
 
-	@NonNull
+	@Nonnull
 	private final Parameter rawElement;
 	
 	public MethodParameterSpecification(Method method, int parameterIndex) {

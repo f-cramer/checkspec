@@ -3,8 +3,9 @@ package checkspec.spec;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 
 import checkspec.api.Modifiers;
 import lombok.AccessLevel;
@@ -76,8 +77,8 @@ public class ModifiersSpecification {
 
 		private final BooleanToBooleanFunction matchingFunction;
 
-		private State(BooleanToBooleanFunction matchingFunction) {
-			this.matchingFunction = Objects.requireNonNull(matchingFunction);
+		private State(@Nonnull BooleanToBooleanFunction matchingFunction) {
+			this.matchingFunction = matchingFunction;
 		}
 
 		public final boolean matches(boolean state) {

@@ -8,11 +8,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import checkspec.report.ReportProblem.Type;
 import checkspec.spec.Specification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
@@ -39,15 +40,15 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 		return Collections.emptyList();
 	}
 
-	public void addSubReports(@NonNull List<? extends Report<?, ?>> reports) {
+	public void addSubReports(@Nonnull List<? extends Report<?, ?>> reports) {
 		reports.forEach(this::addSubReport);
 	}
 
-	public void addProblem(@NonNull ReportProblem entry) {
+	public void addProblem(@Nonnull ReportProblem entry) {
 		problems.add(entry);
 	}
 
-	public void addProblems(@NonNull Collection<ReportProblem> probs) {
+	public void addProblems(@Nonnull Collection<ReportProblem> probs) {
 		problems.addAll(probs);
 	}
 
