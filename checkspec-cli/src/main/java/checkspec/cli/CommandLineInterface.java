@@ -97,12 +97,13 @@ public final class CommandLineInterface {
 			break;
 		}
 		
-		ClassLoader specClassLoader = parseSpecClassLoader(commandLine);
+		URL[] specUrls = parseSpecUrls(commandLine);
+		URLClassLoader specClassLoader = new URLClassLoader(specUrls, ClassLoader.getSystemClassLoader());
 
 		Consumer<SpecReport> wrappedOutputter = wrap(outputter);
-		ClassSpecification[] specifications = parseSpecs(commandLine, specClassLoader);
+		ClassSpecification[] specifications = parseSpecs(commandLine, specUrls, specClassLoader);
 
-		URL[] implementationUrls = parseImplemenationURLs(commandLine);
+		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		ClassLoader implementationLoader = new URLClassLoader(implementationUrls, ClassLoader.getSystemClassLoader());
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPath(implementationUrls);
 		
@@ -111,8 +112,7 @@ public final class CommandLineInterface {
 		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage, implementationLoader);
 		
 		//@formatter:off
-		Arrays.stream(specifications)
-		      .parallel()
+		Arrays.stream(specifications).parallel()
 		      .map(loader)
 		      .peek(wrappedOutputter::accept)
 		      .toArray(SpecReport[]::new);
@@ -157,17 +157,22 @@ public final class CommandLineInterface {
 		return new GuiOutputter();
 	}
 
-	private static ClassLoader parseSpecClassLoader(CommandLine commandLine) throws CommandLineException {
-		URL[] urls = SPEC_PATH.parseMultiple(commandLine);
+	private static URL[] parseSpecUrls(CommandLine commandLine) throws CommandLineException {
+		URL[] specPaths = SPEC_PATH.parseMultiple(commandLine);
 		
-		if (urls.length == 0) {
-			return ClassLoader.getSystemClassLoader();
+		if (specPaths.length == 0) {
+			//@formatter:off
+			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
+			             .map(CommandLineInterface::parseWrappedURL)
+			             .flatMap(Wrapper::getWrappedAsStream)
+			             .toArray(URL[]::new);
+			//@formatter:on
 		} else {
-			return new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+			return specPaths;
 		}
 	}
 
-	private static URL[] parseImplemenationURLs(CommandLine commandLine) throws CommandLineException {
+	private static URL[] parseImplemenationUrls(CommandLine commandLine) throws CommandLineException {
 		URL[] implementationPaths = IMPLEMENTATION_PATH.parseMultiple(commandLine);
 
 		if (implementationPaths.length == 0) {
@@ -182,10 +187,16 @@ public final class CommandLineInterface {
 		}
 	}
 	
-	private static ClassSpecification[] parseSpecs(CommandLine commandLine, ClassLoader classLoader) throws CommandLineException {
+	private static ClassSpecification[] parseSpecs(CommandLine commandLine, URL[] urls, ClassLoader classLoader) throws CommandLineException {
+		String[] rawSpecs = SPECS.parseMultiple(commandLine);
+		if (rawSpecs.length == 0) {
+			return CheckSpec.findSpecifications(urls);
+		}
+		
 		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
+
 		//@formatter:off
-		ClassSpecification[] specs = Arrays.stream(SPECS.parseMultiple(commandLine)).parallel()
+		ClassSpecification[] specs = Arrays.stream(rawSpecs).parallel()
 		                                   .flatMap(loader)
 		                                   .filter(Objects::nonNull)
 		                                   .map(ClassSpecification::new)
@@ -200,7 +211,7 @@ public final class CommandLineInterface {
 	}
 	
 	private static String parseBasePackage(CommandLine commandLine) throws CommandLineException {
-		return BASE_PACKAGE.parse(commandLine);
+		return BASE_PACKAGE.parse(commandLine).replaceAll("\\s", "");
 	}
 	
 	private static Wrapper<URL, CommandLineException> parseWrappedURL(String uri) {
@@ -228,17 +239,16 @@ public final class CommandLineInterface {
 	}
 	
 	private static Options createOptions(CommandLineOption<?>... singleOptions) {
+		Options options = new Options();
+		
 		//@formatter:off
-		return Arrays.stream(singleOptions).parallel()
-		             .distinct()
-		             .map(CommandLineOption::getOption)
-		             .sorted(Comparator.comparing(Option::getOpt))
-		             .reduce(new Options(), (options, option) -> options.addOption(option), CommandLineInterface::combine);
+		Arrays.stream(singleOptions).parallel()
+		      .distinct()
+		      .map(CommandLineOption::getOption)
+		      .sorted(Comparator.comparing(Option::getOpt))
+		      .forEachOrdered(options::addOption);
 		//@formatter:on
-	}
-	
-	private static Options combine(Options o1, Options o2) {
-		o2.getOptions().forEach(o1::addOption);
-		return o1;
+		
+		return options;
 	}
 }

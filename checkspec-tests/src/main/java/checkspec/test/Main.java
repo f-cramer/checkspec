@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.UIManager;
 
@@ -35,6 +36,8 @@ public class Main {
 	private static Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static void main(String[] args) throws Exception {
+		IntStream.iterate(0, i -> i + 1).parallel().filter(Character::isMirrored).findFirst().ifPresent(System.out::println);
+		
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();

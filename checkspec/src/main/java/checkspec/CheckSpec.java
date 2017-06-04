@@ -4,7 +4,9 @@ import static checkspec.StaticChecker.checkImplements;
 import static checkspec.util.ClassUtils.getPackage;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +25,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
+import checkspec.util.StreamUtils;
 
 public class CheckSpec {
 
@@ -72,6 +75,29 @@ public class CheckSpec {
 
 	public static CheckSpec getInstanceForClassPath(URL[] classPathEntries) {
 		return new CheckSpec(classPathEntries);
+	}
+	
+	public static ClassSpecification[] findSpecifications(URL[] urls) {
+		Reflections reflections = createReflections(urls);
+		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.classStreamSupplier(new URLClassLoader(urls, ClassLoader.getSystemClassLoader()));
+		
+		return reflections.getAllTypes()
+		                  .parallelStream()
+		                  .flatMap(classSupplier)
+//		                  .peek(System.out::println)
+		                  .filter(CheckSpec::hasSpecAnnotation)
+		                  .map(ClassSpecification::new)
+		                  .toArray(ClassSpecification[]::new);
+	}
+	
+	private static boolean hasSpecAnnotation(Class<?> clazz) {
+		// @formatter:off
+		return Arrays.stream(clazz.getAnnotations())
+		             .parallel()
+		             .map(Annotation::annotationType)
+		             .map(Class::getName)
+		             .anyMatch(StreamUtils.equalsPredicate(Spec.class.getName()));
+		// @formatter:on
 	}
 
 	private static Reflections createReflections(URL[] urls) {

@@ -27,6 +27,7 @@
 							<mainClass>checkspec.cli.CommandLineInterface</mainClass>
 						</transformer>
 					</transformers>
+					<finalName>${project.artifactId}-${project.version}-standalone</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

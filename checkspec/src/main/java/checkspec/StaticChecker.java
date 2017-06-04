@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 import checkspec.api.Visibility;
@@ -239,8 +238,7 @@ class StaticChecker {
 	}
 
 	private static Comparator<Method> createMethodComparator(MethodSpecification method) {
-		ToIntFunction<Method> heuristic = actual -> compareMethods(actual, method);
-		return Comparator.comparingInt(heuristic::applyAsInt);
+		return Comparator.comparingInt(actual -> compareMethods(actual, method));
 	}
 
 	private static int compareMethods(Method actual, MethodSpecification spec) {

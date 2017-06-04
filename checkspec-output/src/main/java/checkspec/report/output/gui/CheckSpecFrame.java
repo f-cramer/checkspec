@@ -65,7 +65,7 @@ class CheckSpecFrame extends JFrame {
 	}
 
 	private void init() {
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
 		setTitle(report.toString());
