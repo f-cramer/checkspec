@@ -49,8 +49,11 @@ import checkspec.util.ClassUtils;
 import checkspec.util.FieldUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-class StaticChecker {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+final class StaticChecker {
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
 
@@ -75,9 +78,10 @@ class StaticChecker {
 	private static MethodReport checkMethod(Class<?> actual, MethodSpecification method) {
 		String methodName = method.getName();
 
-		// @formatter:off
-		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(MethodParameterSpecification::getType).map(ResolvableType::getRawClass).toArray(Class[]::new);
-		// @formatter:on
+		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel()
+				.map(MethodParameterSpecification::getType)
+				.map(ResolvableType::getRawClass)
+				.toArray(Class[]::new);
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
 		try {
@@ -99,9 +103,9 @@ class StaticChecker {
 
 			return report;
 		} catch (NoSuchMethodException ex) {
-			// @formatter:off
-			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel().filter(e -> e.getName().equals(methodName)).collect(Collectors.toList());
-			// @formatter:on
+			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel()
+					.filter(e -> e.getName().equals(methodName))
+					.collect(Collectors.toList());
 
 			if (methodsWithEqualName.isEmpty()) {
 				return new MethodReport(method);
@@ -146,9 +150,9 @@ class StaticChecker {
 	}
 
 	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
-		// @formatter:off
-		return Arrays.stream(spec.getFieldSpecifications()).parallel().map(e -> checkField(clazz, e)).collect(Collectors.toList());
-		// @formatter:on
+		return Arrays.stream(spec.getFieldSpecifications()).parallel()
+				.map(e -> checkField(clazz, e))
+				.collect(Collectors.toList());
 	}
 
 	private static FieldReport checkField(Class<?> clazz, FieldSpecification field) {
@@ -309,9 +313,8 @@ class StaticChecker {
 			String implementationName = ClassUtils.getName(implementingClass);
 			Object implementation = implementingClass.newInstance();
 
-			// @formatter:off
-			Map<Method, MethodReport> methodReports = classReport.getMethodReports().parallelStream().collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
-			// @formatter:on
+			Map<Method, MethodReport> methodReports = classReport.getMethodReports().parallelStream()
+					.collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
 
 			return (proxy, method, args) -> {
 				MethodReport actualMethod = methodReports.get(method);

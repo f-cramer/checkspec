@@ -103,7 +103,7 @@ class CheckSpecFrame extends JFrame {
 		return tree;
 	}
 
-	private MutableTreeNode createNode(SpecReport report) {
+	private static MutableTreeNode createNode(SpecReport report) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(report);
 
 		for (ClassReport cr : report.getClassReports()) {
@@ -113,7 +113,7 @@ class CheckSpecFrame extends JFrame {
 		return node;
 	}
 
-	private MutableTreeNode createNode(Report<?, ?> report) {
+	private static MutableTreeNode createNode(Report<?, ?> report) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(report);
 
 		for (ReportProblem e : report.getProblems()) {
@@ -126,7 +126,7 @@ class CheckSpecFrame extends JFrame {
 		return node;
 	}
 
-	private MutableTreeNode createNode(ReportProblem line) {
+	private static MutableTreeNode createNode(ReportProblem line) {
 		return new DefaultMutableTreeNode(line, false);
 	}
 

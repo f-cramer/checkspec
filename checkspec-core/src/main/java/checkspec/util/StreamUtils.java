@@ -12,6 +12,18 @@ public class StreamUtils {
 	public static <T> Predicate<T> equalsPredicate(@NonNull T t) {
 		return o -> t.equals(o);
 	}
+	
+	public static <T, U> Predicate<U> equalsPredicate(@NonNull T t, @NonNull Function<U, T> converter) {
+		return o -> t.equals(converter.apply(o));
+	}
+	
+	public static <T, U, V> Function<T, V> concat(@NonNull Function<T, U> c1, @NonNull Function<U, V> c2) {
+		return o -> c2.apply(c1.apply(o));
+	}
+	
+	public static <T, U> Predicate<T> isNullPredicate(Function<T, U> converter) {
+		return t -> converter.apply(t) != null;
+	}
 
 	public static <T> Stream<T> stream(T[] array) {
 		return Arrays.stream(array);

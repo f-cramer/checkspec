@@ -64,7 +64,7 @@ public class ClassUtils {
 		return name -> {
 			try {
 				return Stream.of(loader.loadClass(name));
-			} catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException | NoClassDefFoundError e) {
 				return Stream.empty();
 			}
 		};

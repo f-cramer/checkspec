@@ -26,13 +26,16 @@ import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import checkspec.CheckSpec;
+import checkspec.cli.option.ArgumentCommandLineOption;
 import checkspec.cli.option.CommandLineOption;
 import checkspec.cli.option.EnumCommandLineOption;
+import checkspec.cli.option.SwitchCommandLineOption;
 import checkspec.cli.option.TextCommandLineOption;
 import checkspec.cli.option.TextCommandLineOption.Parser;
 import checkspec.report.SpecReport;
@@ -44,22 +47,39 @@ import checkspec.report.output.text.TextOutputter;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.Wrapper;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommandLineInterface {
 
 	private static final String JAVA_CLASS_PATH = System.getProperty("java.class.path");
 	private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-	private static final CommandLineOption<OutputFormat> FORMAT = EnumCommandLineOption.of("f", OutputFormat.TEXT);
-	private static final CommandLineOption<String> OUTPUT_PATH = TextCommandLineOption.single("o", String.class, Parser.IDENTITY);
-	private static final CommandLineOption<String> SPECS = TextCommandLineOption.multiple("s", String.class, Parser.IDENTITY);
-	private static final CommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL> multiple("p", URL.class, CommandLineInterface::parseUrl);
-	private static final CommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL> multiple("i", URL.class, CommandLineInterface::parseUrl);
-	private static final CommandLineOption<String> BASE_PACKAGE = TextCommandLineOption.single("b", "", Parser.IDENTITY);
+	private static final Option FORMAT_OPTION = Option.builder("f").longOpt("format").hasArg().argName("format")
+			.desc("Sets the output format. Available options are \"text\", \"html\" and \"gui\". Default is \"text\".").build();
+	private static final ArgumentCommandLineOption<OutputFormat> FORMAT = EnumCommandLineOption.of(FORMAT_OPTION, OutputFormat.TEXT);
+	private static final Option OUTPUT_PATH_OPTION = Option.builder("o").longOpt("output").hasArg().argName("path")
+			.desc("Sets the output path for formats \"text\" and \"html\". For format \"text\" the default is to output to the standard output stream, for format \"html\""
+					+ " it is to output to the directory \"./output/\" which is created if it does not already exist.")
+			.build();
+	private static final ArgumentCommandLineOption<String> OUTPUT_PATH = TextCommandLineOption.of(OUTPUT_PATH_OPTION, String.class, Parser.IDENTITY);
+	private static final Option SPECS_OPTION = Option.builder("s").longOpt("spec").hasArgs().argName("spec-classes")
+			.desc("Sets the classes specifications are build from. If not set a specification will be build for any class that is annotated @Spec.").build();
+	private static final ArgumentCommandLineOption<String> SPECS = TextCommandLineOption.of(SPECS_OPTION, String.class, Parser.IDENTITY);
+	private static final Option SPEC_PATH_OPTION = Option.builder("p").longOpt("specpath").hasArgs().argName("paths")
+			.desc("Sets the classpath to load the specifications from. If not set the default classpath is used.").build();
+	private static final ArgumentCommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL>of(SPEC_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
+	private static final Option IMPLEMENTATION_PATH_OPTION = Option.builder("i").longOpt("implpath").hasArg().argName("paths")
+			.desc("Sets the classpath to load the implementations from. If not set the default classpath is used.").build();
+	private static final ArgumentCommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL>of(IMPLEMENTATION_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
+	private static final Option BASE_PACKAGE_OPTION = Option.builder("b").longOpt("basepackage").hasArg().argName("package")
+			.desc("Sets the base package that is used to load implementations. Each found implemenation will be inside of this package or in one of its child packages")
+			.build();
+	private static final ArgumentCommandLineOption<String> BASE_PACKAGE = TextCommandLineOption.of(BASE_PACKAGE_OPTION, "", Parser.IDENTITY);
+	private static final Option HELP_OPTION = Option.builder("h").longOpt("help").desc("Displays this help message.").build();
+	private static final SwitchCommandLineOption HELP = SwitchCommandLineOption.of(HELP_OPTION);
 
-	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE);
+	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
 
 	private static final CommandLineParser PARSER = new DefaultParser();
 
@@ -77,6 +97,12 @@ public final class CommandLineInterface {
 			commandLine = PARSER.parse(OPTIONS, args);
 		} catch (ParseException e) {
 			throw wrapException(e);
+		}
+
+		if (HELP.isSet(commandLine)) {
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("java -jar checkspec-1.0.0-standalone.jar", OPTIONS);
+			return;
 		}
 
 		OutputFormat format = FORMAT.parse(commandLine);
@@ -112,11 +138,9 @@ public final class CommandLineInterface {
 
 		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage, implementationLoader);
 
-		//@formatter:off
 		Arrays.stream(specifications)
-		      .map(loader)
-		      .forEach(wrappedOutputter::accept);
-		//@formatter:on
+				.map(loader)
+				.forEach(wrappedOutputter::accept);
 	}
 
 	private static Consumer<SpecReport> wrapOutputter(Outputter outputter) {
@@ -171,12 +195,10 @@ public final class CommandLineInterface {
 		URL[] implementationPaths = IMPLEMENTATION_PATH.parseMultiple(commandLine);
 
 		if (implementationPaths.length == 0) {
-			//@formatter:off
 			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
-			             .map(CommandLineInterface::parseWrappedUrl)
-			             .flatMap(Wrapper::getWrappedAsStream)
-			             .toArray(URL[]::new);
-			//@formatter:on
+					.map(CommandLineInterface::parseWrappedUrl)
+					.flatMap(Wrapper::getWrappedAsStream)
+					.toArray(URL[]::new);
 		} else {
 			return implementationPaths;
 		}
@@ -190,13 +212,11 @@ public final class CommandLineInterface {
 
 		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
 
-		// @formatter:off
 		ClassSpecification[] specs = Arrays.stream(rawSpecs).parallel()
-		                                   .flatMap(loader)
-		                                   .filter(Objects::nonNull)
-		                                   .map(ClassSpecification::new)
-		                                   .toArray(ClassSpecification[]::new);
-		// @formatter:on
+				.flatMap(loader)
+				.filter(Objects::nonNull)
+				.map(ClassSpecification::new)
+				.toArray(ClassSpecification[]::new);
 
 		if (specs.length == 0) {
 			throw new CommandLineException("No spec was given or none of the given spec classes could be found");
@@ -233,16 +253,14 @@ public final class CommandLineInterface {
 		return new CommandLineException(ex.getMessage(), ex);
 	}
 
-	private static Options createOptions(CommandLineOption<?>... singleOptions) {
+	private static Options createOptions(CommandLineOption... singleOptions) {
 		Options options = new Options();
 
-		// @formatter:off
 		Arrays.stream(singleOptions).parallel()
-		      .distinct()
-		      .map(CommandLineOption::getOption)
-		      .sorted(Comparator.comparing(Option::getOpt))
-		      .forEachOrdered(options::addOption);
-		// @formatter:on
+				.distinct()
+				.map(CommandLineOption::getOption)
+				.sorted(Comparator.comparing(Option::getOpt))
+				.forEachOrdered(options::addOption);
 
 		return options;
 	}

@@ -33,7 +33,12 @@
 			<property name="max" value="200" />
 			<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://" />
 		</module>
+		<module name="FinalClass" />
+		<module name="UnusedImports">
+			<property name="processJavadoc" value="false" />
+		</module>
 		<module name="AvoidStarImport" />
+		<module name="AvoidNestedBlocks" />
 		<module name="OneTopLevelClass" />
 		<module name="NoLineWrap" />
 		<module name="EmptyBlock">
@@ -113,16 +118,16 @@
 
 		<!-- Check that lines are intended with tabs -->
 		<module name="RegexpSinglelineJava">
-			<property name="format" value="^\t*(?! [ \*]) " />
+			<property name="format" value="^\t*(?! \*) " />
 			<property name="message" value="Indent must use tab characters" />
 		</module>
 
 		<module name="Indentation">
 			<property name="basicOffset" value="2" />
 			<property name="braceAdjustment" value="0" />
-			<property name="caseIndent" value="2" />
+			<property name="caseIndent" value="0" />
 			<property name="throwsIndent" value="4" />
-			<property name="lineWrappingIndentation" value="4" />
+			<property name="lineWrappingIndentation" value="2" />
 			<property name="forceStrictCondition" value="false" />
 			<property name="arrayInitIndent" value="2" />
 		</module>

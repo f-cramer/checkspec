@@ -5,6 +5,8 @@ import static checkspec.util.ClassUtils.getPackage;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import checkspec.util.ClassUtils;
 import checkspec.util.StreamUtils;
 import lombok.NonNull;
 
-public class CheckSpec {
+public final class CheckSpec {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
 	private static final String PATH_SEPARATOR = "path.separator";
@@ -84,10 +86,32 @@ public class CheckSpec {
 	}
 
 	private static boolean hasSpecAnnotation(Class<?> clazz) {
+		Function<Annotation, String> concat = StreamUtils.concat(Annotation::annotationType, Class::getName);
+
 		return Arrays.stream(clazz.getAnnotations()).parallel()
-				.map(Annotation::annotationType)
-				.map(Class::getName)
-				.anyMatch(StreamUtils.equalsPredicate(Spec.class.getName()));
+				.filter(StreamUtils.equalsPredicate(Spec.class.getName(), concat))
+				.anyMatch(CheckSpec::hasValueSetToTrue);
+	}
+
+	private static boolean hasValueSetToTrue(Annotation annotation) {
+		Method valueMethod;
+		try {
+			valueMethod = annotation.annotationType().getMethod("value");
+		} catch (NoSuchMethodException | SecurityException e) {
+			return false;
+		}
+
+		if (valueMethod != null && valueMethod.getReturnType() == boolean.class) {
+			boolean accessible = valueMethod.isAccessible();
+			valueMethod.setAccessible(true);
+			try {
+				return (Boolean) valueMethod.invoke(annotation);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException expected) {
+			}
+			valueMethod.setAccessible(accessible);
+		}
+
+		return false;
 	}
 
 	private static Reflections createReflections(URL[] urls) {

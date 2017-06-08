@@ -55,11 +55,9 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 		Stream<ProblemType> reportTypes = getSubReports().parallelStream().map(Report::getType);
 		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(Type::toProblemType);
 
-		// @formatter:off
 		return Stream.concat(reportTypes, problemTypes).parallel()
-		             .max(Comparator.naturalOrder())
-		             .orElseGet(() -> getImplementation() == null ? ProblemType.ERROR : ProblemType.SUCCESS);
-		// @formatter:on
+				.max(Comparator.naturalOrder())
+				.orElseGet(() -> getImplementation() == null ? ProblemType.ERROR : ProblemType.SUCCESS);
 	}
 
 	@Override

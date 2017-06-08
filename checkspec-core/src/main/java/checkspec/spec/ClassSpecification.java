@@ -59,6 +59,10 @@ public class ClassSpecification implements Specification<ResolvableType> {
 				.map(ConstructorSpecification::new)
 				.toArray(ConstructorSpecification[]::new);
 	}
+	
+	public static boolean shouldBeGenerated(Class<?> clazz) {
+		return isIncluded(clazz.getAnnotation(Spec.class));
+	}
 
 	private static boolean isIncluded(Field field) {
 		return isIncluded(field.getAnnotation(Spec.class));

@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class TextCommandLineOption<E> implements CommandLineOption<E> {
+public class TextCommandLineOption<E> implements ArgumentCommandLineOption<E> {
 
 	@NonNull
 	private final Option option;
@@ -28,7 +28,7 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 	private final Parser<E> parser;
 
 	@NonNull
-	private final Class<E> clazz;
+	private final Class<E> argumentClass;
 
 	private final E defaultValue;
 
@@ -40,9 +40,9 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 
 	private Wrapper<E, CommandLineException> parse(String value) {
 		try {
-			return Wrapper.<E, CommandLineException> ofValue(parser.parse(value));
+			return Wrapper.<E, CommandLineException>ofValue(parser.parse(value));
 		} catch (CommandLineException e) {
-			return Wrapper.<E, CommandLineException> ofException(e);
+			return Wrapper.<E, CommandLineException>ofException(e);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 		String[] values = commandLine.getOptionValues(option.getOpt());
 
 		if (values == null) {
-			return (E[]) Array.newInstance(clazz, 0);
+			return (E[]) Array.newInstance(argumentClass, 0);
 		}
 
 		List<Wrapper<E, CommandLineException>> wrapped = Arrays.stream(values).parallel()
@@ -69,33 +69,40 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 
 		return wrapped.parallelStream()
 				.map(Wrapper::getWrapped)
-				.toArray(i -> (E[]) Array.newInstance(clazz, i));
+				.toArray(i -> (E[]) Array.newInstance(argumentClass, i));
 	}
 
 	@Override
-	public CommandLineOption<E> withDefaultValue(E defaultValue) {
-		return new TextCommandLineOption<E>(option, parser, clazz, defaultValue);
+	public TextCommandLineOption<E> withDefaultValue(E defaultValue) {
+		return new TextCommandLineOption<E>(option, parser, argumentClass, defaultValue);
 	}
 
-	public static <E> TextCommandLineOption<E> single(@NonNull String opt, @NonNull Class<E> clazz, @NonNull Parser<E> parser) {
+	public static <E> TextCommandLineOption<E> single(@NonNull String opt, @NonNull Class<E> argumentClass, @NonNull Parser<E> parser) {
 		Option option = Option.builder(opt).hasArg().build();
-		return new TextCommandLineOption<E>(option, parser, clazz, null);
+		return of(option, argumentClass, parser);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <E> TextCommandLineOption<E> single(@NonNull String opt, @NonNull E defaultValue, @NonNull Parser<E> parser) {
 		Option option = Option.builder(opt).hasArg().build();
-		return new TextCommandLineOption<E>(option, parser, (Class<E>) defaultValue.getClass(), defaultValue);
+		return of(option, defaultValue, parser);
 	}
 
-	public static <E> TextCommandLineOption<E> multiple(@NonNull String opt, @NonNull Class<E> clazz, @NonNull Parser<E> parser) {
+	public static <E> TextCommandLineOption<E> multiple(@NonNull String opt, @NonNull Class<E> argumentClass, @NonNull Parser<E> parser) {
 		Option option = Option.builder(opt).hasArgs().build();
-		return new TextCommandLineOption<E>(option, parser, clazz, null);
+		return of(option, argumentClass, parser);
+	}
+
+	public static <E> TextCommandLineOption<E> multiple(@NonNull String opt, @NonNull E defaultValue, @NonNull Parser<E> parser) {
+		Option option = Option.builder(opt).hasArgs().build();
+		return of(option, defaultValue, parser);
+	}
+
+	public static <E> TextCommandLineOption<E> of(@NonNull Option option, @NonNull Class<E> argumentClass, @NonNull Parser<E> parser) {
+		return new TextCommandLineOption<E>(option, parser, argumentClass, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> TextCommandLineOption<E> multiple(@NonNull String opt, @NonNull E defaultValue, @NonNull Parser<E> parser) {
-		Option option = Option.builder(opt).hasArgs().build();
+	public static <E> TextCommandLineOption<E> of(@NonNull Option option, @NonNull E defaultValue, @NonNull Parser<E> parser) {
 		return new TextCommandLineOption<E>(option, parser, (Class<E>) defaultValue.getClass(), defaultValue);
 	}
 

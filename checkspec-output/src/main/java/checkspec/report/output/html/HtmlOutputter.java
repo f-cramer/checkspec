@@ -78,28 +78,28 @@ public class HtmlOutputter implements Outputter {
 	}
 
 	private static Stream<Row> getRows(Report<?, ?> report) {
-		// @formatter:off
-		return Stream.concat(Stream.of(new Row(0, getMark(report), report.toString())), report.getProblems().parallelStream().map(e -> new Row(1, getMark(e), e.toString())));
-		// @formatter:on
+		return Stream.concat(Stream.of(new Row(0, getMark(report), report.toString())), report.getProblems().parallelStream()
+				.map(e -> new Row(1, getMark(e), e.toString())));
 	}
 
 	private static Stream<Row> getRows(ClassReport report) {
-		// @formatter:off
 		Stream<Row> head = Stream.of(new Row(0, getMark(report), report.toString()));
 
-		Stream<Row> problems = report.getProblems().parallelStream().map(e -> new Row(1, getMark(e), e.toString()));
+		Stream<Row> problems = report.getProblems().parallelStream()
+				.map(e -> new Row(1, getMark(e), e.toString()));
 
-		Stream<Row> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel().flatMap(List::stream).flatMap(HtmlOutputter::getRows)
+		Stream<Row> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel()
+				.flatMap(List::stream).flatMap(HtmlOutputter::getRows)
 				.map(Row::withIncreasedIndent);
 
 		return Stream.concat(Stream.concat(head, Stream.concat(problems, reports)), Stream.of(Row.EMPTY));
-		// @formatter:on
 	}
 
 	private static List<Row> getRows(SpecReport report) {
-		// @formatter:off
-		return report.getClassReports().parallelStream().map(HtmlOutputter::getRows).flatMap(Function.identity()).collect(Collectors.toList());
-		// @formatter:on
+		return report.getClassReports().parallelStream()
+				.map(HtmlOutputter::getRows)
+				.flatMap(Function.identity())
+				.collect(Collectors.toList());
 	}
 
 	private static Mark getMark(ReportProblem problem) {
