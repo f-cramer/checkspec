@@ -6,7 +6,21 @@
 	<artifactId>checkspec-parent</artifactId>
 	<version>1.0.0</version>
 
+	<name>CheckSpec</name>
 	<packaging>pom</packaging>
+
+	<developers>
+		<developer>
+			<name>Florian Cramer</name>
+		</developer>
+	</developers>
+
+	<distributionManagement>
+		<site>
+			<id>default</id>
+			<url>file://${project.basedir}/../checkspec-parent/target/stage/</url>
+		</site>
+	</distributionManagement>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -14,18 +28,34 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<source>${java.version}</source>
 
+		<checkstyle.version>7.8.1</checkstyle.version>
+		<checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
+
+		<commons.lang.version>3.5</commons.lang.version>
+		<commons.cli.version>1.4</commons.cli.version>
+		<findbugs.annotations.version>3.0.1</findbugs.annotations.version>
+		<javassist.version>3.21.0-GA</javassist.version>
 		<lombok.version>1.16.16</lombok.version>
+		<objenesis.version>2.5.1</objenesis.version>
+		<reflections.version>0.9.11</reflections.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
+
+		<checkstyle.plugin.version>2.17</checkstyle.plugin.version>
+		<findbugs.plugin.version>3.0.4</findbugs.plugin.version>
+		<javadoc.plugin.version>2.10.4</javadoc.plugin.version>
+		<jxr.plugin.version>2.5</jxr.plugin.version>
+		<lombok.plugin.version>${lombok.version}.0</lombok.plugin.version>
+		<shade.plugin.version>3.0.0</shade.plugin.version>
+		<versions.plugin.version>2.3</versions.plugin.version>
+
+		<junit.version>4.12</junit.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>checkspec-api</artifactId>
@@ -35,6 +65,12 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>checkspec-cli</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>checkspec-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -59,25 +95,25 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.5</version>
+				<version>${commons.lang.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-				<version>1.7.25</version>
+				<version>${slf4j.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>commons-cli</groupId>
 				<artifactId>commons-cli</artifactId>
-				<version>1.4</version>
+				<version>${commons.cli.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.reflections</groupId>
 				<artifactId>reflections</artifactId>
-				<version>0.9.11</version>
+				<version>${reflections.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.javassist</groupId>
@@ -89,38 +125,25 @@
 			<dependency>
 				<groupId>org.objenesis</groupId>
 				<artifactId>objenesis</artifactId>
-				<version>2.5.1</version>
+				<version>${objenesis.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.21.0-GA</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.google.code.findbugs</groupId>
-				<artifactId>annotations</artifactId>
-				<version>3.0.1</version>
+				<version>${javassist.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.thymeleaf</groupId>
 				<artifactId>thymeleaf</artifactId>
-				<version>3.0.6.RELEASE</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-				<scope>provided</scope>
+				<version>${thymeleaf.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<version>${junit.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -130,11 +153,14 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>annotations</artifactId>
+			<version>${findbugs.annotations.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -142,21 +168,9 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.3</version>
-				</plugin>
-
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>3.0.4</version>
-				</plugin>
-
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>${shade.plugin.version}</version>
 					<configuration>
 						<createDependencyReducedPom>false</createDependencyReducedPom>
 					</configuration>
@@ -169,6 +183,22 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>${checkstyle.plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.puppycrawl.tools</groupId>
+							<artifactId>checkstyle</artifactId>
+							<version>${checkstyle.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<linkXRef>true</linkXRef>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -176,8 +206,32 @@
 	<reporting>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${javadoc.plugin.version}</version>
+				<configuration>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<linkXRef>true</linkXRef>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${jxr.plugin.version}</version>
+			</plugin>
+
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
+				<version>${versions.plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -192,17 +246,17 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${findbugs.plugin.version}</version>
 			</plugin>
 		</plugins>
 	</reporting>
 
 	<modules>
-		<module>checkspec</module>
 		<module>checkspec-api</module>
 		<module>checkspec-cli</module>
+		<module>checkspec-core</module>
 		<module>checkspec-output</module>
 		<module>checkspec-test-files</module>
 		<module>checkspec-tests</module>
 	</modules>
-	<name>CheckSpec Parent</name>
 </project>

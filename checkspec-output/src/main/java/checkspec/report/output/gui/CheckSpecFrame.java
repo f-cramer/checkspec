@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -38,6 +37,7 @@ import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.report.output.text.TextOutputter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 class CheckSpecFrame extends JFrame {
@@ -188,7 +188,7 @@ class CheckSpecFrame extends JFrame {
 		}
 	}
 	
-	private String getIconName(@Nonnull ProblemType type) {
+	private String getIconName(@NonNull ProblemType type) {
 		switch (type) {
 		case SUCCESS:
 			return "success";
@@ -221,6 +221,7 @@ class CheckSpecFrame extends JFrame {
 		}
 
 		/**
+		 * Performs the export and returns any {@link Throwable} that was thrown.
 		 *
 		 * @return
 		 *         <ul>
@@ -275,8 +276,8 @@ class CheckSpecFrame extends JFrame {
 				}
 
 				@Override
-				public boolean accept(File f) {
-					return f.getName().endsWith(TEXT_EXTENSION) || f.isDirectory();
+				public boolean accept(File file) {
+					return file.getName().endsWith(TEXT_EXTENSION) || file.isDirectory();
 				}
 			});
 

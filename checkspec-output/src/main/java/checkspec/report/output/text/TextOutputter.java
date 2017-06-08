@@ -6,20 +6,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
 import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
 import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TextOutputter implements Outputter {
 
-	@Nonnull
+	@NonNull
 	private final Writer writer;
 
 	@Override

@@ -55,8 +55,8 @@ public final class CommandLineInterface {
 	private static final CommandLineOption<OutputFormat> FORMAT = EnumCommandLineOption.of("f", OutputFormat.TEXT);
 	private static final CommandLineOption<String> OUTPUT_PATH = TextCommandLineOption.single("o", String.class, Parser.IDENTITY);
 	private static final CommandLineOption<String> SPECS = TextCommandLineOption.multiple("s", String.class, Parser.IDENTITY);
-	private static final CommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL> multiple("p", URL.class, CommandLineInterface::parseURL);
-	private static final CommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL> multiple("i", URL.class, CommandLineInterface::parseURL);
+	private static final CommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL>multiple("p", URL.class, CommandLineInterface::parseUrl);
+	private static final CommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL>multiple("i", URL.class, CommandLineInterface::parseUrl);
 	private static final CommandLineOption<String> BASE_PACKAGE = TextCommandLineOption.single("b", "", Parser.IDENTITY);
 
 	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE);
@@ -76,12 +76,16 @@ public final class CommandLineInterface {
 		try {
 			commandLine = PARSER.parse(OPTIONS, args);
 		} catch (ParseException e) {
-			throw wrap(e);
+			throw wrapException(e);
 		}
-		
+
 		OutputFormat format = FORMAT.parse(commandLine);
 
 		Outputter outputter = null;
+		if (format == OutputFormat.GUI && GraphicsEnvironment.isHeadless()) {
+			throw new CommandLineException("jvm is headless, gui cannot be shown");
+		}
+		
 		switch (format) {
 		case TEXT:
 			outputter = createTextOutputter(commandLine);
@@ -90,27 +94,24 @@ public final class CommandLineInterface {
 			outputter = createHtmlOutputter(commandLine);
 			break;
 		case GUI:
-			if (GraphicsEnvironment.isHeadless()) {
-				throw new CommandLineException("jvm is headless, gui cannot be shown");
-			}
 			outputter = createGuiOutputter(commandLine);
 			break;
 		}
-		
+
 		URL[] specUrls = parseSpecUrls(commandLine);
 		URLClassLoader specClassLoader = new URLClassLoader(specUrls, ClassLoader.getSystemClassLoader());
 
-		Consumer<SpecReport> wrappedOutputter = wrap(outputter);
+		Consumer<SpecReport> wrappedOutputter = wrapOutputter(outputter);
 		ClassSpecification[] specifications = parseSpecs(commandLine, specUrls, specClassLoader);
 
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		ClassLoader implementationLoader = new URLClassLoader(implementationUrls, ClassLoader.getSystemClassLoader());
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPath(implementationUrls);
-		
+
 		String basePackage = parseBasePackage(commandLine);
-		
+
 		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage, implementationLoader);
-		
+
 		//@formatter:off
 		Arrays.stream(specifications).parallel()
 		      .map(loader)
@@ -119,11 +120,11 @@ public final class CommandLineInterface {
 		//@formatter:on
 	}
 
-	private static Consumer<SpecReport> wrap(Outputter outputter) {
+	private static Consumer<SpecReport> wrapOutputter(Outputter outputter) {
 		return report -> {
 			try {
 				outputter.output(report);
-			} catch (OutputException e) {
+			} catch (OutputException expected) {
 			}
 		};
 	}
@@ -137,7 +138,7 @@ public final class CommandLineInterface {
 			try {
 				writer = Files.newBufferedWriter(Paths.get(path), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 			} catch (IOException e) {
-				throw wrap(e);
+				throw wrapException(e);
 			}
 		}
 
@@ -149,7 +150,7 @@ public final class CommandLineInterface {
 		try {
 			return new HtmlOutputter(Paths.get(path));
 		} catch (IOException e) {
-			throw wrap(e);
+			throw wrapException(e);
 		}
 	}
 
@@ -159,11 +160,11 @@ public final class CommandLineInterface {
 
 	private static URL[] parseSpecUrls(CommandLine commandLine) throws CommandLineException {
 		URL[] specPaths = SPEC_PATH.parseMultiple(commandLine);
-		
+
 		if (specPaths.length == 0) {
 			//@formatter:off
 			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
-			             .map(CommandLineInterface::parseWrappedURL)
+			             .map(CommandLineInterface::parseWrappedUrl)
 			             .flatMap(Wrapper::getWrappedAsStream)
 			             .toArray(URL[]::new);
 			//@formatter:on
@@ -178,7 +179,7 @@ public final class CommandLineInterface {
 		if (implementationPaths.length == 0) {
 			//@formatter:off
 			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
-			             .map(CommandLineInterface::parseWrappedURL)
+			             .map(CommandLineInterface::parseWrappedUrl)
 			             .flatMap(Wrapper::getWrappedAsStream)
 			             .toArray(URL[]::new);
 			//@formatter:on
@@ -186,13 +187,13 @@ public final class CommandLineInterface {
 			return implementationPaths;
 		}
 	}
-	
+
 	private static ClassSpecification[] parseSpecs(CommandLine commandLine, URL[] urls, ClassLoader classLoader) throws CommandLineException {
 		String[] rawSpecs = SPECS.parseMultiple(commandLine);
 		if (rawSpecs.length == 0) {
 			return CheckSpec.findSpecifications(urls);
 		}
-		
+
 		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
 
 		//@formatter:off
@@ -209,20 +210,20 @@ public final class CommandLineInterface {
 			return specs;
 		}
 	}
-	
+
 	private static String parseBasePackage(CommandLine commandLine) throws CommandLineException {
 		return BASE_PACKAGE.parse(commandLine).replaceAll("\\s", "");
 	}
-	
-	private static Wrapper<URL, CommandLineException> parseWrappedURL(String uri) {
+
+	private static Wrapper<URL, CommandLineException> parseWrappedUrl(String uri) {
 		try {
-			return Wrapper.ofValue(parseURL(uri));
+			return Wrapper.ofValue(parseUrl(uri));
 		} catch (CommandLineException e) {
 			return Wrapper.ofException(e);
 		}
 	}
 
-	private static URL parseURL(String uriString) throws CommandLineException {
+	private static URL parseUrl(String uriString) throws CommandLineException {
 		try {
 			try {
 				return Paths.get(uriString).toAbsolutePath().normalize().toUri().toURL();
@@ -230,17 +231,17 @@ public final class CommandLineInterface {
 				return new URI(uriString).toURL();
 			}
 		} catch (MalformedURLException | URISyntaxException e) {
-			throw wrap(e);
+			throw wrapException(e);
 		}
 	}
-	
-	private static CommandLineException wrap(Exception e) {
-		return new CommandLineException(e.getMessage(), e);
+
+	private static CommandLineException wrapException(Exception ex) {
+		return new CommandLineException(ex.getMessage(), ex);
 	}
-	
+
 	private static Options createOptions(CommandLineOption<?>... singleOptions) {
 		Options options = new Options();
-		
+
 		//@formatter:off
 		Arrays.stream(singleOptions).parallel()
 		      .distinct()
@@ -248,7 +249,7 @@ public final class CommandLineInterface {
 		      .sorted(Comparator.comparing(Option::getOpt))
 		      .forEachOrdered(options::addOption);
 		//@formatter:on
-		
+
 		return options;
 	}
 }

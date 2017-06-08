@@ -3,12 +3,11 @@ package checkspec.cli.option;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.cli.Option;
 
 import checkspec.cli.CommandLineException;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
@@ -23,10 +22,10 @@ public final class EnumCommandLineOption<E extends Enum<E>> extends TextCommandL
 	@RequiredArgsConstructor
 	private static class EnumParser<E> implements Parser<E> {
 		
-		@Nonnull
+		@NonNull
 		private final Option option;
 		
-		@Nonnull
+		@NonNull
 		private final Class<E> clazz;
 
 		@Override
@@ -43,12 +42,12 @@ public final class EnumCommandLineOption<E extends Enum<E>> extends TextCommandL
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <E extends Enum<E>> EnumCommandLineOption<E> of(@Nonnull String opt, @Nonnull E defaultValue) {
+	public static <E extends Enum<E>> EnumCommandLineOption<E> of(@NonNull String opt, @NonNull E defaultValue) {
 		Option option = Option.builder(opt).hasArg().build();
 		return new EnumCommandLineOption<>(option, (Class<E>) defaultValue.getClass(), defaultValue);
 	}
 	
-	public static <E extends Enum<E>> EnumCommandLineOption<E> of(@Nonnull String opt, @Nonnull Class<E> clazz) {
+	public static <E extends Enum<E>> EnumCommandLineOption<E> of(@NonNull String opt, @NonNull Class<E> clazz) {
 		Option option = Option.builder(opt).hasArg().build();
 		return new EnumCommandLineOption<E>(option, clazz, null);
 	}

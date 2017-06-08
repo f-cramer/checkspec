@@ -23,11 +23,11 @@ public class FrameHolder {
 		
 		public void windowClosed(WindowEvent e) {
 			check();
-		};
+		}
 
 		public void windowOpened(WindowEvent e) {
 			check();
-		};
+		}
 
 		private void check() {
 			if (windows.parallelStream().noneMatch(Window::isVisible)) {
