@@ -35,8 +35,8 @@ public final class EnumCommandLineOption<E extends Enum<E>> extends TextCommandL
 
 		private CommandLineException createException(String value) {
 			String collect = Arrays.stream(clazz.getEnumConstants()).parallel()
-			                       .map(e -> "\"" + e + "\"")
-			                       .collect(Collectors.joining(", "));
+					.map(e -> "\"" + e + "\"")
+					.collect(Collectors.joining(", "));
 			return new CommandLineException(String.format(CANNOT_PARSE_ENUM, value, option.getOpt(), collect));
 		}
 	}

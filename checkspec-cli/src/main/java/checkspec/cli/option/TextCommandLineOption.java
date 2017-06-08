@@ -56,20 +56,20 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 		}
 
 		List<Wrapper<E, CommandLineException>> wrapped = Arrays.stream(values).parallel()
-		                                                       .map(this::parse)
-		                                                       .collect(Collectors.toList());
+				.map(this::parse)
+				.collect(Collectors.toList());
 		Optional<CommandLineException> exception = wrapped.parallelStream()
-		                                                  .filter(Wrapper::hasThrowable)
-		                                                  .map(Wrapper::getThrowable)
-		                                                  .findFirst();
+				.filter(Wrapper::hasThrowable)
+				.map(Wrapper::getThrowable)
+				.findFirst();
 
 		if (exception.isPresent()) {
 			throw exception.get();
 		}
 
 		return wrapped.parallelStream()
-		              .map(Wrapper::getWrapped)
-		              .toArray(i -> (E[]) Array.newInstance(clazz, i));
+				.map(Wrapper::getWrapped)
+				.toArray(i -> (E[]) Array.newInstance(clazz, i));
 	}
 
 	@Override
