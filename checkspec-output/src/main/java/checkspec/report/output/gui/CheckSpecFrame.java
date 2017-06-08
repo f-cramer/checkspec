@@ -174,7 +174,7 @@ class CheckSpecFrame extends JFrame {
 					} else if (userObject instanceof Report) {
 						type = ((Report<?, ?>) userObject).getType();
 					}
-					
+
 					iconName = type == null ? null : getIconName(type);
 				}
 
@@ -187,7 +187,7 @@ class CheckSpecFrame extends JFrame {
 			return component;
 		}
 	}
-	
+
 	private String getIconName(@NonNull ProblemType type) {
 		switch (type) {
 		case SUCCESS:
@@ -197,7 +197,7 @@ class CheckSpecFrame extends JFrame {
 		case ERROR:
 			return "failure";
 		}
-		
+
 		return null;
 	}
 
@@ -221,7 +221,8 @@ class CheckSpecFrame extends JFrame {
 		}
 
 		/**
-		 * Performs the export and returns any {@link Throwable} that was thrown.
+		 * Performs the export and returns any {@link Throwable} that was
+		 * thrown.
 		 *
 		 * @return
 		 *         <ul>

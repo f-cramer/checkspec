@@ -31,13 +31,10 @@ public class MethodUtils {
 	}
 
 	public static String getParameterList(@NonNull Method method) {
-		//@formatter:off
-		return IntStream.range(0, method.getParameterCount())
-		                .parallel()
-		                .mapToObj(i -> ResolvableType.forMethodParameter(method, i))
-		                .map(ClassUtils::getName)
-		                .collect(Collectors.joining(", "));
-		//@formatter:on
+		return IntStream.range(0, method.getParameterCount()).parallel()
+				.mapToObj(i -> ResolvableType.forMethodParameter(method, i))
+				.map(ClassUtils::getName)
+				.collect(Collectors.joining(", "));
 	}
 
 	public static boolean isAbstract(@NonNull Method method) {

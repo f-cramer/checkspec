@@ -44,28 +44,22 @@ public class ClassSpecification implements Specification<ResolvableType> {
 		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
 		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
 
-		//@formatter:off
 		fieldSpecifications = Arrays.stream(clazz.getDeclaredFields()).parallel()
-		                            .filter(ClassSpecification::isIncluded)
-		                            .map(FieldSpecification::new)
-		                            .toArray(FieldSpecification[]::new);
-		//@formatter:on
+				.filter(ClassSpecification::isIncluded)
+				.map(FieldSpecification::new)
+				.toArray(FieldSpecification[]::new);
 
-		//@formatter:off
 		methodSpecifications = Arrays.stream(clazz.getDeclaredMethods()).parallel()
-		                             .filter(ClassSpecification::isIncluded)
-		                             .map(MethodSpecification::new)
-		                             .toArray(MethodSpecification[]::new);
-		//@formatter:on
+				.filter(ClassSpecification::isIncluded)
+				.map(MethodSpecification::new)
+				.toArray(MethodSpecification[]::new);
 
-		//@formatter:off
 		constructorSpecifications = Arrays.stream(clazz.getDeclaredConstructors()).parallel()
-		                                  .filter(ClassSpecification::isIncluded)
-		                                  .map(ConstructorSpecification::new)
-		                                  .toArray(ConstructorSpecification[]::new);
-		//@formatter:on
+				.filter(ClassSpecification::isIncluded)
+				.map(ConstructorSpecification::new)
+				.toArray(ConstructorSpecification[]::new);
 	}
-	
+
 	private static boolean isIncluded(Field field) {
 		return isIncluded(field.getAnnotation(Spec.class));
 	}

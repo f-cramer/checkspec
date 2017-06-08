@@ -296,7 +296,9 @@ public class ResolvableType implements Serializable {
 		}
 
 		// Main assignability check about to follow
-		boolean exactMatch = (matchedBefore != null); // We're checking nested generic variables now...
+		boolean exactMatch = (matchedBefore != null); // We're checking nested
+														// generic variables
+														// now...
 		boolean checkGenerics = true;
 		Class<?> ourResolved = null;
 		if (this.type instanceof TypeVariable) {
@@ -960,10 +962,8 @@ public class ResolvableType implements Serializable {
 
 	// Factory methods
 
-	
-
 	// Factory methods
-	
+
 	/**
 	 * Return a {@link ResolvableType} for the specified {@link Class}, using
 	 * the full generic type information for assignability checks. For example:
@@ -1001,7 +1001,7 @@ public class ResolvableType implements Serializable {
 	}
 
 	// Factory methods
-	
+
 	/**
 	 * Return a {@link ResolvableType} for the specified {@link Class}, doing
 	 * assignability checks against the raw class only (analogous to
@@ -1022,12 +1022,12 @@ public class ResolvableType implements Serializable {
 			public ResolvableType[] getGenerics() {
 				return EMPTY_TYPES_ARRAY;
 			}
-	
+
 			@Override
 			public boolean isAssignableFrom(Class<?> other) {
 				return ClassUtils.isAssignable(getRawClass(), other);
 			}
-	
+
 			@Override
 			public boolean isAssignableFrom(ResolvableType other) {
 				Class<?> otherClass = other.getRawClass();

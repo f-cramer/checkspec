@@ -58,15 +58,21 @@ interface MethodInvocationHandler extends InvocationHandler, MethodHandler {
 	 */
 	Object invokeImpl(Object proxy, Method method, Object[] args) throws Throwable;
 
-	/* (non-Javadoc)
-	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
+	 * java.lang.reflect.Method, java.lang.Object[])
 	 */
 	default Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		return invokeImpl(proxy, method, args);
 	}
 
-	/* (non-Javadoc)
-	 * @see javassist.util.proxy.MethodHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.reflect.Method, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javassist.util.proxy.MethodHandler#invoke(java.lang.Object,
+	 * java.lang.reflect.Method, java.lang.reflect.Method, java.lang.Object[])
 	 */
 	default Object invoke(Object proxy, Method method, Method proceed, Object[] args) throws Throwable {
 		return invokeImpl(proxy, method, args);

@@ -35,11 +35,9 @@ public class MethodSpecification implements Specification<Method> {
 		name = method.getName();
 		returnType = ResolvableType.forMethodReturnType(method);
 
-		//@formatter:off
 		parameters = IntStream.range(0, method.getParameterCount())
-		                      .mapToObj(i -> new MethodParameterSpecification(method, i))
-		                      .toArray(MethodParameterSpecification[]::new);
-		//@formatter:on
+				.mapToObj(i -> new MethodParameterSpecification(method, i))
+				.toArray(MethodParameterSpecification[]::new);
 
 		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
 		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());

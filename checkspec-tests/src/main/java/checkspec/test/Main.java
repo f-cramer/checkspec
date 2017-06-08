@@ -20,7 +20,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		IntStream.iterate(0, i -> i + 1).parallel().filter(Character::isMirrored).findFirst().ifPresent(System.out::println);
-		
+
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
@@ -44,7 +44,7 @@ public class Main {
 
 		outputter = new GuiOutputter();
 		outputter.output(report);
-		
+
 		Calculator proxy = CheckSpec.createProxy(report);
 		System.out.println(proxy.add(1, 2));
 	}

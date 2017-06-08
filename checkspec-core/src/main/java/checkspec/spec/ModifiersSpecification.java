@@ -38,18 +38,15 @@ public class ModifiersSpecification {
 		isTransient = get(modifiers, Modifier::isTransient, annotations, Modifiers::isTransient);
 		isVolatile = get(modifiers, Modifier::isVolatile, annotations, Modifiers::isVolatile);
 	}
-	
+
 	private static State get(int modifiers, IntToBooleanFunction booleanFunction, Annotation[] annotations, Function<Modifiers, checkspec.api.State> stateFunction) {
-		//@formatter:off
-		return Arrays.stream(annotations)
-		             .parallel()
-		             .filter(Modifiers.class::isInstance)
-		             .map(Modifiers.class::cast)
-		             .findAny()
-		             .map(stateFunction::apply)
-		             .map(ModifiersSpecification::from)
-		             .orElseGet(() -> from(booleanFunction.apply(modifiers)));
-		//@formatter:on
+		return Arrays.stream(annotations).parallel()
+				.filter(Modifiers.class::isInstance)
+				.map(Modifiers.class::cast)
+				.findAny()
+				.map(stateFunction::apply)
+				.map(ModifiersSpecification::from)
+				.orElseGet(() -> from(booleanFunction.apply(modifiers)));
 	}
 
 	private static State from(checkspec.api.State state) {
@@ -66,7 +63,7 @@ public class ModifiersSpecification {
 
 		return null;
 	}
-	
+
 	private static State from(boolean state) {
 		return state ? State.TRUE : State.FALSE;
 	}

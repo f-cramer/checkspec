@@ -10,11 +10,11 @@ import java.lang.annotation.Target;
 public @interface Spec {
 
 	/**
-	 * @return if the annotated element is part of the specification
+	 * @return Whether or not the annotated element is part of the specification
 	 */
 	boolean value() default true;
 
 	Visibility[] visibility() default {};
-	
+
 	Modifiers modifiers() default @Modifiers;
 }

@@ -33,42 +33,31 @@ public class TextOutputter implements Outputter {
 	}
 
 	private static String toString(Report<?, ?> report) {
-		//@formatter:off
-		return report.getProblems()
-		             .parallelStream()
-		             .map(ReportProblem::toString)
-		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
-		             .trim()
-		             .replace("\n", "\n\t");
-		//@formatter:on
+		return report.getProblems().parallelStream()
+				.map(ReportProblem::toString)
+				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
+				.trim()
+				.replace("\n", "\n\t");
 	}
 
 	private static String toString(ClassReport report) {
 		Stream<String> problems = report.getProblems().parallelStream().map(Object::toString);
 
-		//@formatter:off
-		Stream<String> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports())
-		                               .parallel()
-		                               .flatMap(List::stream)
-		                               .map(TextOutputter::toString);
-		//@formatter:on
+		Stream<String> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel()
+				.flatMap(List::stream)
+				.map(TextOutputter::toString);
 
-		//@formatter:off
 		return Stream.concat(problems, reports)
-		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
-		             .trim()
-		             .replace("\n", "\n\t");
-		//@formatter:on
+				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
+				.trim()
+				.replace("\n", "\n\t");
 	}
 
 	private static String toString(SpecReport report) {
-		//@formatter:off
-		return report.getClassReports()
-		             .parallelStream()
-		             .map(TextOutputter::toString)
-		             .collect(Collectors.joining("\n", report.toString() + "\n", ""))
-		             .trim()
-		             .replace("\n", "\n\t");
-		//@formatter:on
+		return report.getClassReports().parallelStream()
+				.map(TextOutputter::toString)
+				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
+				.trim()
+				.replace("\n", "\n\t");
 	}
 }

@@ -25,12 +25,9 @@ public class ConstructorUtils {
 	}
 
 	public static String getParameterList(@NonNull Constructor<?> constructor) {
-		//@formatter:off
-		return IntStream.range(0, constructor.getParameterCount())
-		                .parallel()
-		                .mapToObj(i -> ResolvableType.forConstructorParameter(constructor, i))
-		                .map(ClassUtils::getName)
-		                .collect(Collectors.joining(", "));
-		//@formatter:on
+		return IntStream.range(0, constructor.getParameterCount()).parallel()
+				.mapToObj(i -> ResolvableType.forConstructorParameter(constructor, i))
+				.map(ClassUtils::getName)
+				.collect(Collectors.joining(", "));
 	}
 }

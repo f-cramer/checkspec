@@ -51,7 +51,7 @@ import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
 
 class StaticChecker {
-	
+
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
 
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
@@ -65,23 +65,18 @@ class StaticChecker {
 	}
 
 	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpecification spec) {
-		// @formatter:off
 		return Arrays.stream(spec.getMethodSpecifications()).parallel()
-		             .sorted(Comparator.comparing(MethodSpecification::getName))
-		             .map(e -> checkMethod(actual, e))
-		             .filter(Objects::nonNull)
-		             .collect(Collectors.toList());
-		// @formatter:on
+				.sorted(Comparator.comparing(MethodSpecification::getName))
+				.map(e -> checkMethod(actual, e))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
 	}
 
 	private static MethodReport checkMethod(Class<?> actual, MethodSpecification method) {
 		String methodName = method.getName();
 
 		// @formatter:off
-		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel()
-		                                  .map(MethodParameterSpecification::getType)
-		                                  .map(ResolvableType::getRawClass)
-		                                  .toArray(Class[]::new);
+		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel().map(MethodParameterSpecification::getType).map(ResolvableType::getRawClass).toArray(Class[]::new);
 		// @formatter:on
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
 
@@ -105,9 +100,7 @@ class StaticChecker {
 			return report;
 		} catch (NoSuchMethodException ex) {
 			// @formatter:off
-			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel()
-			                                          .filter(e -> e.getName().equals(methodName))
-			                                          .collect(Collectors.toList());
+			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel().filter(e -> e.getName().equals(methodName)).collect(Collectors.toList());
 			// @formatter:on
 
 			if (methodsWithEqualName.isEmpty()) {
@@ -154,10 +147,7 @@ class StaticChecker {
 
 	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
 		// @formatter:off
-		return Arrays.stream(spec.getFieldSpecifications())
-		             .parallel()
-		             .map(e -> checkField(clazz, e))
-		             .collect(Collectors.toList());
+		return Arrays.stream(spec.getFieldSpecifications()).parallel().map(e -> checkField(clazz, e)).collect(Collectors.toList());
 		// @formatter:on
 	}
 
@@ -196,7 +186,7 @@ class StaticChecker {
 
 	public static Optional<ReportProblem> checkVisibility(int actualModifiers, VisibilitySpecification spec) {
 		Visibility actualVisibility = getVisibility(actualModifiers);
-	
+
 		if (!spec.matches(actualVisibility)) {
 			ReportProblem problem;
 			Visibility[] visibilities = spec.getVisibilities();
@@ -210,7 +200,7 @@ class StaticChecker {
 			}
 			return Optional.of(problem);
 		}
-	
+
 		return Optional.empty();
 	}
 
@@ -218,7 +208,7 @@ class StaticChecker {
 		ModifiersSpecification modifiersSpec = spec.getModifiers();
 		return checkModifiers(actual.getModifiers(), modifiersSpec, !modifiersSpec.isInterface() || actual.isInterface());
 	}
-	
+
 	public static List<ReportProblem> checkModifiers(Member actual, Specification<? extends Member> spec) {
 		boolean checkAbstract = !spec.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
 		return checkModifiers(actual.getModifiers(), spec.getModifiers(), checkAbstract);
@@ -226,7 +216,7 @@ class StaticChecker {
 
 	private static List<ReportProblem> checkModifiers(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
-	
+
 		if (checkAbstract) {
 			problems.add(checkModifier(Modifier.isAbstract(actual), spec.isAbstract(), ABSTRACT));
 		}
@@ -237,7 +227,7 @@ class StaticChecker {
 		problems.add(checkModifier(Modifier.isSynchronized(actual), spec.isSynchronized(), SYNCHRONIZED));
 		problems.add(checkModifier(Modifier.isTransient(actual), spec.isTransient(), TRANSIENT));
 		problems.add(checkModifier(Modifier.isVolatile(actual), spec.isVolatile(), VOLATILE));
-	
+
 		return problems.parallelStream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 	}
 
@@ -320,9 +310,7 @@ class StaticChecker {
 			Object implementation = implementingClass.newInstance();
 
 			// @formatter:off
-			Map<Method, MethodReport> methodReports = classReport.getMethodReports()
-			                                                     .parallelStream()
-			                                                     .collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
+			Map<Method, MethodReport> methodReports = classReport.getMethodReports().parallelStream().collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
 			// @formatter:on
 
 			return (proxy, method, args) -> {

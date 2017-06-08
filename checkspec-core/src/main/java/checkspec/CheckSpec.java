@@ -43,12 +43,9 @@ public class CheckSpec {
 		if (DEFAULT_INSTANCE == null) {
 			synchronized (DEFAULT_SYNC) {
 				if (DEFAULT_INSTANCE == null) {
-					//@formatter:off
-					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH)
-					                                 .split(System.getProperty(PATH_SEPARATOR)))
-					                   .flatMap(CheckSpec::getUrlAsStream)
-					                   .toArray(URL[]::new);
-					//@formatter:on
+					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
+							.flatMap(CheckSpec::getUrlAsStream)
+							.toArray(URL[]::new);
 					DEFAULT_INSTANCE = new CheckSpec(urls);
 				}
 			}
@@ -60,13 +57,10 @@ public class CheckSpec {
 		if (LIBRARY_LESS_INSTANCE == null) {
 			synchronized (LIBRARY_LESS_SYNC) {
 				if (LIBRARY_LESS_INSTANCE == null) {
-					//@formatter:off
-					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH)
-					                                 .split(System.getProperty(PATH_SEPARATOR)))
-					                   .filter(e -> !e.endsWith(".jar"))
-					                   .flatMap(CheckSpec::getUrlAsStream)
-					                   .toArray(URL[]::new);
-					//@formatter:on
+					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
+							.filter(e -> !e.endsWith(".jar"))
+							.flatMap(CheckSpec::getUrlAsStream)
+							.toArray(URL[]::new);
 					LIBRARY_LESS_INSTANCE = new CheckSpec(urls);
 				}
 			}
@@ -82,32 +76,25 @@ public class CheckSpec {
 		Reflections reflections = createReflections(urls);
 		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.classStreamSupplier(new URLClassLoader(urls, ClassLoader.getSystemClassLoader()));
 
-		// @formatter:off
 		return reflections.getAllTypes().parallelStream()
-		                  .flatMap(classSupplier)
-		                  .filter(CheckSpec::hasSpecAnnotation)
-		                  .map(ClassSpecification::new)
-		                  .toArray(ClassSpecification[]::new);
-		// @formatter:on
+				.flatMap(classSupplier)
+				.filter(CheckSpec::hasSpecAnnotation)
+				.map(ClassSpecification::new)
+				.toArray(ClassSpecification[]::new);
 	}
 
 	private static boolean hasSpecAnnotation(Class<?> clazz) {
-		// @formatter:off
-		return Arrays.stream(clazz.getAnnotations())
-		             .parallel()
-		             .map(Annotation::annotationType)
-		             .map(Class::getName)
-		             .anyMatch(StreamUtils.equalsPredicate(Spec.class.getName()));
-		// @formatter:on
+		return Arrays.stream(clazz.getAnnotations()).parallel()
+				.map(Annotation::annotationType)
+				.map(Class::getName)
+				.anyMatch(StreamUtils.equalsPredicate(Spec.class.getName()));
 	}
 
 	private static Reflections createReflections(URL[] urls) {
-		// @formatter:off
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
 				.setUrls(urls)
 				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
-		// @formatter:on
 
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
@@ -188,16 +175,11 @@ public class CheckSpec {
 		Function<String, Stream<Class<?>>> loader = ClassUtils.classStreamSupplier(classLoader);
 		String pkg = basePackageName.toLowerCase();
 
-		// @formatter:off
 		List<ClassReport> classReports = reflections.getAllTypes().parallelStream()
-		                                            .filter(e -> !e.equals(spec.getName()))
-		                                            .filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
-		                                            .flatMap(loader)
-		                                            .map(e -> checkImplements(e, spec))
-		                                            .filter(ClassReport::hasAnyImplementation)
-		                                            .sorted()
-		                                            .collect(Collectors.toList());
+				.filter(e -> !e.equals(spec.getName()))
+				.filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
+				.flatMap(loader)
+				.map(e -> checkImplements(e, spec)).filter(ClassReport::hasAnyImplementation).sorted().collect(Collectors.toList());
 		return new SpecReport(spec, classReports);
-		// @formatter:on
 	}
 }

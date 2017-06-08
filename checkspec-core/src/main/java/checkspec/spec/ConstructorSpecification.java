@@ -33,10 +33,8 @@ public class ConstructorSpecification implements Specification<Constructor<?>> {
 		visibility = new VisibilitySpecification(constructor.getModifiers(), constructor.getAnnotations());
 		rawElement = constructor;
 
-		//@formatter:off
 		parameters = IntStream.range(0, constructor.getParameterCount())
-		                      .mapToObj(i -> new MethodParameterSpecification(constructor, i))
-		                      .toArray(MethodParameterSpecification[]::new);
-		//@formatter:on
+				.mapToObj(i -> new MethodParameterSpecification(constructor, i))
+				.toArray(MethodParameterSpecification[]::new);
 	}
 }

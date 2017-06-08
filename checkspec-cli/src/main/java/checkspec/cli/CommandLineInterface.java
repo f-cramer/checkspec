@@ -55,8 +55,8 @@ public final class CommandLineInterface {
 	private static final CommandLineOption<OutputFormat> FORMAT = EnumCommandLineOption.of("f", OutputFormat.TEXT);
 	private static final CommandLineOption<String> OUTPUT_PATH = TextCommandLineOption.single("o", String.class, Parser.IDENTITY);
 	private static final CommandLineOption<String> SPECS = TextCommandLineOption.multiple("s", String.class, Parser.IDENTITY);
-	private static final CommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL>multiple("p", URL.class, CommandLineInterface::parseUrl);
-	private static final CommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL>multiple("i", URL.class, CommandLineInterface::parseUrl);
+	private static final CommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL> multiple("p", URL.class, CommandLineInterface::parseUrl);
+	private static final CommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL> multiple("i", URL.class, CommandLineInterface::parseUrl);
 	private static final CommandLineOption<String> BASE_PACKAGE = TextCommandLineOption.single("b", "", Parser.IDENTITY);
 
 	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE);
@@ -85,7 +85,7 @@ public final class CommandLineInterface {
 		if (format == OutputFormat.GUI && GraphicsEnvironment.isHeadless()) {
 			throw new CommandLineException("jvm is headless, gui cannot be shown");
 		}
-		
+
 		switch (format) {
 		case TEXT:
 			outputter = createTextOutputter(commandLine);
@@ -113,10 +113,9 @@ public final class CommandLineInterface {
 		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage, implementationLoader);
 
 		//@formatter:off
-		Arrays.stream(specifications).parallel()
+		Arrays.stream(specifications)
 		      .map(loader)
-		      .peek(wrappedOutputter::accept)
-		      .toArray(SpecReport[]::new);
+		      .forEach(wrappedOutputter::accept);
 		//@formatter:on
 	}
 
@@ -162,12 +161,7 @@ public final class CommandLineInterface {
 		URL[] specPaths = SPEC_PATH.parseMultiple(commandLine);
 
 		if (specPaths.length == 0) {
-			//@formatter:off
-			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
-			             .map(CommandLineInterface::parseWrappedUrl)
-			             .flatMap(Wrapper::getWrappedAsStream)
-			             .toArray(URL[]::new);
-			//@formatter:on
+			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel().map(CommandLineInterface::parseWrappedUrl).flatMap(Wrapper::getWrappedAsStream).toArray(URL[]::new);
 		} else {
 			return specPaths;
 		}
@@ -196,13 +190,13 @@ public final class CommandLineInterface {
 
 		Function<String, Stream<Class<?>>> loader = classStreamSupplier(classLoader);
 
-		//@formatter:off
+		// @formatter:off
 		ClassSpecification[] specs = Arrays.stream(rawSpecs).parallel()
 		                                   .flatMap(loader)
 		                                   .filter(Objects::nonNull)
 		                                   .map(ClassSpecification::new)
 		                                   .toArray(ClassSpecification[]::new);
-		//@formatter:on
+		// @formatter:on
 
 		if (specs.length == 0) {
 			throw new CommandLineException("No spec was given or none of the given spec classes could be found");
@@ -242,13 +236,13 @@ public final class CommandLineInterface {
 	private static Options createOptions(CommandLineOption<?>... singleOptions) {
 		Options options = new Options();
 
-		//@formatter:off
+		// @formatter:off
 		Arrays.stream(singleOptions).parallel()
 		      .distinct()
 		      .map(CommandLineOption::getOption)
 		      .sorted(Comparator.comparing(Option::getOpt))
 		      .forEachOrdered(options::addOption);
-		//@formatter:on
+		// @formatter:on
 
 		return options;
 	}

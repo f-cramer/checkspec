@@ -40,9 +40,9 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 
 	private Wrapper<E, CommandLineException> parse(String value) {
 		try {
-			return Wrapper.<E, CommandLineException>ofValue(parser.parse(value));
+			return Wrapper.<E, CommandLineException> ofValue(parser.parse(value));
 		} catch (CommandLineException e) {
-			return Wrapper.<E, CommandLineException>ofException(e);
+			return Wrapper.<E, CommandLineException> ofException(e);
 		}
 	}
 
@@ -55,14 +55,21 @@ public class TextCommandLineOption<E> implements CommandLineOption<E> {
 			return (E[]) Array.newInstance(clazz, 0);
 		}
 
-		List<Wrapper<E, CommandLineException>> wrapped = Arrays.stream(values).parallel().map(this::parse).collect(Collectors.toList());
-		Optional<CommandLineException> exception = wrapped.parallelStream().filter(Wrapper::hasThrowable).map(Wrapper::getThrowable).findFirst();
+		List<Wrapper<E, CommandLineException>> wrapped = Arrays.stream(values).parallel()
+		                                                       .map(this::parse)
+		                                                       .collect(Collectors.toList());
+		Optional<CommandLineException> exception = wrapped.parallelStream()
+		                                                  .filter(Wrapper::hasThrowable)
+		                                                  .map(Wrapper::getThrowable)
+		                                                  .findFirst();
 
 		if (exception.isPresent()) {
 			throw exception.get();
 		}
 
-		return wrapped.parallelStream().map(Wrapper::getWrapped).toArray(i -> (E[]) Array.newInstance(clazz, i));
+		return wrapped.parallelStream()
+		              .map(Wrapper::getWrapped)
+		              .toArray(i -> (E[]) Array.newInstance(clazz, i));
 	}
 
 	@Override

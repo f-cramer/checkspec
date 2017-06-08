@@ -20,7 +20,7 @@ public class FrameHolder {
 	private final List<Window> windows = new LinkedList<>();
 
 	private WindowListener listener = new WindowAdapter() {
-		
+
 		public void windowClosed(WindowEvent e) {
 			check();
 		}

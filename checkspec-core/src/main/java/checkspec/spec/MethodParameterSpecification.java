@@ -22,7 +22,7 @@ public class MethodParameterSpecification {
 
 	@NonNull
 	private final Parameter rawElement;
-	
+
 	public MethodParameterSpecification(Method method, int parameterIndex) {
 		type = ResolvableType.forMethodParameter(method, parameterIndex);
 		rawElement = method.getParameters()[parameterIndex];
