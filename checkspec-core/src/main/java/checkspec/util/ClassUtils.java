@@ -1,5 +1,7 @@
 package checkspec.util;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -11,6 +13,9 @@ import lombok.experimental.UtilityClass;
 public class ClassUtils {
 
 	private static String TO_STRING_FORMAT = "%s %s %s";
+	
+	private static volatile ClassLoader SYSTEM_CLASS_LOADER;
+	private static final Object SYSTEM_CLASS_LOAD_SYNC = new Object();
 
 	public static String toString(ResolvableType type) {
 		Visibility visibility = getVisibility(type);
@@ -129,5 +134,18 @@ public class ClassUtils {
 		}
 
 		return org.apache.commons.lang3.ClassUtils.isAssignable(cls.getRawClass(), toClass.getRawClass());
+	}
+	
+	public static ClassLoader getSystemClassLoader() {
+		if (SYSTEM_CLASS_LOADER == null) {
+			synchronized (SYSTEM_CLASS_LOAD_SYNC) {
+				if (SYSTEM_CLASS_LOADER == null) {
+					PrivilegedAction<ClassLoader> action = () -> ClassLoader.getSystemClassLoader();
+					SYSTEM_CLASS_LOADER = AccessController.doPrivileged(action);
+				}
+			}
+		}
+		
+		return SYSTEM_CLASS_LOADER;
 	}
 }

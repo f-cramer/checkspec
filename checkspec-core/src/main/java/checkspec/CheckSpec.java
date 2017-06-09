@@ -47,7 +47,7 @@ public final class CheckSpec {
 	private static final ClassLoader BOOT_CLASS_LOADER;
 
 	static {
-		ClassLoader loader = ClassLoader.getSystemClassLoader();
+		ClassLoader loader = ClassUtils.getSystemClassLoader();
 		while (loader.getParent() != null) {
 			loader = loader.getParent();
 		}
@@ -90,7 +90,7 @@ public final class CheckSpec {
 
 	public static ClassSpecification[] findSpecifications(URL[] urls) {
 		Reflections reflections = createReflections(urls);
-		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.classStreamSupplier(new URLClassLoader(urls, ClassLoader.getSystemClassLoader()));
+		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.classStreamSupplier(new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
 
 		return reflections.getAllTypes().parallelStream()
 				.flatMap(classSupplier)
@@ -158,7 +158,7 @@ public final class CheckSpec {
 	private final ClassLoader classLoader;
 
 	private CheckSpec(URL[] urls) {
-		this(createReflections(urls), new URLClassLoader(urls, ClassLoader.getSystemClassLoader()));
+		this(createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
 	}
 
 	/**

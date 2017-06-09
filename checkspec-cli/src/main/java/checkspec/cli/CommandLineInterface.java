@@ -45,6 +45,7 @@ import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.report.output.text.TextOutputter;
 import checkspec.spec.ClassSpecification;
+import checkspec.util.ClassUtils;
 import checkspec.util.Wrapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -125,7 +126,7 @@ public final class CommandLineInterface {
 		}
 
 		URL[] specUrls = parseSpecUrls(commandLine);
-		URLClassLoader specClassLoader = new URLClassLoader(specUrls, ClassLoader.getSystemClassLoader());
+		URLClassLoader specClassLoader = new URLClassLoader(specUrls, ClassUtils.getSystemClassLoader());
 
 		Consumer<SpecReport> wrappedOutputter = wrapOutputter(outputter);
 		ClassSpecification[] specifications = parseSpecs(commandLine, specUrls, specClassLoader);

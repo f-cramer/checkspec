@@ -50,6 +50,8 @@
 		<versions.plugin.version>2.3</versions.plugin.version>
 
 		<checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
+		<findbugs.effort>Max</findbugs.effort>
+		<findbugs.threshold>low</findbugs.threshold>
 	</properties>
 
 	<dependencyManagement>

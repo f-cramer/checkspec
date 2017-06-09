@@ -229,7 +229,7 @@ final class StaticChecker {
 				problem = new ReportProblem(1, String.format("should have visibility \"%s\"", visibilities[0]), Type.ERROR);
 			} else {
 				String visibilityString = Arrays.stream(visibilities).map(Visibility::toString).collect(Collectors.joining(", "));
-				problem = new ReportProblem(1, String.format("should have any of the following visibilities: \"\"", visibilityString), Type.ERROR);
+				problem = new ReportProblem(1, String.format("should have any of the following visibilities: \"%s\"", visibilityString), Type.ERROR);
 			}
 			return Optional.of(problem);
 		}
