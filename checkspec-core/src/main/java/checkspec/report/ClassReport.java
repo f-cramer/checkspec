@@ -1,6 +1,7 @@
 package checkspec.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,24 +31,36 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 		return Collections.unmodifiableList(subReports);
 	}
 
+	public void addFieldReport(FieldReport report) {
+		fieldReports.add(report);
+	}
+
+	public void addFieldReports(Collection<FieldReport> reports) {
+		fieldReports.addAll(reports);
+	}
+
 	public List<FieldReport> getFieldReports() {
 		return Collections.unmodifiableList(fieldReports);
 	}
 
-	public void add(FieldReport report) {
-		fieldReports.add(report);
-	}
-
-	public void add(ConstructorReport report) {
+	public void addConstructorReport(ConstructorReport report) {
 		constructorReports.add(report);
 	}
 
-	public void add(MethodReport report) {
-		methodReports.add(report);
+	public void addConstructorReports(Collection<ConstructorReport> reports) {
+		fieldReports.addAll(fieldReports);
 	}
 
 	public List<ConstructorReport> getConstructorReports() {
 		return Collections.unmodifiableList(constructorReports);
+	}
+
+	public void addMethodReport(MethodReport report) {
+		methodReports.add(report);
+	}
+
+	public void addMethodReports(Collection<MethodReport> reports) {
+		methodReports.addAll(reports);
 	}
 
 	public List<MethodReport> getMethodReports() {
@@ -57,19 +70,5 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 	public boolean hasAnyImplementation() {
 		List<Report<?, ?>> subReports = getSubReports();
 		return subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.getImplementation() != null);
-	}
-
-	@Override
-	protected void addSubReport(Report<?, ?> report) {
-		if (report instanceof FieldReport) {
-			add((FieldReport) report);
-		} else if (report instanceof ConstructorReport) {
-			add((ConstructorReport) report);
-		} else if (report instanceof MethodReport) {
-			add((MethodReport) report);
-		} else {
-			ResolvableType type = ResolvableType.forClass(report.getClass());
-			throw new IllegalArgumentException(String.format("cannot add report of type \"%s\" to class report", type));
-		}
 	}
 }

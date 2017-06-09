@@ -131,12 +131,11 @@ public final class CommandLineInterface {
 		ClassSpecification[] specifications = parseSpecs(commandLine, specUrls, specClassLoader);
 
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
-		ClassLoader implementationLoader = new URLClassLoader(implementationUrls, ClassLoader.getSystemClassLoader());
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPath(implementationUrls);
 
 		String basePackage = parseBasePackage(commandLine);
 
-		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage, implementationLoader);
+		Function<ClassSpecification, SpecReport> loader = e -> checkSpec.checkSpec(e, basePackage);
 
 		Arrays.stream(specifications)
 				.map(loader)

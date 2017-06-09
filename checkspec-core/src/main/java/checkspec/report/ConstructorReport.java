@@ -10,12 +10,12 @@ import checkspec.spec.ConstructorSpecification;
 
 public class ConstructorReport extends Report<ConstructorSpecification, Constructor<?>> {
 
-	public ConstructorReport(Constructor<?> specConstructor) {
-		super(new ConstructorSpecification(specConstructor), null, null);
+	public ConstructorReport(ConstructorSpecification specConstructor) {
+		super(specConstructor, null, null);
 	}
 
-	public ConstructorReport(Constructor<?> specConstructor, Constructor<?> implementingConstructor) {
-		super(new ConstructorSpecification(specConstructor), implementingConstructor, null);
+	public ConstructorReport(ConstructorSpecification specConstructor, Constructor<?> implementingConstructor) {
+		super(specConstructor, implementingConstructor, null);
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.google.common.base.Objects;
+
 import lombok.NonNull;
 
 public class StreamUtils {
@@ -14,7 +16,7 @@ public class StreamUtils {
 	}
 	
 	public static <T, U> Predicate<U> equalsPredicate(@NonNull T t, @NonNull Function<U, T> converter) {
-		return o -> t.equals(converter.apply(o));
+		return o -> Objects.equal(t, converter.apply(o));
 	}
 	
 	public static <T, U, V> Function<T, V> concat(@NonNull Function<T, U> c1, @NonNull Function<U, V> c2) {

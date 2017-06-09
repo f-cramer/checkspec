@@ -39,10 +39,6 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 		return Collections.emptyList();
 	}
 
-	public void addSubReports(@NonNull List<? extends Report<?, ?>> reports) {
-		reports.forEach(this::addSubReport);
-	}
-
 	public void addProblem(@NonNull ReportProblem entry) {
 		problems.add(entry);
 	}
@@ -70,10 +66,6 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 
 			return problemsSum + subReportsSum;
 		}
-	}
-
-	protected void addSubReport(Report<?, ?> subReport) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

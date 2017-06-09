@@ -11,6 +11,7 @@ import static javax.lang.model.element.Modifier.SYNCHRONIZED;
 import static javax.lang.model.element.Modifier.TRANSIENT;
 import static javax.lang.model.element.Modifier.VOLATILE;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -31,12 +32,14 @@ import org.objenesis.ObjenesisStd;
 
 import checkspec.api.Visibility;
 import checkspec.report.ClassReport;
+import checkspec.report.ConstructorReport;
 import checkspec.report.FieldReport;
 import checkspec.report.MethodReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
+import checkspec.spec.ConstructorSpecification;
 import checkspec.spec.FieldSpecification;
 import checkspec.spec.MethodParameterSpecification;
 import checkspec.spec.MethodSpecification;
@@ -60,11 +63,70 @@ final class StaticChecker {
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
 		ClassReport report = new ClassReport(spec, clazz);
 
+		checkVisibility(clazz, spec).ifPresent(report::addProblem);
 		report.addProblems(checkModifiers(clazz, spec));
-		report.addSubReports(checkFields(clazz, spec));
-		report.addSubReports(checkMethods(clazz, spec));
+		report.addFieldReports(checkFields(clazz, spec));
+		report.addConstructorReports(checkConstructors(clazz, spec));
+		report.addMethodReports(checkMethods(clazz, spec));
 
 		return report;
+	}
+
+	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
+		return Arrays.stream(spec.getFieldSpecifications()).parallel()
+				.map(e -> checkField(clazz, e))
+				.collect(Collectors.toList());
+	}
+
+	private static FieldReport checkField(Class<?> clazz, FieldSpecification field) {
+		String fieldName = field.getName();
+	
+		ResolvableType fieldType = field.getType();
+		String fieldTypeName = getName(fieldType);
+	
+		try {
+			Field actualField = clazz.getDeclaredField(fieldName);
+			ResolvableType actualFieldType = FieldUtils.getType(actualField);
+			String actualFieldTypeName = getName(actualFieldType);
+	
+			FieldReport report = new FieldReport(field, actualField);
+	
+			if (!actualFieldType.equals(fieldType)) {
+				String format = "has type of \"%s\" rather than \"%s\"";
+				String message = String.format(format, actualFieldTypeName, fieldTypeName);
+				report.addProblem(new ReportProblem(1, message, Type.WARNING));
+			}
+	
+			return report;
+		} catch (NoSuchFieldException e) {
+			return new FieldReport(field);
+		}
+	}
+
+	public static List<ConstructorReport> checkConstructors(Class<?> actual, ClassSpecification spec) {
+		return Arrays.stream(spec.getConstructorSpecifications()).parallel()
+				.map(e -> checkConstructor(actual, e))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+
+	private static ConstructorReport checkConstructor(Class<?> actual, ConstructorSpecification constructor) {
+		Class<?>[] parameterTypes = Arrays.stream(constructor.getParameters()).parallel()
+				.map(MethodParameterSpecification::getType)
+				.map(ResolvableType::getRawClass)
+				.toArray(Class[]::new);
+	
+		try {
+			Constructor<?> actualConstructor = actual.getDeclaredConstructor(parameterTypes);
+			ConstructorReport report = new ConstructorReport(constructor, actualConstructor);
+	
+			checkVisibility(actualConstructor, constructor).ifPresent(report::addProblem);
+			report.addProblems(checkModifiers(actualConstructor, constructor));
+	
+			return report;
+		} catch (NoSuchMethodException | NoClassDefFoundError ex) {
+			return new ConstructorReport(constructor);
+		}
 	}
 
 	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpecification spec) {
@@ -102,7 +164,7 @@ final class StaticChecker {
 			report.addProblems(checkModifiers(actualMethod, method));
 
 			return report;
-		} catch (NoSuchMethodException ex) {
+		} catch (NoSuchMethodException | NoClassDefFoundError ex) {
 			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel()
 					.filter(e -> e.getName().equals(methodName))
 					.collect(Collectors.toList());
@@ -117,8 +179,6 @@ final class StaticChecker {
 
 				return report;
 			}
-		} catch (NoClassDefFoundError e) {
-			return null;
 		}
 	}
 
@@ -147,37 +207,6 @@ final class StaticChecker {
 		}
 
 		return problems;
-	}
-
-	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
-		return Arrays.stream(spec.getFieldSpecifications()).parallel()
-				.map(e -> checkField(clazz, e))
-				.collect(Collectors.toList());
-	}
-
-	private static FieldReport checkField(Class<?> clazz, FieldSpecification field) {
-		String fieldName = field.getName();
-
-		ResolvableType fieldType = field.getType();
-		String fieldTypeName = getName(fieldType);
-
-		try {
-			Field actualField = clazz.getDeclaredField(fieldName);
-			ResolvableType actualFieldType = FieldUtils.getType(actualField);
-			String actualFieldTypeName = getName(actualFieldType);
-
-			FieldReport report = new FieldReport(field, actualField);
-
-			if (!actualFieldType.equals(fieldType)) {
-				String format = "has type of \"%s\" rather than \"%s\"";
-				String message = String.format(format, actualFieldTypeName, fieldTypeName);
-				report.addProblem(new ReportProblem(1, message, Type.WARNING));
-			}
-
-			return report;
-		} catch (NoSuchFieldException e) {
-			return new FieldReport(field);
-		}
 	}
 
 	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpecification spec) {

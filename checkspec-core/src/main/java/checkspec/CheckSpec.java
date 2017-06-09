@@ -28,8 +28,11 @@ import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
 import checkspec.util.StreamUtils;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckSpec {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
@@ -40,6 +43,17 @@ public final class CheckSpec {
 
 	private static volatile CheckSpec LIBRARY_LESS_INSTANCE;
 	private static final Object LIBRARY_LESS_SYNC = new Object();
+
+	private static final ClassLoader BOOT_CLASS_LOADER;
+
+	static {
+		ClassLoader loader = ClassLoader.getSystemClassLoader();
+		while (loader.getParent() != null) {
+			loader = loader.getParent();
+		}
+
+		BOOT_CLASS_LOADER = loader;
+	}
 
 	public static CheckSpec getDefaultInstance() {
 		if (DEFAULT_INSTANCE == null) {
@@ -141,9 +155,10 @@ public final class CheckSpec {
 	}
 
 	private final Reflections reflections;
+	private final ClassLoader classLoader;
 
 	private CheckSpec(URL[] urls) {
-		reflections = createReflections(urls);
+		this(createReflections(urls), new URLClassLoader(urls, ClassLoader.getSystemClassLoader()));
 	}
 
 	/**
@@ -163,47 +178,43 @@ public final class CheckSpec {
 		return checkSpec(spec, "");
 	}
 
-	/**
-	 * Creates a {@link SpecReport} for the given specification {@code spec}
-	 * that is populated with a {@link ClassReport} for any class that in any
-	 * way matches {@code spec}. Any implementation is loaded with the given
-	 * class loader.
-	 * <p>
-	 * Behaves the same as a call to {@code checkSpec(spec, "", classLoader)}
-	 * 
-	 * @param spec
-	 *            the non-null specification the return {@code SpecReport}
-	 *            should be based on
-	 * @param classLoader
-	 *            the class loader the implemenations are loaded from
-	 * @return a {@code SpecReport} that is populated with a {@code ClassReport}
-	 *         for any class that in any way matches {@code spec}
-	 */
-	public SpecReport checkSpec(ClassSpecification spec, ClassLoader classLoader) {
-		return checkSpec(spec, "", classLoader);
-	}
-
-	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage) {
+	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull Class<?> basePackage) {
 		return checkSpec(spec, getPackage(basePackage));
 	}
 
-	public SpecReport checkSpec(ClassSpecification spec, String basePackageName) {
-		return checkSpec(spec, basePackageName, ClassLoader.getSystemClassLoader());
-	}
-
-	public SpecReport checkSpec(ClassSpecification spec, Class<?> basePackage, ClassLoader classLoader) {
-		return checkSpec(spec, getPackage(basePackage), classLoader);
-	}
-
-	public SpecReport checkSpec(ClassSpecification spec, String basePackageName, ClassLoader classLoader) {
-		Function<String, Stream<Class<?>>> loader = ClassUtils.classStreamSupplier(classLoader);
-		String pkg = basePackageName.toLowerCase();
-
+	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull String basePackageName) {
 		List<ClassReport> classReports = reflections.getAllTypes().parallelStream()
-				.filter(e -> !e.equals(spec.getName()))
-				.filter(e -> getPackage(e).toLowerCase().startsWith(pkg))
-				.flatMap(loader)
-				.map(e -> checkImplements(e, spec)).filter(ClassReport::hasAnyImplementation).sorted().collect(Collectors.toList());
+//				.filter(StreamUtils.equalsPredicate(spec.getName()).negate())
+				.filter(e -> getPackage(e).toLowerCase().startsWith(basePackageName))
+				.flatMap(ClassUtils.classStreamSupplier(classLoader))
+				.filter(StreamUtils.equalsPredicate(getLocation(spec.getRawElement().getRawClass()), CheckSpec::getLocation).negate())
+				.map(e -> checkImplements(e, spec))
+				.filter(ClassReport::hasAnyImplementation)
+				.sorted()
+				.collect(Collectors.toList());
+
 		return new SpecReport(spec, classReports);
+	}
+	
+	private static URL getLocation(@NonNull Class<?> clazz) {
+		String canonicalName;
+		Class<?> c1 = clazz;
+		
+		while (c1 != null && c1.getCanonicalName() == null) {
+			c1 = c1.getEnclosingClass();
+		}
+
+		if (c1 == null) {
+			return null;
+		}
+		
+		canonicalName = c1.getCanonicalName().replace('.', '/') + ".class";
+
+		ClassLoader loader = clazz.getClassLoader();
+		if (loader != null) {
+			return loader.getResource(canonicalName);
+		}
+
+		return BOOT_CLASS_LOADER.getResource(canonicalName);
 	}
 }
