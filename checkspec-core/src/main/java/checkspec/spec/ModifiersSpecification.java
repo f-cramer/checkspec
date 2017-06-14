@@ -6,14 +6,17 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import checkspec.api.Modifiers;
+import checkspec.api.Spec;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true, chain = false)
+@ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ModifiersSpecification {
 
@@ -41,10 +44,11 @@ public class ModifiersSpecification {
 
 	private static State get(int modifiers, IntToBooleanFunction booleanFunction, Annotation[] annotations, Function<Modifiers, checkspec.api.State> stateFunction) {
 		return Arrays.stream(annotations).parallel()
-				.filter(Modifiers.class::isInstance)
-				.map(Modifiers.class::cast)
+				.filter(Spec.class::isInstance)
+				.map(Spec.class::cast)
 				.findAny()
-				.map(stateFunction::apply)
+				.map(Spec::modifiers)
+				.map(stateFunction)
 				.map(ModifiersSpecification::from)
 				.orElseGet(() -> from(booleanFunction.apply(modifiers)));
 	}

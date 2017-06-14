@@ -43,8 +43,8 @@ public class Report<T extends Specification<U>, U> implements Comparable<Report<
 		problems.add(entry);
 	}
 
-	public void addProblems(@NonNull Collection<ReportProblem> probs) {
-		problems.addAll(probs);
+	public void addProblems(@NonNull Collection<ReportProblem> problems) {
+		this.problems.addAll(problems);
 	}
 
 	public ProblemType getType() {

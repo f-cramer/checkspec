@@ -48,7 +48,7 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 	}
 
 	public void addConstructorReports(Collection<ConstructorReport> reports) {
-		fieldReports.addAll(fieldReports);
+		this.constructorReports.addAll(reports);
 	}
 
 	public List<ConstructorReport> getConstructorReports() {

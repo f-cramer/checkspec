@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.apache.commons.text.similarity.SimilarityScore;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
@@ -50,6 +52,7 @@ import checkspec.spec.VisibilitySpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.FieldUtils;
+import checkspec.util.MathUtils;
 import checkspec.util.MethodUtils;
 import javassist.util.proxy.ProxyFactory;
 import lombok.AccessLevel;
@@ -59,10 +62,11 @@ import lombok.NoArgsConstructor;
 final class StaticChecker {
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
+	private static final SimilarityScore<Integer> NAME_SIMILARITY = LevenshteinDistance.getDefaultInstance();
 
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
 		ClassReport report = new ClassReport(spec, clazz);
-
+		
 		checkVisibility(clazz, spec).ifPresent(report::addProblem);
 		report.addProblems(checkModifiers(clazz, spec));
 		report.addFieldReports(checkFields(clazz, spec));
@@ -78,29 +82,57 @@ final class StaticChecker {
 				.collect(Collectors.toList());
 	}
 
-	private static FieldReport checkField(Class<?> clazz, FieldSpecification field) {
-		String fieldName = field.getName();
-	
-		ResolvableType fieldType = field.getType();
-		String fieldTypeName = getName(fieldType);
-	
+	private static FieldReport checkField(Class<?> clazz, FieldSpecification spec) {
+		String fieldName = spec.getName();
+
 		try {
 			Field actualField = clazz.getDeclaredField(fieldName);
-			ResolvableType actualFieldType = FieldUtils.getType(actualField);
-			String actualFieldTypeName = getName(actualFieldType);
-	
-			FieldReport report = new FieldReport(field, actualField);
-	
-			if (!actualFieldType.equals(fieldType)) {
-				String format = "has type of \"%s\" rather than \"%s\"";
-				String message = String.format(format, actualFieldTypeName, fieldTypeName);
-				report.addProblem(new ReportProblem(1, message, Type.WARNING));
-			}
-	
-			return report;
-		} catch (NoSuchFieldException e) {
-			return new FieldReport(field);
+			return checkField(actualField, spec);
+		} catch (NoSuchFieldException ex) {
+			Field[] fields = clazz.getDeclaredFields();
+			return Arrays.stream(fields).parallel()
+					.min(Comparator.comparingInt(e -> calculateDistance(e, spec)))
+					.map(e -> checkField(e, spec))
+					.orElseGet(() -> new FieldReport(spec));
 		}
+	}
+
+	private static FieldReport checkField(Field field, FieldSpecification spec) {
+		List<ReportProblem> problems = new ArrayList<>();
+
+		String fieldName = field.getName();
+		String specName = spec.getName();
+
+		if (!fieldName.equals(specName)) {
+			String format = "should have name \"%s\"";
+			problems.add(new ReportProblem(1, String.format(format, specName), Type.WARNING));
+		}
+
+		ResolvableType fieldType = FieldUtils.getType(field);
+		ResolvableType specType = spec.getType();
+
+		if (fieldType.getRawClass() != specType.getRawClass()) {
+			String fieldTypeName = getName(fieldType);
+			String specTypeName = getName(specType);
+
+			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
+			String format = "has " + (compatible ? "" : "in") + "compatible type \"%s\" rather than \"%s\"";
+			String message = String.format(format, fieldTypeName, specTypeName);
+			problems.add(new ReportProblem(1, message, compatible ? Type.WARNING : Type.ERROR));
+		}
+
+		FieldReport report = new FieldReport(spec, field);
+		report.addProblems(problems);
+		return report;
+	}
+
+	private static int calculateDistance(Field field, FieldSpecification spec) {
+		int nameDistance = NAME_SIMILARITY.apply(field.getName(), spec.getName());
+
+		ResolvableType fieldType = FieldUtils.getType(field);
+		int typeDistance = field.getType() == spec.getType().getRawClass() ? 0 : ClassUtils.isAssignable(spec.getType(), fieldType) ? 5 : 10;
+
+		return MathUtils.multiplyWithoutOverflow(nameDistance, typeDistance);
 	}
 
 	public static List<ConstructorReport> checkConstructors(Class<?> actual, ClassSpecification spec) {
@@ -115,14 +147,14 @@ final class StaticChecker {
 				.map(MethodParameterSpecification::getType)
 				.map(ResolvableType::getRawClass)
 				.toArray(Class[]::new);
-	
+
 		try {
 			Constructor<?> actualConstructor = actual.getDeclaredConstructor(parameterTypes);
 			ConstructorReport report = new ConstructorReport(constructor, actualConstructor);
-	
+
 			checkVisibility(actualConstructor, constructor).ifPresent(report::addProblem);
 			report.addProblems(checkModifiers(actualConstructor, constructor));
-	
+
 			return report;
 		} catch (NoSuchMethodException | NoClassDefFoundError ex) {
 			return new ConstructorReport(constructor);
@@ -219,9 +251,9 @@ final class StaticChecker {
 
 	public static Optional<ReportProblem> checkVisibility(int actualModifiers, VisibilitySpecification spec) {
 		Visibility actualVisibility = getVisibility(actualModifiers);
+		ReportProblem problem = null;
 
 		if (!spec.matches(actualVisibility)) {
-			ReportProblem problem;
 			Visibility[] visibilities = spec.getVisibilities();
 			if (visibilities.length == 1 && visibilities[0] == Visibility.PACKAGE) {
 				problem = new ReportProblem(1, "should not have any visibility modifier", Type.ERROR);
@@ -231,10 +263,9 @@ final class StaticChecker {
 				String visibilityString = Arrays.stream(visibilities).map(Visibility::toString).collect(Collectors.joining(", "));
 				problem = new ReportProblem(1, String.format("should have any of the following visibilities: \"%s\"", visibilityString), Type.ERROR);
 			}
-			return Optional.of(problem);
 		}
 
-		return Optional.empty();
+		return Optional.ofNullable(problem);
 	}
 
 	public static List<ReportProblem> checkModifiers(Class<?> actual, ClassSpecification spec) {
@@ -261,7 +292,10 @@ final class StaticChecker {
 		problems.add(checkModifier(Modifier.isTransient(actual), spec.isTransient(), TRANSIENT));
 		problems.add(checkModifier(Modifier.isVolatile(actual), spec.isVolatile(), VOLATILE));
 
-		return problems.parallelStream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+		return problems.parallelStream()
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -280,19 +314,19 @@ final class StaticChecker {
 	 *         {@link ReportProblem} with a matching problem description
 	 */
 	private static Optional<ReportProblem> checkModifier(boolean actual, State spec, javax.lang.model.element.Modifier modifier) {
+		ReportProblem problem = null;
+
 		if (spec == State.TRUE && !spec.matches(actual)) {
 			String format = "should have modifier \"%s\"";
-			ReportProblem problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
-			return Optional.of(problem);
+			problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
 		}
 
 		if (spec == State.FALSE && !spec.matches(actual)) {
 			String format = "should not have modifier \"%s\"";
-			ReportProblem problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
-			return Optional.of(problem);
+			problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
 		}
 
-		return Optional.empty();
+		return Optional.ofNullable(problem);
 	}
 
 	private static Comparator<Method> createMethodComparator(MethodSpecification method) {
@@ -305,8 +339,13 @@ final class StaticChecker {
 		}
 
 		int heuristic = 0;
-		heuristic += checkModifiers(actual, spec).parallelStream().mapToLong(ReportProblem::getScore).sum();
-		heuristic += checkMethodParameters(actual, spec).parallelStream().mapToLong(ReportProblem::getScore).sum();
+		heuristic += checkVisibility(actual, spec).map(ReportProblem::getScore).orElse(0);
+		heuristic += checkModifiers(actual, spec).parallelStream()
+				.mapToLong(ReportProblem::getScore)
+				.sum();
+		heuristic += checkMethodParameters(actual, spec).parallelStream()
+				.mapToLong(ReportProblem::getScore)
+				.sum();
 
 		return heuristic;
 	}

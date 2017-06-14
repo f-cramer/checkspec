@@ -8,9 +8,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class FieldSpecification implements Specification<Field> {
 
 	@NonNull

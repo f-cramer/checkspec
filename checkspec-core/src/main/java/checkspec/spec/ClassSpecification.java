@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import checkspec.api.Spec;
 import checkspec.spring.ResolvableType;
@@ -54,6 +55,7 @@ public class ClassSpecification implements Specification<ResolvableType> {
 				.map(MethodSpecification::new)
 				.toArray(MethodSpecification[]::new);
 
+		System.out.println(Arrays.stream(clazz.getDeclaredConstructors()).map(Constructor::i).collect(Collectors.toList()));
 		constructorSpecifications = Arrays.stream(clazz.getDeclaredConstructors()).parallel()
 				.filter(ClassSpecification::isIncluded)
 				.map(ConstructorSpecification::new)

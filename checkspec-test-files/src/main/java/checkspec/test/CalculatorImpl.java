@@ -1,6 +1,9 @@
 package checkspec.test;
 
+@SuppressWarnings("unused")
 public class CalculatorImpl {
+
+	private int abcd;
 
 	public int add(int a, int b) {
 		return a + b;
