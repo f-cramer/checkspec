@@ -1,6 +1,8 @@
 package checkspec.spec;
 
 import java.lang.reflect.Field;
+import java.util.Comparator;
+import java.util.Objects;
 
 import checkspec.spring.ResolvableType;
 import checkspec.util.FieldUtils;
@@ -13,7 +15,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString
-public class FieldSpecification implements Specification<Field> {
+public class FieldSpecification implements Specification<Field>, Comparable<FieldSpecification> {
 
 	@NonNull
 	private final String name;
@@ -36,5 +38,10 @@ public class FieldSpecification implements Specification<Field> {
 		modifiers = new ModifiersSpecification(field.getModifiers(), field.getAnnotations());
 		visibility = new VisibilitySpecification(field.getModifiers(), field.getAnnotations());
 		rawElement = field;
+	}
+
+	@Override
+	public int compareTo(FieldSpecification o) {
+		return Objects.compare(name, o.name, Comparator.naturalOrder());
 	}
 }

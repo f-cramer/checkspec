@@ -49,7 +49,7 @@ class CheckSpecFrame extends JFrame {
 	private static final String FILE_DESCRIPTION = ".%s Files";
 
 	private static final String SUCCESS = "Export was successful";
-	private static final String ERROR = "An error occurred while exporting:\n%s";
+	private static final String ERROR = "An error occurred while exporting:%n%s";
 
 	private static final String TEXT = "txt";
 	private static final String TEXT_EXTENSION = String.format(FILE_EXTENSION, TEXT);
@@ -319,11 +319,10 @@ class CheckSpecFrame extends JFrame {
 			try {
 				Outputter outputter = new HtmlOutputter(path);
 				outputter.output(report);
+				return Optional.empty();
 			} catch (Exception e) {
 				return Optional.of(e);
 			}
-
-			return Optional.empty();
 		}
 
 		private Optional<Path> selectHtmlDirectory() {

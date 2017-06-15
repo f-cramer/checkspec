@@ -20,13 +20,17 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.ToIntBiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.commons.text.similarity.SimilarityScore;
 import org.objenesis.Objenesis;
@@ -37,6 +41,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.ConstructorReport;
 import checkspec.report.FieldReport;
 import checkspec.report.MethodReport;
+import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
 import checkspec.report.SpecReport;
@@ -51,6 +56,7 @@ import checkspec.spec.Specification;
 import checkspec.spec.VisibilitySpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
+import checkspec.util.ConstructorUtils;
 import checkspec.util.FieldUtils;
 import checkspec.util.MathUtils;
 import checkspec.util.MethodUtils;
@@ -66,9 +72,10 @@ final class StaticChecker {
 
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
 		ClassReport report = new ClassReport(spec, clazz);
-		
+
 		checkVisibility(clazz, spec).ifPresent(report::addProblem);
 		report.addProblems(checkModifiers(clazz, spec));
+		checkSuperClass(clazz, spec).ifPresent(report::addProblem);
 		report.addFieldReports(checkFields(clazz, spec));
 		report.addConstructorReports(checkConstructors(clazz, spec));
 		report.addMethodReports(checkMethods(clazz, spec));
@@ -77,24 +84,52 @@ final class StaticChecker {
 	}
 
 	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
-		return Arrays.stream(spec.getFieldSpecifications()).parallel()
-				.map(e -> checkField(clazz, e))
-				.collect(Collectors.toList());
+		// FieldSpecification[] fieldSpecifications =
+		// spec.getFieldSpecifications();
+		// List<Pair<Field, FieldSpecification>> pairs =
+		// Arrays.stream(fieldSpecifications).parallel()
+		// .flatMap(mapFields(clazz))
+		// .sorted(Comparator.comparingInt(pair ->
+		// calculateDistance(pair.getLeft(), pair.getRight())))
+		// .collect(Collectors.toList());
+		//
+		// List<Field> unusedFields = new
+		// ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+		// List<FieldSpecification> notFoundSpecs = new
+		// ArrayList<>(Arrays.asList(fieldSpecifications));
+		//
+		// Iterator<Pair<Field, FieldSpecification>> iterator =
+		// pairs.iterator();
+		// while (iterator.hasNext()) {
+		// Pair<Field, FieldSpecification> pair = iterator.next();
+		// Field field = pair.getLeft();
+		// FieldSpecification fieldSpec = pair.getRight();
+		//
+		// if (unusedFields.contains(field) &&
+		// notFoundSpecs.contains(fieldSpec)) {
+		// unusedFields.remove(field);
+		// notFoundSpecs.remove(fieldSpec);
+		// } else {
+		// iterator.remove();
+		// }
+		// }
+		//
+		// Stream<FieldReport> foundFields = pairs.parallelStream()
+		// .map(pair -> checkField(pair.getLeft(), pair.getRight()));
+		// Stream<FieldReport> notFoundFields = notFoundSpecs.parallelStream()
+		// .map(FieldReport::new);
+		//
+		// return Stream.concat(foundFields, notFoundFields)
+		// .sorted(Comparator.comparing(FieldReport::getSpec))
+		// .collect(Collectors.toList());
+
+		return check(clazz, spec, ClassSpecification::getFieldSpecifications, StaticChecker::mapFields, StaticChecker::calculateDistance, Class::getDeclaredFields, StaticChecker::checkField,
+				FieldReport::new, Comparator.comparing(FieldReport::getSpec));
 	}
 
-	private static FieldReport checkField(Class<?> clazz, FieldSpecification spec) {
-		String fieldName = spec.getName();
-
-		try {
-			Field actualField = clazz.getDeclaredField(fieldName);
-			return checkField(actualField, spec);
-		} catch (NoSuchFieldException ex) {
-			Field[] fields = clazz.getDeclaredFields();
-			return Arrays.stream(fields).parallel()
-					.min(Comparator.comparingInt(e -> calculateDistance(e, spec)))
-					.map(e -> checkField(e, spec))
-					.orElseGet(() -> new FieldReport(spec));
-		}
+	private static Function<FieldSpecification, Stream<Pair<Field, FieldSpecification>>> mapFields(Class<?> clazz) {
+		return fieldSpec -> Arrays.stream(clazz.getDeclaredFields()).parallel()
+				.map(field -> Pair.of(field, fieldSpec));
 	}
 
 	private static FieldReport checkField(Field field, FieldSpecification spec) {
@@ -102,6 +137,8 @@ final class StaticChecker {
 
 		String fieldName = field.getName();
 		String specName = spec.getName();
+
+		checkVisibility(field, spec).ifPresent(problems::add);
 
 		if (!fieldName.equals(specName)) {
 			String format = "should have name \"%s\"";
@@ -126,92 +163,203 @@ final class StaticChecker {
 		return report;
 	}
 
-	private static int calculateDistance(Field field, FieldSpecification spec) {
-		int nameDistance = NAME_SIMILARITY.apply(field.getName(), spec.getName());
+	public static List<ConstructorReport> checkConstructors(Class<?> clazz, ClassSpecification spec) {
+		// ConstructorSpecification[] constructorSpecifications =
+		// spec.getConstructorSpecifications();
+		// List<Pair<Constructor<?>, ConstructorSpecification>> pairs =
+		// Arrays.stream(constructorSpecifications).parallel()
+		// .flatMap(mapConstructors(clazz))
+		// .sorted(Comparator.comparingInt(pair ->
+		// calculateDistance(pair.getLeft(), pair.getRight())))
+		// .collect(Collectors.toList());
+		//
+		// List<Constructor<?>> unusedConstructors = new
+		// ArrayList<>(Arrays.asList(clazz.getDeclaredConstructors()));
+		// List<ConstructorSpecification> notFoundSpecs = new
+		// ArrayList<>(Arrays.asList(constructorSpecifications));
+		//
+		// Iterator<Pair<Constructor<?>, ConstructorSpecification>> iterator =
+		// pairs.iterator();
+		// while (iterator.hasNext()) {
+		// Pair<Constructor<?>, ConstructorSpecification> pair =
+		// iterator.next();
+		// Constructor<?> constructor = pair.getLeft();
+		// ConstructorSpecification constructorSpec = pair.getRight();
+		// if (unusedConstructors.contains(constructor) &&
+		// notFoundSpecs.contains(constructorSpec)) {
+		// unusedConstructors.remove(constructor);
+		// notFoundSpecs.remove(constructorSpec);
+		// } else {
+		// iterator.remove();
+		// }
+		// }
+		//
+		// Stream<ConstructorReport> foundConstructors = pairs.parallelStream()
+		// .map(pair -> checkConstructor(pair.getLeft(), pair.getRight()));
+		// Stream<ConstructorReport> notFoundConstructors =
+		// notFoundSpecs.parallelStream()
+		// .map(ConstructorReport::new);
+		//
+		// return Stream.concat(foundConstructors, notFoundConstructors)
+		// .sorted(Comparator.comparing(ConstructorReport::getSpec))
+		// .collect(Collectors.toList());
 
-		ResolvableType fieldType = FieldUtils.getType(field);
-		int typeDistance = field.getType() == spec.getType().getRawClass() ? 0 : ClassUtils.isAssignable(spec.getType(), fieldType) ? 5 : 10;
-
-		return MathUtils.multiplyWithoutOverflow(nameDistance, typeDistance);
+		return check(clazz, spec, ClassSpecification::getConstructorSpecifications, StaticChecker::mapConstructors, StaticChecker::calculateDistance, Class::getDeclaredConstructors,
+				StaticChecker::checkConstructor, ConstructorReport::new, Comparator.comparing(ConstructorReport::getSpec));
 	}
 
-	public static List<ConstructorReport> checkConstructors(Class<?> actual, ClassSpecification spec) {
-		return Arrays.stream(spec.getConstructorSpecifications()).parallel()
-				.map(e -> checkConstructor(actual, e))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
+	private static Function<ConstructorSpecification, Stream<Pair<Constructor<?>, ConstructorSpecification>>> mapConstructors(Class<?> clazz) {
+		return constructorSpec -> Arrays.stream(clazz.getDeclaredConstructors()).parallel()
+				.map(constructor -> Pair.of(constructor, constructorSpec));
 	}
 
-	private static ConstructorReport checkConstructor(Class<?> actual, ConstructorSpecification constructor) {
-		Class<?>[] parameterTypes = Arrays.stream(constructor.getParameters()).parallel()
-				.map(MethodParameterSpecification::getType)
-				.map(ResolvableType::getRawClass)
-				.toArray(Class[]::new);
+	private static ConstructorReport checkConstructor(Constructor<?> constructor, ConstructorSpecification spec) {
+		List<ReportProblem> problems = new ArrayList<>();
 
-		try {
-			Constructor<?> actualConstructor = actual.getDeclaredConstructor(parameterTypes);
-			ConstructorReport report = new ConstructorReport(constructor, actualConstructor);
+		checkVisibility(constructor, spec).ifPresent(problems::add);
+		problems.addAll(checkModifiers(constructor, spec));
+		problems.addAll(checkConstructorParameters(constructor, spec));
 
-			checkVisibility(actualConstructor, constructor).ifPresent(report::addProblem);
-			report.addProblems(checkModifiers(actualConstructor, constructor));
-
-			return report;
-		} catch (NoSuchMethodException | NoClassDefFoundError ex) {
-			return new ConstructorReport(constructor);
-		}
+		ConstructorReport report = new ConstructorReport(spec, constructor);
+		return report;
 	}
 
-	public static List<MethodReport> checkMethods(Class<?> actual, ClassSpecification spec) {
-		return Arrays.stream(spec.getMethodSpecifications()).parallel()
-				.sorted(Comparator.comparing(MethodSpecification::getName))
-				.map(e -> checkMethod(actual, e))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
-	}
+	private static List<ReportProblem> checkConstructorParameters(Constructor<?> actual, ConstructorSpecification spec) {
+		List<ReportProblem> problems = new ArrayList<>();
 
-	private static MethodReport checkMethod(Class<?> actual, MethodSpecification method) {
-		String methodName = method.getName();
+		int actualLength = actual.getParameterCount();
+		int specLength = spec.getParameters().length;
 
-		Class<?>[] parameterTypes = Arrays.stream(method.getParameters()).parallel()
-				.map(MethodParameterSpecification::getType)
-				.map(ResolvableType::getRawClass)
-				.toArray(Class[]::new);
-		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method.getRawElement());
+		if (actualLength == specLength) {
+			for (int i = 0; i < actualLength; i++) {
+				ResolvableType specType = ResolvableType.forConstructorParameter(spec.getRawElement(), i);
+				ResolvableType actualType = ResolvableType.forConstructorParameter(actual, i);
 
-		try {
-			Method actualMethod = actual.getDeclaredMethod(methodName, parameterTypes);
-			ResolvableType actualMethodReturnType = ResolvableType.forMethodReturnType(actualMethod);
-			String actualMethodReturnTypeName = getName(actualMethodReturnType);
-
-			MethodReport report = new MethodReport(method, actualMethod);
-
-			if (actualMethodReturnType.getRawClass() != methodReturnType.getRawClass()) {
-				boolean compatible = ClassUtils.isAssignable(actualMethodReturnType, methodReturnType);
-				String format = "returns " + (compatible ? "" : "in") + "compatible type \"%s\"";
-				Type type = compatible ? Type.WARNING : Type.ERROR;
-				report.addProblem(new ReportProblem(1, String.format(format, actualMethodReturnTypeName), type));
+				if (actualType.getRawClass() != specType.getRawClass()) {
+					boolean compatible = ClassUtils.isAssignable(specType, actualType);
+					String format = "parameter %d has " + (compatible ? "" : "in") + "compatible type \"%s\"";
+					Type type = compatible ? Type.WARNING : Type.ERROR;
+					problems.add(new ReportProblem(1, String.format(format, i + 1, getName(actualType)), type));
+				}
 			}
+		} else {
+			int score = Math.abs(actualLength - specLength);
+			String message = String.format("parameter count should be %s but is %s", specLength, actualLength);
+			problems.add(new ReportProblem(score, message, Type.WARNING));
+		}
 
-			checkVisibility(actualMethod, method).ifPresent(report::addProblem);
-			report.addProblems(checkModifiers(actualMethod, method));
+		return problems;
+	}
 
-			return report;
-		} catch (NoSuchMethodException | NoClassDefFoundError ex) {
-			List<Method> methodsWithEqualName = Arrays.stream(actual.getDeclaredMethods()).parallel()
-					.filter(e -> e.getName().equals(methodName))
-					.collect(Collectors.toList());
+	public static List<MethodReport> checkMethods(Class<?> clazz, ClassSpecification spec) {
+		// MethodSpecification[] methodSpecifications =
+		// spec.getMethodSpecifications();
+		// List<Pair<Method, MethodSpecification>> pairs =
+		// Arrays.stream(methodSpecifications).parallel()
+		// .flatMap(mapMethods(clazz))
+		// .sorted(Comparator.comparingInt(pair ->
+		// calculateDistance(pair.getLeft(), pair.getRight())))
+		// .collect(Collectors.toList());
+		//
+		// List<Method> unusedMethods = new
+		// ArrayList<>(Arrays.asList(clazz.getDeclaredMethods()));
+		// List<MethodSpecification> notFoundSpecs = new
+		// ArrayList<>(Arrays.asList(methodSpecifications));
+		//
+		// Iterator<Pair<Method, MethodSpecification>> iterator =
+		// pairs.iterator();
+		// while (iterator.hasNext()) {
+		// Pair<Method, MethodSpecification> pair = iterator.next();
+		// Method method = pair.getLeft();
+		// MethodSpecification methodSpec = pair.getRight();
+		// if (unusedMethods.contains(method) &&
+		// notFoundSpecs.contains(methodSpec)) {
+		// unusedMethods.remove(method);
+		// notFoundSpecs.remove(methodSpec);
+		// } else {
+		// iterator.remove();
+		// }
+		// }
+		//
+		// Stream<MethodReport> foundMethods = pairs.parallelStream()
+		// .map(pair -> checkMethod(pair.getLeft(), pair.getRight()));
+		// Stream<MethodReport> notFoundMethods = notFoundSpecs.parallelStream()
+		// .map(MethodReport::new);
+		//
+		// return Stream.concat(foundMethods, notFoundMethods)
+		// .sorted(Comparator.comparing(MethodReport::getSpec))
+		// .collect(Collectors.toList());
 
-			if (methodsWithEqualName.isEmpty()) {
-				return new MethodReport(method);
+		return check(clazz, spec, ClassSpecification::getMethodSpecifications, StaticChecker::mapMethods, StaticChecker::calculateDistance, Class::getDeclaredMethods, StaticChecker::checkMethod,
+				MethodReport::new, Comparator.comparing(MethodReport::getSpec));
+	}
+
+	private static Function<MethodSpecification, Stream<Pair<Method, MethodSpecification>>> mapMethods(Class<?> clazz) {
+		return methodSpec -> Arrays.stream(clazz.getDeclaredMethods()).parallel()
+				.map(method -> Pair.of(method, methodSpec));
+	}
+
+	private static <MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<SpecificationType, MemberType>> List<ReportType> check(Class<?> clazz,
+			ClassSpecification spec, Function<ClassSpecification, SpecificationType[]> specSupplier,
+			Function<Class<?>, Function<SpecificationType, Stream<Pair<MemberType, SpecificationType>>>> mapperFunction, ToIntBiFunction<MemberType, SpecificationType> distanceMeasure,
+			Function<Class<?>, MemberType[]> memberSupplier, BiFunction<MemberType, SpecificationType, ReportType> memberChecker, Function<SpecificationType, ReportType> emptyReportGenerator,
+			Comparator<ReportType> comparator) {
+		SpecificationType[] specifications = specSupplier.apply(spec);
+
+		List<Pair<MemberType, SpecificationType>> pairs = Arrays.stream(specifications).parallel()
+				.flatMap(mapperFunction.apply(clazz))
+				.sorted(Comparator.comparingInt(pair -> distanceMeasure.applyAsInt(pair.getLeft(), pair.getRight())))
+				.collect(Collectors.toList());
+
+		List<MemberType> unusedMethods = new ArrayList<>(Arrays.asList(memberSupplier.apply(clazz)));
+		List<SpecificationType> notFoundSpecs = new ArrayList<>(Arrays.asList(specifications));
+
+		Iterator<Pair<MemberType, SpecificationType>> iterator = pairs.iterator();
+		while (iterator.hasNext()) {
+			Pair<MemberType, SpecificationType> pair = iterator.next();
+			MemberType member = pair.getLeft();
+			SpecificationType methodSpec = pair.getRight();
+			if (unusedMethods.contains(member) && notFoundSpecs.contains(methodSpec)) {
+				unusedMethods.remove(member);
+				notFoundSpecs.remove(methodSpec);
 			} else {
-				Method actualMethod = methodsWithEqualName.parallelStream().min(createMethodComparator(method)).get();
-
-				MethodReport report = new MethodReport(method, actualMethod);
-				report.addProblems(checkMethodParameters(actualMethod, method));
-
-				return report;
+				iterator.remove();
 			}
 		}
+
+		Stream<ReportType> foundMethods = pairs.parallelStream()
+				.map(pair -> memberChecker.apply(pair.getLeft(), pair.getRight()));
+		Stream<ReportType> notFoundMethods = notFoundSpecs.parallelStream()
+				.map(emptyReportGenerator);
+
+		return Stream.concat(foundMethods, notFoundMethods)
+				.sorted(comparator)
+				.collect(Collectors.toList());
+	}
+
+	private static MethodReport checkMethod(Method method, MethodSpecification spec) {
+		ResolvableType specReturnType = spec.getReturnType();
+		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method);
+		String methodReturnTypeName = getName(methodReturnType);
+
+		MethodReport report = new MethodReport(spec, method);
+
+		checkVisibility(method, spec).ifPresent(report::addProblem);
+		report.addProblems(checkModifiers(method, spec));
+
+		if (!method.getName().equals(spec.getName())) {
+			String format = "should be called \"%s\"";
+			report.addProblem(new ReportProblem(1, String.format(format, spec.getName()), Type.ERROR));
+		}
+
+		if (methodReturnType.getRawClass() != specReturnType.getRawClass()) {
+			boolean compatible = ClassUtils.isAssignable(methodReturnType, specReturnType);
+			String format = "returns " + (compatible ? "" : "in") + "compatible type \"%s\"";
+			Type type = compatible ? Type.WARNING : Type.ERROR;
+			report.addProblem(new ReportProblem(1, String.format(format, methodReturnTypeName), type));
+		}
+
+		return report;
 	}
 
 	private static List<ReportProblem> checkMethodParameters(Method actual, MethodSpecification spec) {
@@ -239,6 +387,21 @@ final class StaticChecker {
 		}
 
 		return problems;
+	}
+
+	public static Optional<ReportProblem> checkSuperClass(Class<?> actual, ClassSpecification spec) {
+		ResolvableType rawSpecSuperClass = spec.getSuperClassSpecification().getRawElement();
+		if (actual.getSuperclass() != rawSpecSuperClass.getRawClass()) {
+			String format;
+			if (rawSpecSuperClass.getRawClass().getName().equals("java.lang.Object")) {
+				format = "should not declare any super class";
+			} else {
+				format = "should declare \"%s\" as its super class";
+			}
+			return Optional.of(new ReportProblem(1, String.format(format, getName(rawSpecSuperClass)), Type.ERROR));
+		}
+
+		return Optional.empty();
 	}
 
 	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpecification spec) {
@@ -301,7 +464,7 @@ final class StaticChecker {
 	/**
 	 * Creates and returns a {@link ReportProblem} if the actual state of the
 	 * given modifiers does not match the given modifier specification state.
-	 * 
+	 *
 	 * @param actual
 	 *            the actual modifier state - {@code true} if the modifier is
 	 *            set, {@code false} otherwise
@@ -329,15 +492,30 @@ final class StaticChecker {
 		return Optional.ofNullable(problem);
 	}
 
-	private static Comparator<Method> createMethodComparator(MethodSpecification method) {
-		return Comparator.comparingInt(actual -> compareMethods(actual, method));
+	private static int calculateDistance(Field field, FieldSpecification spec) {
+		int nameDistance = NAME_SIMILARITY.apply(field.getName(), spec.getName());
+
+		ResolvableType fieldType = FieldUtils.getType(field);
+		int typeDistance = field.getType() == spec.getType().getRawClass() ? 0 : ClassUtils.isAssignable(spec.getType(), fieldType) ? 5 : 10;
+
+		return MathUtils.multiplyWithoutOverflow(nameDistance, typeDistance);
 	}
 
-	private static int compareMethods(Method actual, MethodSpecification spec) {
+	private static int calculateDistance(Constructor<?> constructor, ConstructorSpecification spec) {
+		ResolvableType[] parameters = ConstructorUtils.getParametersAsResolvableType(constructor);
+		ResolvableType[] specParameters = Arrays.stream(spec.getParameters())
+				.map(MethodParameterSpecification::getType)
+				.toArray(ResolvableType[]::new);
+
+		return MethodUtils.calculateParameterDistance(parameters, specParameters);
+	}
+
+	private static int calculateDistance(Method actual, MethodSpecification spec) {
 		if (actual.equals(spec.getRawElement())) {
 			return 0;
 		}
 
+		int nameSimilarity = NAME_SIMILARITY.apply(actual.getName(), spec.getName()) * 2 + 1;
 		int heuristic = 0;
 		heuristic += checkVisibility(actual, spec).map(ReportProblem::getScore).orElse(0);
 		heuristic += checkModifiers(actual, spec).parallelStream()
@@ -347,7 +525,7 @@ final class StaticChecker {
 				.mapToLong(ReportProblem::getScore)
 				.sum();
 
-		return heuristic;
+		return MathUtils.multiplyWithoutOverflow(nameSimilarity, heuristic + 1);
 	}
 
 	@SuppressWarnings("unchecked")

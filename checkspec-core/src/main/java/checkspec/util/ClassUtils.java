@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
 public class ClassUtils {
 
 	private static String TO_STRING_FORMAT = "%s %s %s";
-	
+
 	private static volatile ClassLoader SYSTEM_CLASS_LOADER;
 	private static final Object SYSTEM_CLASS_LOAD_SYNC = new Object();
 
@@ -73,6 +73,10 @@ public class ClassUtils {
 				return Stream.empty();
 			}
 		};
+	}
+
+	public Function<String, Stream<Class<?>>> systemClassStreamSupplier() {
+		return classStreamSupplier(getSystemClassLoader());
 	}
 
 	public static String getPackage(ResolvableType type) {
@@ -135,7 +139,7 @@ public class ClassUtils {
 
 		return org.apache.commons.lang3.ClassUtils.isAssignable(cls.getRawClass(), toClass.getRawClass());
 	}
-	
+
 	public static ClassLoader getSystemClassLoader() {
 		if (SYSTEM_CLASS_LOADER == null) {
 			synchronized (SYSTEM_CLASS_LOAD_SYNC) {
@@ -145,7 +149,7 @@ public class ClassUtils {
 				}
 			}
 		}
-		
+
 		return SYSTEM_CLASS_LOADER;
 	}
 }

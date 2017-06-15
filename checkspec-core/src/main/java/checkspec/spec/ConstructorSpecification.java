@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConstructorSpecification implements Specification<Constructor<?>> {
+public class ConstructorSpecification implements Specification<Constructor<?>>, Comparable<ConstructorSpecification> {
 
 	@NonNull
 	private final String name;
@@ -36,5 +36,20 @@ public class ConstructorSpecification implements Specification<Constructor<?>> {
 		parameters = IntStream.range(0, constructor.getParameterCount())
 				.mapToObj(i -> new MethodParameterSpecification(constructor, i))
 				.toArray(MethodParameterSpecification[]::new);
+	}
+
+	@Override
+	public int compareTo(ConstructorSpecification o) {
+		int length = Math.min(parameters.length, o.parameters.length);
+		for (int i = 0; i < length; i++) {
+			Class<?> thisClass = parameters[i].getType().getRawClass();
+			Class<?> oClass = o.parameters[i].getType().getRawClass();
+
+			if (thisClass != oClass) {
+				return thisClass.getName().compareTo(oClass.getName());
+			}
+		}
+
+		return Integer.compare(parameters.length, o.parameters.length);
 	}
 }

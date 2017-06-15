@@ -1,0 +1,9 @@
+<FindBugsFilter>
+	<Match>
+		<Package name="~checkspec\.spring.*" />
+	</Match>
+
+	<Match>
+		<Package name="~checkspec\.test.*" />
+	</Match>
+</FindBugsFilter>

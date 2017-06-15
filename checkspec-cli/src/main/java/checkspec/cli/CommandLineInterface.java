@@ -80,6 +80,8 @@ public final class CommandLineInterface {
 	private static final Option HELP_OPTION = Option.builder("h").longOpt("help").desc("Displays this help message.").build();
 	private static final SwitchCommandLineOption HELP = SwitchCommandLineOption.of(HELP_OPTION);
 
+	private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
+	private static final String SYNTAX = "java -jar checkspec-1.0.0-standalone.jar";
 	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
 
 	private static final CommandLineParser PARSER = new DefaultParser();
@@ -89,6 +91,7 @@ public final class CommandLineInterface {
 			parse(args);
 		} catch (CommandLineException e) {
 			System.err.println(e.getMessage());
+			HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
 		}
 	}
 
@@ -101,8 +104,7 @@ public final class CommandLineInterface {
 		}
 
 		if (HELP.isSet(commandLine)) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("java -jar checkspec-1.0.0-standalone.jar", OPTIONS);
+			HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
 			return;
 		}
 

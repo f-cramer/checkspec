@@ -4,17 +4,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import checkspec.api.Spec;
 import checkspec.spring.ResolvableType;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class ClassSpecification implements Specification<ResolvableType> {
 
 	@NonNull
@@ -25,6 +23,9 @@ public class ClassSpecification implements Specification<ResolvableType> {
 
 	@NonNull
 	private final VisibilitySpecification visibility;
+
+	@NonNull
+	private final SuperClassSpecification superClassSpecification;
 
 	@NonNull
 	private final FieldSpecification[] fieldSpecifications;
@@ -44,6 +45,7 @@ public class ClassSpecification implements Specification<ResolvableType> {
 		name = clazz.getName();
 		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
 		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
+		superClassSpecification = new SuperClassSpecification(clazz.getSuperclass());
 
 		fieldSpecifications = Arrays.stream(clazz.getDeclaredFields()).parallel()
 				.filter(ClassSpecification::isIncluded)
@@ -55,13 +57,12 @@ public class ClassSpecification implements Specification<ResolvableType> {
 				.map(MethodSpecification::new)
 				.toArray(MethodSpecification[]::new);
 
-		System.out.println(Arrays.stream(clazz.getDeclaredConstructors()).map(Constructor::i).collect(Collectors.toList()));
 		constructorSpecifications = Arrays.stream(clazz.getDeclaredConstructors()).parallel()
 				.filter(ClassSpecification::isIncluded)
 				.map(ConstructorSpecification::new)
 				.toArray(ConstructorSpecification[]::new);
 	}
-	
+
 	public static boolean shouldBeGenerated(Class<?> clazz) {
 		return isIncluded(clazz.getAnnotation(Spec.class));
 	}

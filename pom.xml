@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -31,7 +32,7 @@
 		<source>${java.version}</source>
 
 		<commons.cli.version>1.4</commons.cli.version>
-		<commons.lang.version>3.5</commons.lang.version>
+		<commons.lang.version>3.6</commons.lang.version>
 		<commons.text.version>1.1</commons.text.version>
 		<findbugs.annotations.version>3.0.1</findbugs.annotations.version>
 		<javassist.version>3.21.0-GA</javassist.version>
@@ -53,6 +54,7 @@
 		<checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
 		<findbugs.effort>Max</findbugs.effort>
 		<findbugs.threshold>low</findbugs.threshold>
+		<findbugs.excludeFilterFile>config/findbugs-exclude.xml</findbugs.excludeFilterFile>
 	</properties>
 
 	<dependencyManagement>
@@ -145,6 +147,12 @@
 				<groupId>org.thymeleaf</groupId>
 				<artifactId>thymeleaf</artifactId>
 				<version>${thymeleaf.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slfj4-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -195,6 +203,15 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
 					<version>${checkstyle.plugin.version}</version>
+					<configuration>
+						<linkXRef>true</linkXRef>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${assembly.plugin.version}</version>
 					<configuration>
 						<linkXRef>true</linkXRef>
 					</configuration>

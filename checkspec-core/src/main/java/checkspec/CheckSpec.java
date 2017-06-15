@@ -1,8 +1,5 @@
 package checkspec;
 
-import static checkspec.StaticChecker.checkImplements;
-import static checkspec.util.ClassUtils.getPackage;
-
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +7,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -18,9 +17,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
+import org.reflections.Store;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
+
+import com.google.common.collect.Multimap;
 
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
@@ -28,11 +30,8 @@ import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
 import checkspec.util.StreamUtils;
-import lombok.AccessLevel;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckSpec {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
@@ -90,7 +89,7 @@ public final class CheckSpec {
 
 	public static ClassSpecification[] findSpecifications(URL[] urls) {
 		Reflections reflections = createReflections(urls);
-		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.classStreamSupplier(new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
+		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.systemClassStreamSupplier();
 
 		return reflections.getAllTypes().parallelStream()
 				.flatMap(classSupplier)
@@ -161,13 +160,20 @@ public final class CheckSpec {
 		this(createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
 	}
 
+	private CheckSpec(Reflections reflections, ClassLoader classLoader) {
+		this.reflections = reflections;
+		this.classLoader = classLoader;
+
+		this.reflections.expandSuperTypes();
+	}
+
 	/**
 	 * Creates a {@link SpecReport} for the given specification {@code spec}
 	 * that is populated with a {@link ClassReport} for any class that in any
 	 * way matches {@code spec}.
 	 * <p>
 	 * Behaves the same as a call to {@code checkSpec(spec, "")}.
-	 * 
+	 *
 	 * @param spec
 	 *            the non-null specification the return {@code SpecReport}
 	 *            should be based on
@@ -179,27 +185,43 @@ public final class CheckSpec {
 	}
 
 	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull Class<?> basePackage) {
-		return checkSpec(spec, getPackage(basePackage));
+		return checkSpec(spec, ClassUtils.getPackage(basePackage));
 	}
 
 	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull String basePackageName) {
-		List<ClassReport> classReports = reflections.getAllTypes().parallelStream()
-//				.filter(StreamUtils.equalsPredicate(spec.getName()).negate())
-				.filter(e -> getPackage(e).toLowerCase().startsWith(basePackageName))
+		Store store = reflections.getStore();
+
+		List<ClassReport> classReports = store.keySet().parallelStream()
+				.map(store::get)
+				.map(Multimap::values)
+				.flatMap(Collection::parallelStream)
+				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(StreamUtils.equalsPredicate(getLocation(spec.getRawElement().getRawClass()), CheckSpec::getLocation).negate())
-				.map(e -> checkImplements(e, spec))
+				.filter(this::loadedFromValidLocation)
+				.map(e -> StaticChecker.checkImplements(e, spec))
 				.filter(ClassReport::hasAnyImplementation)
 				.sorted()
 				.collect(Collectors.toList());
 
 		return new SpecReport(spec, classReports);
 	}
-	
+
+	private boolean loadedFromValidLocation(Class<?> clazz) {
+		Set<URL> urls = reflections.getConfiguration().getUrls();
+		URL location = getLocation(clazz);
+
+		return urls.parallelStream().anyMatch(url -> isParent(location, url));
+	}
+
+	private static boolean isParent(URL child, URL parent) {
+		return child.getPath().startsWith(parent.getPath());
+	}
+
 	private static URL getLocation(@NonNull Class<?> clazz) {
 		String canonicalName;
 		Class<?> c1 = clazz;
-		
+
 		while (c1 != null && c1.getCanonicalName() == null) {
 			c1 = c1.getEnclosingClass();
 		}
@@ -207,7 +229,7 @@ public final class CheckSpec {
 		if (c1 == null) {
 			return null;
 		}
-		
+
 		canonicalName = c1.getCanonicalName().replace('.', '/') + ".class";
 
 		ClassLoader loader = clazz.getClassLoader();

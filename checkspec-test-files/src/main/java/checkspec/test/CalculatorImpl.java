@@ -1,9 +1,13 @@
 package checkspec.test;
 
-@SuppressWarnings("unused")
-public class CalculatorImpl {
+import java.util.ArrayList;
 
-	private int abcd;
+@SuppressWarnings("unused")
+public class CalculatorImpl extends ArrayList<Integer> {
+
+	private static final long serialVersionUID = -3637983294990560884L;
+
+	private int abc;
 
 	public int add(int a, int b) {
 		return a + b;
