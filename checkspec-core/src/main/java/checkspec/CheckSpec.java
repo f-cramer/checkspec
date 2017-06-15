@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -17,12 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
-import org.reflections.Store;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
-
-import com.google.common.collect.Multimap;
 
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
@@ -189,12 +185,7 @@ public final class CheckSpec {
 	}
 
 	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull String basePackageName) {
-		Store store = reflections.getStore();
-
-		List<ClassReport> classReports = store.keySet().parallelStream()
-				.map(store::get)
-				.map(Multimap::values)
-				.flatMap(Collection::parallelStream)
+		List<ClassReport> classReports = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values().parallelStream()
 				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(StreamUtils.equalsPredicate(getLocation(spec.getRawElement().getRawClass()), CheckSpec::getLocation).negate())
