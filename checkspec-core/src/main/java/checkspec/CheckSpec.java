@@ -9,22 +9,19 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
 
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.util.ClassUtils;
+import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
 import lombok.NonNull;
 
@@ -84,7 +81,7 @@ public final class CheckSpec {
 	}
 
 	public static ClassSpecification[] findSpecifications(URL[] urls) {
-		Reflections reflections = createReflections(urls);
+		Reflections reflections = ReflectionsUtils.createReflections(urls);
 		Function<String, Stream<Class<?>>> classSupplier = ClassUtils.systemClassStreamSupplier();
 
 		return reflections.getAllTypes().parallelStream()
@@ -123,18 +120,6 @@ public final class CheckSpec {
 		return false;
 	}
 
-	private static Reflections createReflections(URL[] urls) {
-		ConfigurationBuilder configuration = new ConfigurationBuilder()
-				.forPackages("")
-				.setUrls(urls)
-				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
-
-		int availableProcessors = Runtime.getRuntime().availableProcessors();
-		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
-		configuration.setExecutorService(threadPool);
-		return new Reflections(configuration);
-	}
-
 	private static Stream<URL> getUrlAsStream(String path) {
 		try {
 			return Stream.of(new File(path).toURI().toURL());
@@ -153,7 +138,7 @@ public final class CheckSpec {
 	private final ClassLoader classLoader;
 
 	private CheckSpec(URL[] urls) {
-		this(createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
+		this(ReflectionsUtils.createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
 	}
 
 	private CheckSpec(Reflections reflections, ClassLoader classLoader) {

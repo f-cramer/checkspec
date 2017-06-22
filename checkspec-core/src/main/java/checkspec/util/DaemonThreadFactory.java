@@ -1,4 +1,4 @@
-package checkspec;
+package checkspec.util;
 
 import java.util.concurrent.ThreadFactory;
 

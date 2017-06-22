@@ -26,6 +26,9 @@ public class ClassSpecification implements Specification<ResolvableType> {
 
 	@NonNull
 	private final SuperClassSpecification superClassSpecification;
+	
+	@NonNull
+	private final InterfaceSpecification[] interfaceSpecifications;
 
 	@NonNull
 	private final FieldSpecification[] fieldSpecifications;
@@ -46,6 +49,10 @@ public class ClassSpecification implements Specification<ResolvableType> {
 		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
 		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
 		superClassSpecification = new SuperClassSpecification(clazz.getSuperclass());
+		
+		interfaceSpecifications = Arrays.stream(clazz.getInterfaces()).parallel()
+				.map(InterfaceSpecification::new)
+				.toArray(InterfaceSpecification[]::new);
 
 		fieldSpecifications = Arrays.stream(clazz.getDeclaredFields()).parallel()
 				.filter(ClassSpecification::isIncluded)

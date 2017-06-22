@@ -36,7 +36,7 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 		fieldReports.add(report);
 	}
 
-	public void addFieldReports(Collection<FieldReport> reports) {
+	public void addFieldReports(Collection<? extends FieldReport> reports) {
 		fieldReports.addAll(reports);
 	}
 
@@ -48,7 +48,7 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 		constructorReports.add(report);
 	}
 
-	public void addConstructorReports(Collection<ConstructorReport> reports) {
+	public void addConstructorReports(Collection<? extends ConstructorReport> reports) {
 		this.constructorReports.addAll(reports);
 	}
 
@@ -60,7 +60,7 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 		methodReports.add(report);
 	}
 
-	public void addMethodReports(Collection<MethodReport> reports) {
+	public void addMethodReports(Collection<? extends MethodReport> reports) {
 		methodReports.addAll(reports);
 	}
 

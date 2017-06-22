@@ -152,4 +152,20 @@ public class ClassUtils {
 
 		return SYSTEM_CLASS_LOADER;
 	}
+
+	public static boolean equal(ResolvableType t1, ResolvableType t2) {
+		if (t1.equals(t2)) {
+			return true;
+		}
+
+		if (t1.getRawClass() == t2.getRawClass()) {
+			return true;
+		}
+
+		if (getName(t1).equals(getName(t2))) {
+			return true;
+		}
+
+		return false;
+	}
 }

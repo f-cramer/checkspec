@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ToIntBiFunction;
@@ -35,7 +36,9 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.commons.text.similarity.SimilarityScore;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
+import org.reflections.Reflections;
 
+import checkspec.analysis.AnalysisForClass;
 import checkspec.api.Visibility;
 import checkspec.report.ClassReport;
 import checkspec.report.ConstructorReport;
@@ -48,6 +51,7 @@ import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.spec.ConstructorSpecification;
 import checkspec.spec.FieldSpecification;
+import checkspec.spec.InterfaceSpecification;
 import checkspec.spec.MethodParameterSpecification;
 import checkspec.spec.MethodSpecification;
 import checkspec.spec.ModifiersSpecification;
@@ -60,6 +64,7 @@ import checkspec.util.ConstructorUtils;
 import checkspec.util.FieldUtils;
 import checkspec.util.MathUtils;
 import checkspec.util.MethodUtils;
+import checkspec.util.ReflectionsUtils;
 import javassist.util.proxy.ProxyFactory;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -70,17 +75,41 @@ final class StaticChecker {
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
 	private static final SimilarityScore<Integer> NAME_SIMILARITY = LevenshteinDistance.getDefaultInstance();
 
+	private static final String ERROR_FORMAT = "Analysis \"%s\" does not provide a default constructor and thus will not be used%n";
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
 		ClassReport report = new ClassReport(spec, clazz);
+		ResolvableType type = ResolvableType.forClass(clazz);
 
-		checkVisibility(clazz, spec).ifPresent(report::addProblem);
-		report.addProblems(checkModifiers(clazz, spec));
-		checkSuperClass(clazz, spec).ifPresent(report::addProblem);
-		report.addFieldReports(checkFields(clazz, spec));
-		report.addConstructorReports(checkConstructors(clazz, spec));
-		report.addMethodReports(checkMethods(clazz, spec));
+		Reflections reflections = ReflectionsUtils.createDefaultReflections();
+
+		Set<Class<? extends AnalysisForClass>> analysisClasses = reflections.getSubTypesOf(AnalysisForClass.class);
+		for (Class<? extends AnalysisForClass> analysisClass : analysisClasses) {
+			try {
+				if (!Modifier.isAbstract(analysisClass.getModifiers())) {
+					AnalysisForClass analysis = analysisClass.newInstance();
+					performAnalysis(analysis, type, spec, report);
+				}
+			} catch (InstantiationException | IllegalAccessException e) {
+				System.err.printf(ERROR_FORMAT, ClassUtils.getName(analysisClass));
+			}
+		}
+		
+//		checkVisibility(clazz, spec).ifPresent(report::addProblem);
+//		report.addProblems(checkModifiers(clazz, spec));
+//		checkSuperClass(clazz, spec).ifPresent(report::addProblem);
+//		report.addProblems(checkInterfaces(clazz, spec));
+//		report.addFieldReports(checkFields(clazz, spec));
+//		report.addConstructorReports(checkConstructors(clazz, spec));
+//		report.addMethodReports(checkMethods(clazz, spec));
 
 		return report;
+	}
+	
+	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, ClassReport report) {
+		ReturnType returnValue = analysis.analyse(clazz, spec);
+		analysis.add(report, returnValue);
 	}
 
 	public static List<FieldReport> checkFields(Class<?> clazz, ClassSpecification spec) {
@@ -311,17 +340,17 @@ final class StaticChecker {
 				.sorted(Comparator.comparingInt(pair -> distanceMeasure.applyAsInt(pair.getLeft(), pair.getRight())))
 				.collect(Collectors.toList());
 
-		List<MemberType> unusedMethods = new ArrayList<>(Arrays.asList(memberSupplier.apply(clazz)));
+		List<MemberType> unusedMembers = new ArrayList<>(Arrays.asList(memberSupplier.apply(clazz)));
 		List<SpecificationType> notFoundSpecs = new ArrayList<>(Arrays.asList(specifications));
 
 		Iterator<Pair<MemberType, SpecificationType>> iterator = pairs.iterator();
 		while (iterator.hasNext()) {
 			Pair<MemberType, SpecificationType> pair = iterator.next();
 			MemberType member = pair.getLeft();
-			SpecificationType methodSpec = pair.getRight();
-			if (unusedMethods.contains(member) && notFoundSpecs.contains(methodSpec)) {
-				unusedMethods.remove(member);
-				notFoundSpecs.remove(methodSpec);
+			SpecificationType memberSpec = pair.getRight();
+			if (unusedMembers.contains(member) && notFoundSpecs.contains(memberSpec)) {
+				unusedMembers.remove(member);
+				notFoundSpecs.remove(memberSpec);
 			} else {
 				iterator.remove();
 			}
@@ -402,6 +431,37 @@ final class StaticChecker {
 		}
 
 		return Optional.empty();
+	}
+
+	public static List<ReportProblem> checkInterfaces(Class<?> actual, ClassSpecification spec) {
+		List<ReportProblem> problems = new ArrayList<>();
+
+		List<ResolvableType> notFoundInterfaces = Arrays.stream(actual.getInterfaces())
+				.map(ResolvableType::forClass)
+				// needs to be mutable
+				.collect(Collectors.toCollection(() -> new ArrayList<>()));
+
+		List<InterfaceSpecification> specifications = new ArrayList<>(Arrays.asList(spec.getInterfaceSpecifications()));
+
+		for (InterfaceSpecification specification : specifications) {
+			Optional<ResolvableType> interf = notFoundInterfaces.parallelStream()
+					.filter(i -> ClassUtils.equal(specification.getRawElement(), i))
+					.findAny();
+
+			if (interf.isPresent()) {
+				notFoundInterfaces.remove(interf.get());
+			} else {
+				String format = "should implement interface \"%s\"";
+				problems.add(new ReportProblem(1, String.format(format, ClassUtils.getName(interf.get())), Type.ERROR));
+			}
+		}
+
+		String format = "should not implements interface \"%s\"";
+		for (ResolvableType notFoundInterface : notFoundInterfaces) {
+			problems.add(new ReportProblem(1, String.format(format, ClassUtils.getName(notFoundInterface)), Type.ERROR));
+		}
+
+		return problems;
 	}
 
 	public static Optional<ReportProblem> checkVisibility(Class<?> actual, ClassSpecification spec) {
