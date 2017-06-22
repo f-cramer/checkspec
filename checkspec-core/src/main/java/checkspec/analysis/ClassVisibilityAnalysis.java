@@ -11,7 +11,7 @@ public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implemen
 
 	@Override
 	public Optional<ReportProblem> analyse(ResolvableType actual, ClassSpecification specification) {
-		return analyse(actual.getRawClass().getModifiers(), specification.getVisibility());
+		return analyseVisibility(actual.getRawClass().getModifiers(), specification.getVisibility());
 	}
 
 	@Override

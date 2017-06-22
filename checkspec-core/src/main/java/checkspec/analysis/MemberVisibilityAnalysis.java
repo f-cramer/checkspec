@@ -10,7 +10,7 @@ public class MemberVisibilityAnalysis extends AbstractVisibilityAnalysis impleme
 
 	@Override
 	public Optional<ReportProblem> analyse(Member actual, Specification<? extends Member> specification) {
-		return analyse(actual.getModifiers(), specification.getVisibility());
+		return analyseVisibility(actual.getModifiers(), specification.getVisibility());
 	}
 
 }

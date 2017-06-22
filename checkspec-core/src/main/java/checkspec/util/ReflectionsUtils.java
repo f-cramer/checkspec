@@ -48,7 +48,7 @@ public final class ReflectionsUtils {
 		}
 		return URLS;
 	}
-
+	
 	private static Stream<URL> getUrlAsStream(String path) {
 		try {
 			return Stream.of(new File(path).toURI().toURL());

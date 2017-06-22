@@ -4,10 +4,12 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -16,10 +18,12 @@ import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
+import checkspec.analysis.AnalysisForClass;
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
+import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
@@ -134,6 +138,27 @@ public final class CheckSpec {
 		return StaticChecker.createProxy(clazz, handler);
 	}
 
+	private static final String ERROR_FORMAT = "Analysis \"%s\" does not provide a default constructor and thus will not be used%n";
+	private static final AnalysisForClass<?>[] ANALYSES;
+
+	static {
+		Reflections reflections = ReflectionsUtils.createDefaultReflections();
+
+		ANALYSES = reflections.getSubTypesOf(AnalysisForClass.class).parallelStream()
+				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+				.map(clazz -> {
+					try {
+						return clazz.newInstance();
+					} catch (InstantiationException | IllegalAccessException e) {
+						System.err.printf(ERROR_FORMAT, ClassUtils.getName(clazz));
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.peek(System.out::println)
+				.toArray(AnalysisForClass<?>[]::new);
+	}
+
 	private final Reflections reflections;
 	private final ClassLoader classLoader;
 
@@ -175,12 +200,28 @@ public final class CheckSpec {
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(StreamUtils.equalsPredicate(getLocation(spec.getRawElement().getRawClass()), CheckSpec::getLocation).negate())
 				.filter(this::loadedFromValidLocation)
-				.map(e -> StaticChecker.checkImplements(e, spec))
+				.map(e -> checkImplements(e, spec))
 				.filter(ClassReport::hasAnyImplementation)
 				.sorted()
 				.collect(Collectors.toList());
 
 		return new SpecReport(spec, classReports);
+	}
+
+	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
+		ClassReport report = new ClassReport(spec, clazz);
+		ResolvableType type = ResolvableType.forClass(clazz);
+
+		for (final AnalysisForClass<?> analysis : ANALYSES) {
+			performAnalysis(analysis, type, spec, report);
+		}
+
+		return report;
+	}
+
+	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, ClassReport report) {
+		ReturnType returnValue = analysis.analyse(clazz, spec);
+		analysis.add(report, returnValue);
 	}
 
 	private boolean loadedFromValidLocation(Class<?> clazz) {

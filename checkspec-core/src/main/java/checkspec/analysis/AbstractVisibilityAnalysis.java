@@ -13,7 +13,7 @@ import checkspec.spec.VisibilitySpecification;
 
 public abstract class AbstractVisibilityAnalysis {
 
-	protected static Optional<ReportProblem> analyse(int actualModifiers, VisibilitySpecification spec) {
+	protected static Optional<ReportProblem> analyseVisibility(int actualModifiers, VisibilitySpecification spec) {
 		Visibility actualVisibility = getVisibility(actualModifiers);
 		ReportProblem problem = null;
 
@@ -24,7 +24,9 @@ public abstract class AbstractVisibilityAnalysis {
 			} else if (visibilities.length == 1) {
 				problem = new ReportProblem(1, String.format("should have visibility \"%s\"", visibilities[0]), Type.ERROR);
 			} else {
-				String visibilityString = Arrays.stream(visibilities).map(Visibility::toString).collect(Collectors.joining(", "));
+				String visibilityString = Arrays.stream(visibilities)
+						.map(Visibility::toString)
+						.collect(Collectors.joining(", "));
 				problem = new ReportProblem(1, String.format("should have any of the following visibilities: \"%s\"", visibilityString), Type.ERROR);
 			}
 		}
