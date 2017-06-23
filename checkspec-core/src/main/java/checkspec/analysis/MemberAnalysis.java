@@ -63,9 +63,12 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 				.collect(Collectors.toList());
 	}
 
-	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec);
+	private Function<SpecificationType, Stream<Pair<MemberType, SpecificationType>>> getMapperFunction(Class<?> clazz) {
+		return spec -> Arrays.stream(getMembers(clazz)).parallel()
+				.map(member -> Pair.of(member, spec));
+	}
 
-	protected abstract Function<SpecificationType, Stream<Pair<MemberType, SpecificationType>>> getMapperFunction(Class<?> clazz);
+	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec);
 
 	protected abstract int getDistance(MemberType member, SpecificationType specification);
 

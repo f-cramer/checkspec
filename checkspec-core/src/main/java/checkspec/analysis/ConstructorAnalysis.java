@@ -8,10 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ConstructorReport;
@@ -28,22 +24,16 @@ import lombok.Getter;
 
 @Getter
 public class ConstructorAnalysis extends MemberAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
-	
+
 	private static final String COMPATIBLE_TYPE = "parameter %d has compatible type \"%s\"";
 	private static final String INCOMPATIBLE_TYPE = "parameter %d has incompatible type \"%s\"";
 	private static final String PARAMETER_COUNT = "parameter count should be %s but is %s";
 
 	private Comparator<ConstructorReport> comparator = Comparator.comparing(ConstructorReport::getSpec);
-	
+
 	@Override
 	protected ConstructorSpecification[] getMemberSpecifications(ClassSpecification spec) {
 		return spec.getConstructorSpecifications();
-	}
-
-	@Override
-	protected Function<ConstructorSpecification, Stream<Pair<Constructor<?>, ConstructorSpecification>>> getMapperFunction(Class<?> clazz) {
-		return constructorSpec -> Arrays.stream(clazz.getDeclaredConstructors()).parallel()
-				.map(constructor -> Pair.of(constructor, constructorSpec));
 	}
 
 	@Override

@@ -1,27 +1,20 @@
 package checkspec;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
-import org.reflections.Reflections;
 
-import checkspec.analysis.AnalysisForClass;
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.SpecReport;
-import checkspec.spec.ClassSpecification;
-import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.MethodUtils;
-import checkspec.util.ReflectionsUtils;
 import javassist.util.proxy.ProxyFactory;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

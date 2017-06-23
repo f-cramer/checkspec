@@ -4,14 +4,9 @@ import static checkspec.util.ClassUtils.getName;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
@@ -33,18 +28,12 @@ public class MethodAnalysis extends MemberAnalysis<Method, MethodSpecification, 
 	private static final String PARAMETER_COMPATIBLE_TYPE = "parameter %d has compatible type \"%s\"";
 	private static final String PARAMETER_INCOMPATIBLE_TYPE = "parameter %d has incompatible type \"%s\"";
 	private static final String PARAMETER_COUNT = "parameter count should be %s but is %s";
-	
+
 	private Comparator<MethodReport> comparator = Comparator.comparing(MethodReport::getSpec);
-	
+
 	@Override
 	protected MethodSpecification[] getMemberSpecifications(ClassSpecification spec) {
 		return spec.getMethodSpecifications();
-	}
-
-	@Override
-	protected Function<MethodSpecification, Stream<Pair<Method, MethodSpecification>>> getMapperFunction(Class<?> clazz) {
-		return methodSpec -> Arrays.stream(clazz.getDeclaredMethods()).parallel()
-				.map(method -> Pair.of(method, methodSpec));
 	}
 
 	@Override

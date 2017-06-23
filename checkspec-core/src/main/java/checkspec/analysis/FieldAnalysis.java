@@ -4,14 +4,9 @@ import static checkspec.util.ClassUtils.getName;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import checkspec.report.ClassReport;
 import checkspec.report.FieldReport;
@@ -27,22 +22,16 @@ import lombok.Getter;
 
 @Getter
 public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, FieldReport> {
-	
+
 	private static final String NAME = "should have name \"%s\"";
 	private static final String COMPATIBLE_TYPE = "has compatible type \"%s\" rather than \"%s\"";
 	private static final String INCOMPATIBLE_TYPE = "has incompatible type \"%s\" rather than \"%s\"";
 
 	private Comparator<FieldReport> comparator = Comparator.comparing(FieldReport::getSpec);
-	
+
 	@Override
 	protected FieldSpecification[] getMemberSpecifications(ClassSpecification spec) {
 		return spec.getFieldSpecifications();
-	}
-
-	@Override
-	protected Function<FieldSpecification, Stream<Pair<Field, FieldSpecification>>> getMapperFunction(Class<?> clazz) {
-		return FieldSpec -> Arrays.stream(clazz.getDeclaredFields()).parallel()
-				.map(Field -> Pair.of(Field, FieldSpec));
 	}
 
 	@Override
