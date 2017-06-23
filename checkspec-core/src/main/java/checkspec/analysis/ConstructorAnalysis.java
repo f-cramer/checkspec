@@ -28,6 +28,10 @@ import lombok.Getter;
 
 @Getter
 public class ConstructorAnalysis extends MemberAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
+	
+	private static final String COMPATIBLE_TYPE = "parameter %d has compatible type \"%s\"";
+	private static final String INCOMPATIBLE_TYPE = "parameter %d has incompatible type \"%s\"";
+	private static final String PARAMETER_COUNT = "parameter count should be %s but is %s";
 
 	private Comparator<ConstructorReport> comparator = Comparator.comparing(ConstructorReport::getSpec);
 	
@@ -87,14 +91,14 @@ public class ConstructorAnalysis extends MemberAnalysis<Constructor<?>, Construc
 
 				if (actualType.getRawClass() != specType.getRawClass()) {
 					boolean compatible = ClassUtils.isAssignable(specType, actualType);
-					String format = "parameter %d has " + (compatible ? "" : "in") + "compatible type \"%s\"";
+					String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
 					Type type = compatible ? Type.WARNING : Type.ERROR;
 					problems.add(new ReportProblem(1, String.format(format, i + 1, getName(actualType)), type));
 				}
 			}
 		} else {
 			int score = Math.abs(actualLength - specLength);
-			String message = String.format("parameter count should be %s but is %s", specLength, actualLength);
+			String message = String.format(PARAMETER_COUNT, specLength, actualLength);
 			problems.add(new ReportProblem(score, message, Type.WARNING));
 		}
 

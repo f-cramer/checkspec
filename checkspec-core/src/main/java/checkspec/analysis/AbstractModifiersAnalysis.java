@@ -22,6 +22,9 @@ import checkspec.spec.ModifiersSpecification.State;
 
 public abstract class AbstractModifiersAnalysis {
 
+	private static final String SHOULD_HAVE = "should have modifier \"%s\"";
+	private static final String SHOULD_NOT_HAVE = "should not have modifier \"%s\"";
+
 	protected static List<ReportProblem> analyse(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
 
@@ -61,13 +64,11 @@ public abstract class AbstractModifiersAnalysis {
 		ReportProblem problem = null;
 
 		if (spec == State.TRUE && !spec.matches(actual)) {
-			String format = "should have modifier \"%s\"";
-			problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
+			problem = new ReportProblem(1, String.format(SHOULD_HAVE, modifier), Type.WARNING);
 		}
 
 		if (spec == State.FALSE && !spec.matches(actual)) {
-			String format = "should not have modifier \"%s\"";
-			problem = new ReportProblem(1, String.format(format, modifier), Type.WARNING);
+			problem = new ReportProblem(1, String.format(SHOULD_NOT_HAVE, modifier), Type.WARNING);
 		}
 
 		return Optional.ofNullable(problem);

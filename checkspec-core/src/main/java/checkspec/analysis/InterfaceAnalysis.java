@@ -16,6 +16,9 @@ import checkspec.util.ClassUtils;
 
 public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> {
 
+	private static final String SHOULD = "should implement interface \"%s\"";
+	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
+	
 	@Override
 	public List<ReportProblem> analyse(ResolvableType actual, ClassSpecification spec) {
 		List<ReportProblem> problems = new ArrayList<>();
@@ -35,14 +38,12 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 			if (interf.isPresent()) {
 				notFoundInterfaces.remove(interf.get());
 			} else {
-				String format = "should implement interface \"%s\"";
-				problems.add(new ReportProblem(1, String.format(format, ClassUtils.getName(interf.get())), Type.ERROR));
+				problems.add(new ReportProblem(1, String.format(SHOULD, ClassUtils.getName(interf.get())), Type.ERROR));
 			}
 		}
 
-		String format = "should not implements interface \"%s\"";
 		for (ResolvableType notFoundInterface : notFoundInterfaces) {
-			problems.add(new ReportProblem(1, String.format(format, ClassUtils.getName(notFoundInterface)), Type.ERROR));
+			problems.add(new ReportProblem(1, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), Type.ERROR));
 		}
 
 		return problems;

@@ -11,16 +11,20 @@ import checkspec.spec.ClassSpecification;
 import checkspec.spring.ResolvableType;
 
 public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
+	
+	private static final String OBJECT_CLASS_NAME = Object.class.getName();
+	private static final String SHOULD = "should not declare any super class";
+	private static final String SHOULD_NOT = "should declare \"%s\" as its super class";
 
 	@Override
 	public Optional<ReportProblem> analyse(ResolvableType actual, ClassSpecification specification) {
 		ResolvableType rawSpecSuperClass = specification.getSuperClassSpecification().getRawElement();
 		if (actual.getRawClass().getSuperclass() != rawSpecSuperClass.getRawClass()) {
 			String format;
-			if (rawSpecSuperClass.getRawClass().getName().equals("java.lang.Object")) {
-				format = "should not declare any super class";
+			if (OBJECT_CLASS_NAME.equals(rawSpecSuperClass.getRawClass().getName())) {
+				format = SHOULD;
 			} else {
-				format = "should declare \"%s\" as its super class";
+				format = SHOULD_NOT;
 			}
 			return Optional.of(new ReportProblem(1, String.format(format, getName(rawSpecSuperClass)), Type.ERROR));
 		}

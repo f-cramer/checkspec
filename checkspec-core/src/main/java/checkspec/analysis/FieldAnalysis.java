@@ -27,6 +27,10 @@ import lombok.Getter;
 
 @Getter
 public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, FieldReport> {
+	
+	private static final String NAME = "should have name \"%s\"";
+	private static final String COMPATIBLE_TYPE = "has compatible type \"%s\" rather than \"%s\"";
+	private static final String INCOMPATIBLE_TYPE = "has incompatible type \"%s\" rather than \"%s\"";
 
 	private Comparator<FieldReport> comparator = Comparator.comparing(FieldReport::getSpec);
 	
@@ -67,8 +71,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		problems.addAll(MODIFIERS_ANALYSIS.analyse(field, spec));
 
 		if (!fieldName.equals(specName)) {
-			String format = "should have name \"%s\"";
-			problems.add(new ReportProblem(1, String.format(format, specName), Type.WARNING));
+			problems.add(new ReportProblem(1, String.format(NAME, specName), Type.WARNING));
 		}
 
 		ResolvableType fieldType = FieldUtils.getType(field);
@@ -79,7 +82,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 			String specTypeName = getName(specType);
 
 			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
-			String format = "has " + (compatible ? "" : "in") + "compatible type \"%s\" rather than \"%s\"";
+			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
 			String message = String.format(format, fieldTypeName, specTypeName);
 			problems.add(new ReportProblem(1, message, compatible ? Type.WARNING : Type.ERROR));
 		}

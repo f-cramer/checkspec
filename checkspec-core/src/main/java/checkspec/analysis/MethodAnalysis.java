@@ -27,6 +27,13 @@ import lombok.Getter;
 @Getter
 public class MethodAnalysis extends MemberAnalysis<Method, MethodSpecification, MethodReport> {
 
+	private static final String NAME = "should have name \"%s\"";
+	private static final String COMPATIBLE_TYPE = "returns compatible type \"%s\"";
+	private static final String INCOMPATIBLE_TYPE = "returns incompatible type \"%s\"";
+	private static final String PARAMETER_COMPATIBLE_TYPE = "parameter %d has compatible type \"%s\"";
+	private static final String PARAMETER_INCOMPATIBLE_TYPE = "parameter %d has incompatible type \"%s\"";
+	private static final String PARAMETER_COUNT = "parameter count should be %s but is %s";
+	
 	private Comparator<MethodReport> comparator = Comparator.comparing(MethodReport::getSpec);
 	
 	@Override
@@ -76,13 +83,12 @@ public class MethodAnalysis extends MemberAnalysis<Method, MethodSpecification, 
 		report.addProblems(MODIFIERS_ANALYSIS.analyse(method, spec));
 
 		if (!method.getName().equals(spec.getName())) {
-			String format = "should be called \"%s\"";
-			report.addProblem(new ReportProblem(1, String.format(format, spec.getName()), Type.ERROR));
+			report.addProblem(new ReportProblem(1, String.format(NAME, spec.getName()), Type.ERROR));
 		}
 
 		if (methodReturnType.getRawClass() != specReturnType.getRawClass()) {
 			boolean compatible = ClassUtils.isAssignable(methodReturnType, specReturnType);
-			String format = "returns " + (compatible ? "" : "in") + "compatible type \"%s\"";
+			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
 			Type type = compatible ? Type.WARNING : Type.ERROR;
 			report.addProblem(new ReportProblem(1, String.format(format, methodReturnTypeName), type));
 		}
@@ -108,14 +114,14 @@ public class MethodAnalysis extends MemberAnalysis<Method, MethodSpecification, 
 
 				if (actualType.getRawClass() != specType.getRawClass()) {
 					boolean compatible = ClassUtils.isAssignable(specType, actualType);
-					String format = "parameter %d has " + (compatible ? "" : "in") + "compatible type \"%s\"";
+					String format = compatible ? PARAMETER_COMPATIBLE_TYPE : PARAMETER_INCOMPATIBLE_TYPE;
 					Type type = compatible ? Type.WARNING : Type.ERROR;
 					problems.add(new ReportProblem(1, String.format(format, i + 1, getName(actualType)), type));
 				}
 			}
 		} else {
 			int score = Math.abs(actualLength - specLength);
-			String message = String.format("parameter count should be %s but is %s", specLength, actualLength);
+			String message = String.format(PARAMETER_COUNT, specLength, actualLength);
 			problems.add(new ReportProblem(score, message, Type.WARNING));
 		}
 
