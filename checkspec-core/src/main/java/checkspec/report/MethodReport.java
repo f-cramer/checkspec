@@ -5,19 +5,32 @@ import static checkspec.util.MessageUtils.missing;
 import static checkspec.util.MethodUtils.createString;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 import checkspec.spec.MethodSpecification;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
 @EqualsAndHashCode(callSuper = true)
 public class MethodReport extends Report<MethodSpecification, Method> {
 
-	public MethodReport(MethodSpecification specMethod) {
-		super(specMethod, null, null);
+	private final ParametersReport parametersReport;
+
+	public MethodReport(MethodSpecification specification) {
+		super(specification, null, null);
+		this.parametersReport = new ParametersReport(specification.getParameters());
 	}
 
-	public MethodReport(MethodSpecification specMethod, Method implementingMethod) {
-		super(specMethod, implementingMethod, null);
+	public MethodReport(MethodSpecification specification, Method method, ParametersReport parametersReport) {
+		super(specification, method, null);
+		this.parametersReport = parametersReport;
+	}
+
+	@Override
+	public List<Report<?, ?>> getSubReports() {
+		return Collections.singletonList(parametersReport);
 	}
 
 	@Override

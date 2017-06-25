@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -144,17 +143,16 @@ public final class CheckSpec {
 	static {
 		Reflections reflections = ReflectionsUtils.createDefaultReflections();
 
-		ANALYSES = reflections.getSubTypesOf(AnalysisForClass.class).parallelStream()
+		ANALYSES = reflections.getSubTypesOf(AnalysisForClass.class).stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-				.map(clazz -> {
+				.flatMap(clazz -> {
 					try {
-						return clazz.newInstance();
+						return Stream.of(clazz.newInstance());
 					} catch (InstantiationException | IllegalAccessException e) {
 						System.err.printf(ERROR_FORMAT, ClassUtils.getName(clazz));
-						return null;
+						return Stream.empty();
 					}
 				})
-				.filter(Objects::nonNull)
 				.peek(System.out::println)
 				.toArray(AnalysisForClass<?>[]::new);
 	}

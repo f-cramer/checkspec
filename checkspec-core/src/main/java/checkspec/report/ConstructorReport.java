@@ -5,17 +5,28 @@ import static checkspec.util.MessageUtils.bestFitting;
 import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.List;
 
 import checkspec.spec.ConstructorSpecification;
 
 public class ConstructorReport extends Report<ConstructorSpecification, Constructor<?>> {
 
-	public ConstructorReport(ConstructorSpecification specConstructor) {
-		super(specConstructor, null, null);
+	private final ParametersReport parametersReport;
+
+	public ConstructorReport(ConstructorSpecification specification) {
+		super(specification, null, null);
+		this.parametersReport = new ParametersReport(specification.getParameters());
 	}
 
-	public ConstructorReport(ConstructorSpecification specConstructor, Constructor<?> implementingConstructor) {
-		super(specConstructor, implementingConstructor, null);
+	public ConstructorReport(ConstructorSpecification specification, Constructor<?> constructor, ParametersReport parametersReport) {
+		super(specification, constructor, null);
+		this.parametersReport = parametersReport;
+	}
+
+	@Override
+	public List<Report<?, ?>> getSubReports() {
+		return Collections.singletonList(parametersReport);
 	}
 
 	@Override

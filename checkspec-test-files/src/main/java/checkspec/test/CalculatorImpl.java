@@ -1,11 +1,7 @@
 package checkspec.test;
 
-import java.util.ArrayList;
-
 @SuppressWarnings("unused")
-public class CalculatorImpl extends ArrayList<Integer> {
-
-	private static final long serialVersionUID = -3637983294990560884L;
+public class CalculatorImpl {
 
 	private int abc;
 

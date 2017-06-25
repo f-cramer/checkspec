@@ -78,7 +78,7 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 			Report<?, ?> subReport = subReports.get(0);
 			if (subReport instanceof ConstructorReport) {
 				ConstructorSpecification constructorSpec = ((ConstructorReport) subReport).getSpec();
-				return constructorSpec.getParameters().length != 0;
+				return constructorSpec.getParameters().getCount() != 0;
 			}
 		}
 

@@ -1,8 +1,8 @@
 package checkspec.spec;
 
 import java.lang.reflect.Constructor;
-import java.util.stream.IntStream;
 
+import checkspec.spring.ResolvableType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -22,7 +22,7 @@ public class ConstructorSpecification implements Specification<Constructor<?>>, 
 	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private final MethodParameterSpecification[] parameters;
+	private final ParametersSpecification parameters;
 
 	@NonNull
 	private final Constructor<?> rawElement;
@@ -33,23 +33,23 @@ public class ConstructorSpecification implements Specification<Constructor<?>>, 
 		visibility = new VisibilitySpecification(constructor.getModifiers(), constructor.getAnnotations());
 		rawElement = constructor;
 
-		parameters = IntStream.range(0, constructor.getParameterCount())
-				.mapToObj(i -> new MethodParameterSpecification(constructor, i))
-				.toArray(MethodParameterSpecification[]::new);
+		parameters = new ParametersSpecification(constructor.getParameters(), index -> ResolvableType.forConstructorParameter(constructor, index));
 	}
 
 	@Override
 	public int compareTo(ConstructorSpecification o) {
-		int length = Math.min(parameters.length, o.parameters.length);
+		ParameterSpecification[] parameterSpecifications = parameters.getParameterSpecifications();
+		ParameterSpecification[] oParameterSpecifications = o.parameters.getParameterSpecifications();
+		int length = Math.min(parameterSpecifications.length, oParameterSpecifications.length);
 		for (int i = 0; i < length; i++) {
-			Class<?> thisClass = parameters[i].getType().getRawClass();
-			Class<?> oClass = o.parameters[i].getType().getRawClass();
+			Class<?> thisClass = parameterSpecifications[i].getType().getRawClass();
+			Class<?> oClass = oParameterSpecifications[i].getType().getRawClass();
 
 			if (thisClass != oClass) {
 				return thisClass.getName().compareTo(oClass.getName());
 			}
 		}
 
-		return Integer.compare(parameters.length, o.parameters.length);
+		return Integer.compare(parameterSpecifications.length, oParameterSpecifications.length);
 	}
 }

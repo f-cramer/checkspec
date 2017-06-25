@@ -16,15 +16,15 @@ import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-public class Report<T extends Specification<U>, U> implements Comparable<Report<?, ?>>, ReportEntry {
+public class Report<SpecificationType extends Specification<RawType>, RawType> implements Comparable<Report<?, ?>>, ReportEntry {
 
-	private final T spec;
-	private final U implementation;
+	private final SpecificationType spec;
+	private final RawType implementation;
 
 	private final String title;
 	private final List<ReportProblem> problems = new ArrayList<>();
 
-	protected Report(T spec, U implementation, String title, ReportProblem... problems) {
+	protected Report(SpecificationType spec, RawType implementation, String title, ReportProblem... problems) {
 		this.spec = spec;
 		this.implementation = implementation;
 		this.title = title;

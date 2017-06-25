@@ -168,4 +168,16 @@ public class ClassUtils {
 
 		return false;
 	}
+
+	public static boolean equal(Class<?> t1, Class<?> t2) {
+		if (t1 == t2) {
+			return true;
+		}
+
+		if (getName(t1).equals(getName(t2))) {
+			return true;
+		}
+
+		return false;
+	}
 }
