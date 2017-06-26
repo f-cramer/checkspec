@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
 
 import checkspec.spec.ConstructorSpecification;
 
-public class ConstructorReport extends ExecutableReport<ConstructorSpecification, Constructor<?>> {
+public class ConstructorReport extends ExecutableReport<Constructor<?>, ConstructorSpecification> {
 
 	public ConstructorReport(ConstructorSpecification specification) {
 		super(specification);

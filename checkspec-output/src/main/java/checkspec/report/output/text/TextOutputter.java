@@ -43,7 +43,8 @@ public class TextOutputter implements Outputter {
 	private static String toString(ClassReport report) {
 		Stream<String> problems = report.getProblems().parallelStream().map(Object::toString);
 
-		Stream<String> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel()
+		Stream<List<? extends Report<?, ?>>> lists = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports());
+		Stream<String> reports = lists.parallel()
 				.flatMap(List::stream)
 				.map(TextOutputter::toString);
 

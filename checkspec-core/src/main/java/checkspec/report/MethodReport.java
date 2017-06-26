@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class MethodReport extends ExecutableReport<MethodSpecification, Method> {
+public class MethodReport extends ExecutableReport<Method, MethodSpecification> {
 
 	public MethodReport(MethodSpecification specification) {
 		super(specification);

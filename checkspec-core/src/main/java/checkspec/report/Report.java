@@ -1,7 +1,6 @@
 package checkspec.report;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,19 +15,26 @@ import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-public abstract class Report<SpecificationType extends Specification<RawType>, RawType> implements Comparable<Report<?, ?>>, ReportEntry {
+public abstract class Report<RawType, SpecificationType extends Specification<RawType>> implements Comparable<Report<?, ?>> {
 
 	private final SpecificationType spec;
 	private final RawType implementation;
-
 	private final String title;
+
 	private final List<ReportProblem> problems = new ArrayList<>();
 
-	protected Report(SpecificationType spec, RawType implementation, String title, ReportProblem... problems) {
+	protected Report(SpecificationType spec) {
+		this(spec, null, null);
+	}
+
+	protected Report(SpecificationType spec, RawType implementation) {
+		this(spec, implementation, null);
+	}
+
+	protected Report(SpecificationType spec, RawType implementation, String title) {
 		this.spec = spec;
 		this.implementation = implementation;
 		this.title = title;
-		this.problems.addAll(Arrays.asList(problems));
 	}
 
 	public List<ReportProblem> getProblems() {
@@ -60,7 +66,6 @@ public abstract class Report<SpecificationType extends Specification<RawType>, R
 		return implementation != null && spec.getName().equals(getRawTypeName(implementation));
 	}
 
-	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
 			return 10;

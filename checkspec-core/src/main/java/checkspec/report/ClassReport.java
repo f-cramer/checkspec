@@ -11,7 +11,7 @@ import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class ClassReport extends Report<ClassSpecification, ResolvableType> {
+public class ClassReport extends Report<ResolvableType, ClassSpecification> {
 
 	private List<FieldReport> fieldReports = new ArrayList<>();
 	private List<ConstructorReport> constructorReports = new ArrayList<>();

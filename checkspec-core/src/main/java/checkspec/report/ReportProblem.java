@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ReportProblem implements ReportEntry {
+public class ReportProblem {
 
 	private final int score;
 	@NonNull

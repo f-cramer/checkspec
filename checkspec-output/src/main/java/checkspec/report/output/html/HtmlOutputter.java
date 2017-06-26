@@ -88,8 +88,10 @@ public class HtmlOutputter implements Outputter {
 		Stream<Row> problems = report.getProblems().parallelStream()
 				.map(e -> new Row(1, getMark(e), e.toString()));
 
-		Stream<Row> reports = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports()).parallel()
-				.flatMap(List::stream).flatMap(HtmlOutputter::getRows)
+		Stream<List<? extends Report<?, ?>>> lists = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports());
+		Stream<Row> reports = lists.parallel()
+				.flatMap(List::stream)
+				.flatMap(HtmlOutputter::getRows)
 				.map(Row::withIncreasedIndent);
 
 		return Stream.concat(Stream.concat(head, Stream.concat(problems, reports)), Stream.of(Row.EMPTY));

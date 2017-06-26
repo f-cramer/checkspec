@@ -19,10 +19,6 @@ public class StreamUtils {
 		return o -> Objects.equal(t, converter.apply(o));
 	}
 	
-	public static <T, U, V> Function<T, V> concat(@NonNull Function<T, U> c1, @NonNull Function<U, V> c2) {
-		return o -> c2.apply(c1.apply(o));
-	}
-	
 	public static <T, U> Predicate<T> isNullPredicate(Function<T, U> converter) {
 		return t -> converter.apply(t) != null;
 	}

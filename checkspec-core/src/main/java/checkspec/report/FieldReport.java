@@ -8,14 +8,14 @@ import java.lang.reflect.Field;
 
 import checkspec.spec.FieldSpecification;
 
-public class FieldReport extends Report<FieldSpecification, Field> {
+public class FieldReport extends Report<Field, FieldSpecification> {
 
 	public FieldReport(FieldSpecification specField) {
-		super(specField, null, null);
+		super(specField);
 	}
 
 	public FieldReport(FieldSpecification specField, Field implementingField) {
-		super(specField, implementingField, null);
+		super(specField, implementingField);
 	}
 
 	@Override

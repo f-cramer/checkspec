@@ -1,6 +1,5 @@
 package checkspec;
 
-import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,10 +22,10 @@ import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.spring.ResolvableType;
-import checkspec.util.TypeDiscovery;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
+import checkspec.util.TypeDiscovery;
 import lombok.NonNull;
 
 @SuppressWarnings("unchecked")
@@ -56,10 +55,7 @@ public final class CheckSpec {
 		if (DEFAULT_INSTANCE == null) {
 			synchronized (DEFAULT_SYNC) {
 				if (DEFAULT_INSTANCE == null) {
-					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
-							.flatMap(CheckSpec::getUrlAsStream)
-							.toArray(URL[]::new);
-					DEFAULT_INSTANCE = new CheckSpec(urls);
+					DEFAULT_INSTANCE = new CheckSpec();
 				}
 			}
 		}
@@ -72,7 +68,7 @@ public final class CheckSpec {
 				if (LIBRARY_LESS_INSTANCE == null) {
 					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
 							.filter(e -> !e.endsWith(".jar"))
-							.flatMap(CheckSpec::getUrlAsStream)
+							.flatMap(ReflectionsUtils::getUrlAsStream)
 							.toArray(URL[]::new);
 					LIBRARY_LESS_INSTANCE = new CheckSpec(urls);
 				}
@@ -97,10 +93,10 @@ public final class CheckSpec {
 	}
 
 	private static boolean hasSpecAnnotation(Class<?> clazz) {
-		Function<Annotation, String> concat = StreamUtils.concat(Annotation::annotationType, Class::getName);
+		Function<Annotation, String> annotationName = ((Function<Annotation, Class<?>>) Annotation::annotationType).andThen(Class::getName);
 
 		return Arrays.stream(clazz.getAnnotations()).parallel()
-				.filter(StreamUtils.equalsPredicate(Spec.class.getName(), concat))
+				.filter(StreamUtils.equalsPredicate(Spec.class.getName(), annotationName))
 				.anyMatch(CheckSpec::hasValueSetToTrue);
 	}
 
@@ -125,14 +121,6 @@ public final class CheckSpec {
 		return false;
 	}
 
-	private static Stream<URL> getUrlAsStream(String path) {
-		try {
-			return Stream.of(new File(path).toURI().toURL());
-		} catch (Exception e) {
-			return Stream.empty();
-		}
-	}
-
 	public static <T> T createProxy(SpecReport report) {
 		Class<?> clazz = report.getSpec().getRawElement().getRawClass();
 		MethodInvocationHandler handler = StaticChecker.createInvocationHandler(clazz, report);
@@ -143,16 +131,19 @@ public final class CheckSpec {
 	private static final AnalysisForClass<?>[] ANALYSES;
 
 	static {
-		Function<Class<AnalysisForClass<?>>, Stream<AnalysisForClass<?>>> instantiate = ClassUtils.instantiate(ERROR_FORMAT);
 		ANALYSES = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
-				.flatMap(instantiate)
-				.toArray(AnalysisForClass<?>[]::new);
+				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
+				.toArray(length -> new AnalysisForClass<?>[length]);
 	}
 
 	private final Reflections reflections;
 	private final ClassLoader classLoader;
+
+	private CheckSpec() {
+		this(ReflectionsUtils.createDefaultReflections(), ClassUtils.getSystemClassLoader());
+	}
 
 	private CheckSpec(URL[] urls) {
 		this(ReflectionsUtils.createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));

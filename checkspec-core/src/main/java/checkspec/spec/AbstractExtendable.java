@@ -27,7 +27,7 @@ class AbstractExtendable implements Extendable {
 		return (Optional<T>) Optional.ofNullable(extensions.get(clazz));
 	}
 
-	protected <RawElement, ExtensionPoint> void performExtensions(Extension<RawElement, ExtensionPoint>[] extensions, RawElement element, ExtensionPoint extensionPoint) {
+	protected <RawElement, ExtensionPoint extends Extendable> void performExtensions(Extension<RawElement, ExtensionPoint>[] extensions, RawElement element, ExtensionPoint extensionPoint) {
 		for (Extension<RawElement, ExtensionPoint> extension : extensions) {
 			try {
 				extension.extend(element, extensionPoint);

@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString
-public class FieldSpecification extends AbstractExtendable implements Specification<Field>, Comparable<FieldSpecification> {
+public class FieldSpecification extends AbstractExtendable implements MemberSpecification<Field>, Comparable<FieldSpecification> {
 
 	private static final FieldSpecificationExtension[] EXTENSIONS;
 

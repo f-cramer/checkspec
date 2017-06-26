@@ -10,17 +10,17 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public abstract class ExecutableReport<SpecificationType extends ExecutableSpecification<RawType>, RawType extends Executable> extends Report<SpecificationType, RawType> {
+public abstract class ExecutableReport<RawType extends Executable, SpecificationType extends ExecutableSpecification<RawType>> extends MemberReport<RawType, SpecificationType> {
 
 	private final ParametersReport parametersReport;
 
 	public ExecutableReport(SpecificationType specification) {
-		super(specification, null, null);
+		super(specification);
 		this.parametersReport = new ParametersReport(specification.getParameters());
 	}
 
 	public ExecutableReport(SpecificationType specification, RawType executable, ParametersReport parametersReport) {
-		super(specification, executable, null);
+		super(specification, executable);
 		this.parametersReport = parametersReport;
 	}
 

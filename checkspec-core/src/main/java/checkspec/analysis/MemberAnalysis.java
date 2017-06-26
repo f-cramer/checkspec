@@ -21,14 +21,14 @@ import checkspec.spec.ClassSpecification;
 import checkspec.spec.Specification;
 import checkspec.spring.ResolvableType;
 
-public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
+public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		implements AnalysisForClass<Collection<? extends ReportType>> {
 
 	private static final SimilarityScore<Integer> NAME_DISTANCE = LevenshteinDistance.getDefaultInstance();
 	protected static final MemberVisibilityAnalysis VISIBILITY_ANALYSIS = new MemberVisibilityAnalysis();
 	protected static final MemberModifiersAnalysis MODIFIERS_ANALYSIS = new MemberModifiersAnalysis();
 
-	private final Comparator<ReportType> COMPARATOR = Comparator.comparing(report -> report.getSpec().getName());
+	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpec().getName());
 
 	@Override
 	public final Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec) {
@@ -62,7 +62,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 				.map(this::createEmptyReport);
 
 		return Stream.concat(foundMembers, notFoundMembers)
-				.sorted(COMPARATOR)
+				.sorted(comparator)
 				.collect(Collectors.toList());
 	}
 
@@ -80,7 +80,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	protected abstract ReportType createEmptyReport(SpecificationType specification);
 
 	protected Comparator<ReportType> getComparator() {
-		return COMPARATOR;
+		return comparator;
 	}
 
 	protected final int calculateDistance(String left, String right) {

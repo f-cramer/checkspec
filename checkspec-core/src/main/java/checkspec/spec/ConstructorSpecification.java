@@ -49,19 +49,19 @@ public class ConstructorSpecification extends AbstractExtendable implements Exec
 	}
 
 	@Override
-	public int compareTo(ConstructorSpecification o) {
+	public int compareTo(ConstructorSpecification other) {
 		ParameterSpecification[] parameterSpecifications = parameters.getParameterSpecifications();
-		ParameterSpecification[] oParameterSpecifications = o.parameters.getParameterSpecifications();
-		int length = Math.min(parameterSpecifications.length, oParameterSpecifications.length);
+		ParameterSpecification[] otherParameterSpecifications = other.parameters.getParameterSpecifications();
+		int length = Math.min(parameterSpecifications.length, otherParameterSpecifications.length);
 		for (int i = 0; i < length; i++) {
 			Class<?> thisClass = parameterSpecifications[i].getType().getRawClass();
-			Class<?> oClass = oParameterSpecifications[i].getType().getRawClass();
+			Class<?> otherClass = otherParameterSpecifications[i].getType().getRawClass();
 
-			if (thisClass != oClass) {
-				return thisClass.getName().compareTo(oClass.getName());
+			if (thisClass != otherClass) {
+				return thisClass.getName().compareTo(otherClass.getName());
 			}
 		}
 
-		return Integer.compare(parameterSpecifications.length, oParameterSpecifications.length);
+		return Integer.compare(parameterSpecifications.length, otherParameterSpecifications.length);
 	}
 }

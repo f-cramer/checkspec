@@ -175,15 +175,7 @@ public class ClassUtils {
 			return true;
 		}
 
-		if (t1.getRawClass() == t2.getRawClass()) {
-			return true;
-		}
-
-		if (getName(t1).equals(getName(t2))) {
-			return true;
-		}
-
-		return false;
+		return equal(t1.getRawClass(), t2.getRawClass());
 	}
 
 	public static boolean equal(Class<?> t1, Class<?> t2) {

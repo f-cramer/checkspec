@@ -8,14 +8,14 @@ import checkspec.spec.ExecutableSpecification;
 import checkspec.spec.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 
-public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
+public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 
 	protected static final ParametersAnalysis PARAMETERS_ANALYSIS = new ParametersAnalysis();
 
-	private static Comparator<ResolvableType> CLASS_NAME_COMPARATOR = Comparator.comparing(ResolvableType::getRawClass, Comparator.comparing(Class::getSimpleName));
+	private static final Comparator<ResolvableType> CLASS_NAME_COMPARATOR = Comparator.comparing(ResolvableType::getRawClass, Comparator.comparing(Class::getSimpleName));
 
-	private Comparator<ReportType> PARAMETER_COMPARATOR = (left, right) -> {
+	private final Comparator<ReportType> parameterComparator = (left, right) -> {
 		ParametersSpecification leftParameters = left.getSpec().getParameters();
 		ParametersSpecification rightParameters = right.getSpec().getParameters();
 		int minLength = Math.min(leftParameters.getCount(), rightParameters.getCount());
@@ -33,6 +33,6 @@ public abstract class ExecutableAnalysis<MemberType extends Executable, Specific
 	@Override
 	protected Comparator<ReportType> getComparator() {
 		Comparator<ReportType> comparator = super.getComparator();
-		return comparator.thenComparing(PARAMETER_COMPARATOR);
+		return comparator.thenComparing(parameterComparator);
 	}
 }
