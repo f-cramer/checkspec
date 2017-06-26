@@ -4,16 +4,26 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import checkspec.api.Spec;
+import checkspec.extension.ClassSpecificationExtension;
 import checkspec.spring.ResolvableType;
+import checkspec.util.TypeDiscovery;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
 @Getter
 @ToString
-public class ClassSpecification implements Specification<ResolvableType> {
+public class ClassSpecification extends AbstractExtendable implements Specification<ResolvableType> {
+
+	private static final ClassSpecificationExtension[] EXTENSIONS;
+
+	static {
+		List<ClassSpecificationExtension> instances = TypeDiscovery.getInstancesOf(ClassSpecificationExtension.class);
+		EXTENSIONS = instances.toArray(new ClassSpecificationExtension[instances.size()]);
+	}
 
 	@NonNull
 	private final String name;
@@ -68,6 +78,8 @@ public class ClassSpecification implements Specification<ResolvableType> {
 				.filter(ClassSpecification::isIncluded)
 				.map(ConstructorSpecification::new)
 				.toArray(ConstructorSpecification[]::new);
+		
+		performExtensions(EXTENSIONS, clazz, this);
 	}
 
 	public static boolean shouldBeGenerated(Class<?> clazz) {

@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true, chain = false)
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ModifiersSpecification {
+public class ModifiersSpecification extends AbstractExtendable {
 
 	private final State isAbstract;
 	private final State isFinal;

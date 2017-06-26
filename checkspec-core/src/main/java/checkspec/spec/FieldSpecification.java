@@ -2,10 +2,13 @@ package checkspec.spec;
 
 import java.lang.reflect.Field;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
+import checkspec.extension.FieldSpecificationExtension;
 import checkspec.spring.ResolvableType;
 import checkspec.util.FieldUtils;
+import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,7 +18,14 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString
-public class FieldSpecification implements Specification<Field>, Comparable<FieldSpecification> {
+public class FieldSpecification extends AbstractExtendable implements Specification<Field>, Comparable<FieldSpecification> {
+
+	private static final FieldSpecificationExtension[] EXTENSIONS;
+
+	static {
+		List<FieldSpecificationExtension> instances = TypeDiscovery.getInstancesOf(FieldSpecificationExtension.class);
+		EXTENSIONS = instances.toArray(new FieldSpecificationExtension[instances.size()]);
+	}
 
 	@NonNull
 	private final String name;
@@ -38,6 +48,8 @@ public class FieldSpecification implements Specification<Field>, Comparable<Fiel
 		modifiers = new ModifiersSpecification(field.getModifiers(), field.getAnnotations());
 		visibility = new VisibilitySpecification(field.getModifiers(), field.getAnnotations());
 		rawElement = field;
+
+		performExtensions(EXTENSIONS, field, this);
 	}
 
 	@Override

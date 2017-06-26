@@ -21,14 +21,17 @@ public final class ReflectionsUtils {
 	private static final Object URLS_SYNC = new Object();
 
 	public static Reflections createDefaultReflections() {
-		return createReflections(getUrlsFromClasspath());
+		return createReflections(null);
 	}
 
 	public static Reflections createReflections(URL[] urls) {
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
-				.setUrls(urls)
 				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
+
+		if (urls != null) {
+			configuration.setUrls(urls);
+		}
 
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());

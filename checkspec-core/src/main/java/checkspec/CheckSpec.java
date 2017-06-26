@@ -23,11 +23,13 @@ import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.spring.ResolvableType;
+import checkspec.util.TypeDiscovery;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
 import lombok.NonNull;
 
+@SuppressWarnings("unchecked")
 public final class CheckSpec {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
@@ -141,18 +143,11 @@ public final class CheckSpec {
 	private static final AnalysisForClass<?>[] ANALYSES;
 
 	static {
-		Reflections reflections = ReflectionsUtils.createDefaultReflections();
-
-		ANALYSES = reflections.getSubTypesOf(AnalysisForClass.class).stream()
+		Function<Class<AnalysisForClass<?>>, Stream<AnalysisForClass<?>>> instantiate = ClassUtils.instantiate(ERROR_FORMAT);
+		ANALYSES = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-				.flatMap(clazz -> {
-					try {
-						return Stream.of(clazz.newInstance());
-					} catch (InstantiationException | IllegalAccessException e) {
-						System.err.printf(ERROR_FORMAT, ClassUtils.getName(clazz));
-						return Stream.empty();
-					}
-				})
+				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
+				.flatMap(instantiate)
 				.toArray(AnalysisForClass<?>[]::new);
 	}
 
@@ -221,14 +216,14 @@ public final class CheckSpec {
 		analysis.add(report, returnValue);
 	}
 
-	private boolean loadedFromValidLocation(Class<?> clazz) {
+	private boolean loadedFromValidLocation(@NonNull Class<?> clazz) {
 		Set<URL> urls = reflections.getConfiguration().getUrls();
 		URL location = getLocation(clazz);
 
 		return urls.parallelStream().anyMatch(url -> isParent(location, url));
 	}
 
-	private static boolean isParent(URL child, URL parent) {
+	private static boolean isParent(@NonNull URL child, @NonNull URL parent) {
 		return child.getPath().startsWith(parent.getPath());
 	}
 
@@ -236,7 +231,7 @@ public final class CheckSpec {
 		String canonicalName;
 		Class<?> c1 = clazz;
 
-		while (c1 != null && c1.getCanonicalName() == null) {
+		while (c1 != null && c1.getEnclosingClass() != null && c1.getCanonicalName() == null) {
 			c1 = c1.getEnclosingClass();
 		}
 
@@ -244,13 +239,24 @@ public final class CheckSpec {
 			return null;
 		}
 
-		canonicalName = c1.getCanonicalName().replace('.', '/') + ".class";
+		canonicalName = c1.getName().replace('.', '/') + ".class";
 
 		ClassLoader loader = clazz.getClassLoader();
+		if (loader == null) {
+			loader = c1.getClassLoader();
+		}
+			
 		if (loader != null) {
-			return loader.getResource(canonicalName);
+			URL resource = loader.getResource(canonicalName);
+			if (resource != null) {
+				return resource;
+			}
 		}
 
-		return BOOT_CLASS_LOADER.getResource(canonicalName);
+		URL resource = BOOT_CLASS_LOADER.getResource(canonicalName);
+		if (resource == null) {
+			System.out.println(canonicalName);
+		}
+		return resource;
 	}
 }

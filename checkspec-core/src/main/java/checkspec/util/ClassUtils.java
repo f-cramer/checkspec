@@ -78,6 +78,23 @@ public class ClassUtils {
 	public Function<String, Stream<Class<?>>> systemClassStreamSupplier() {
 		return classStreamSupplier(getSystemClassLoader());
 	}
+	
+	public static <T> Function<Class<T>, Stream<T>> instantiate() {
+		return instantiate(null);
+	}
+
+	public static <T> Function<Class<T>, Stream<T>> instantiate(String errorFormat) {
+		return clazz -> {
+			try {
+				return Stream.of(clazz.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				if (errorFormat != null) {
+					System.err.printf(errorFormat, getName(clazz));
+				}
+				return Stream.empty();
+			}
+		};
+	}
 
 	public static String getPackage(ResolvableType type) {
 		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());

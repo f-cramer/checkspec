@@ -2,9 +2,12 @@ package checkspec.spec;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
+import checkspec.extension.MethodSpecificationExtension;
 import checkspec.spring.ResolvableType;
+import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -14,7 +17,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class MethodSpecification implements ExecutableSpecification<Method>, Comparable<MethodSpecification> {
+public class MethodSpecification extends AbstractExtendable implements ExecutableSpecification<Method>, Comparable<MethodSpecification> {
+
+	private static final MethodSpecificationExtension[] EXTENSIONS;
+
+	static {
+		List<MethodSpecificationExtension> instances = TypeDiscovery.getInstancesOf(MethodSpecificationExtension.class);
+		EXTENSIONS = instances.toArray(new MethodSpecificationExtension[instances.size()]);
+	}
 
 	@NonNull
 	private final String name;
@@ -42,6 +52,8 @@ public class MethodSpecification implements ExecutableSpecification<Method>, Com
 		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
 		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());
 		rawElement = method;
+
+		performExtensions(EXTENSIONS, method, this);
 	}
 
 	@Override

@@ -1,8 +1,11 @@
 package checkspec.spec;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
+import checkspec.extension.ConstructorSpecificationExtension;
 import checkspec.spring.ResolvableType;
+import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,7 +13,14 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConstructorSpecification implements ExecutableSpecification<Constructor<?>>, Comparable<ConstructorSpecification> {
+public class ConstructorSpecification extends AbstractExtendable implements ExecutableSpecification<Constructor<?>>, Comparable<ConstructorSpecification> {
+
+	private static final ConstructorSpecificationExtension[] EXTENSIONS;
+
+	static {
+		List<ConstructorSpecificationExtension> instances = TypeDiscovery.getInstancesOf(ConstructorSpecificationExtension.class);
+		EXTENSIONS = instances.toArray(new ConstructorSpecificationExtension[instances.size()]);
+	}
 
 	@NonNull
 	private final String name;
@@ -34,6 +44,8 @@ public class ConstructorSpecification implements ExecutableSpecification<Constru
 		rawElement = constructor;
 
 		parameters = new ParametersSpecification(constructor.getParameters(), index -> ResolvableType.forConstructorParameter(constructor, index));
+
+		performExtensions(EXTENSIONS, constructor, this);
 	}
 
 	@Override
