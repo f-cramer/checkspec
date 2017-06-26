@@ -47,8 +47,8 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 			report.addProblem(new ReportProblem(score, String.format(NAME, specName), Type.WARNING));
 		}
 
-		VISIBILITY_ANALYSIS.analyse(field, spec).ifPresent(report::addProblem);
-		report.addProblems(MODIFIERS_ANALYSIS.analyse(field, spec));
+		VISIBILITY_ANALYSIS.analyze(field, spec).ifPresent(report::addProblem);
+		report.addProblems(MODIFIERS_ANALYSIS.analyze(field, spec));
 
 		ResolvableType fieldType = FieldUtils.getType(field);
 		ResolvableType specType = spec.getType();

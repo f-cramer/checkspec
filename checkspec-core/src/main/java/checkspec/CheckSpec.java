@@ -153,7 +153,6 @@ public final class CheckSpec {
 						return Stream.empty();
 					}
 				})
-				.peek(System.out::println)
 				.toArray(AnalysisForClass<?>[]::new);
 	}
 
@@ -218,7 +217,7 @@ public final class CheckSpec {
 	}
 
 	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, ClassReport report) {
-		ReturnType returnValue = analysis.analyse(clazz, spec);
+		ReturnType returnValue = analysis.analyze(clazz, spec);
 		analysis.add(report, returnValue);
 	}
 

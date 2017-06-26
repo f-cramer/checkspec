@@ -10,7 +10,7 @@ import checkspec.spring.ResolvableType;
 public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
 
 	@Override
-	public Optional<ReportProblem> analyse(ResolvableType actual, ClassSpecification specification) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification) {
 		return analyseVisibility(actual.getRawClass().getModifiers(), specification.getVisibility());
 	}
 

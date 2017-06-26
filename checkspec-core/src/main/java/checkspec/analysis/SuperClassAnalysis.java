@@ -17,7 +17,7 @@ public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProbl
 	private static final String SHOULD_NOT = "should declare \"%s\" as its super class";
 
 	@Override
-	public Optional<ReportProblem> analyse(ResolvableType actual, ClassSpecification specification) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification) {
 		ResolvableType rawSpecSuperClass = specification.getSuperClassSpecification().getRawElement();
 		if (actual.getRawClass().getSuperclass() != rawSpecSuperClass.getRawClass()) {
 			String format;

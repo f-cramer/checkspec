@@ -4,11 +4,11 @@ import java.lang.reflect.Executable;
 import java.util.Comparator;
 
 import checkspec.report.Report;
+import checkspec.spec.ExecutableSpecification;
 import checkspec.spec.ParametersSpecification;
-import checkspec.spec.Specification;
 import checkspec.spring.ResolvableType;
 
-public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends Specification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
+public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 
 	protected static final ParametersAnalysis PARAMETERS_ANALYSIS = new ParametersAnalysis();
@@ -16,8 +16,8 @@ public abstract class ExecutableAnalysis<MemberType extends Executable, Specific
 	private static Comparator<ResolvableType> CLASS_NAME_COMPARATOR = Comparator.comparing(ResolvableType::getRawClass, Comparator.comparing(Class::getSimpleName));
 
 	private Comparator<ReportType> PARAMETER_COMPARATOR = (left, right) -> {
-		ParametersSpecification leftParameters = getParametersSpecification(left.getSpec());
-		ParametersSpecification rightParameters = getParametersSpecification(right.getSpec());
+		ParametersSpecification leftParameters = left.getSpec().getParameters();
+		ParametersSpecification rightParameters = right.getSpec().getParameters();
 		int minLength = Math.min(leftParameters.getCount(), rightParameters.getCount());
 
 		for (int i = 0; i < minLength; i++) {
@@ -35,6 +35,4 @@ public abstract class ExecutableAnalysis<MemberType extends Executable, Specific
 		Comparator<ReportType> comparator = super.getComparator();
 		return comparator.thenComparing(PARAMETER_COMPARATOR);
 	}
-
-	protected abstract ParametersSpecification getParametersSpecification(SpecificationType specification);
 }

@@ -25,19 +25,19 @@ public abstract class AbstractModifiersAnalysis {
 	private static final String SHOULD_HAVE = "should have modifier \"%s\"";
 	private static final String SHOULD_NOT_HAVE = "should not have modifier \"%s\"";
 
-	protected static List<ReportProblem> analyse(int actual, ModifiersSpecification spec, boolean checkAbstract) {
+	protected static List<ReportProblem> analyze(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
 
 		if (checkAbstract) {
-			problems.add(analyse(Modifier.isAbstract(actual), spec.isAbstract(), ABSTRACT));
+			problems.add(analyze(Modifier.isAbstract(actual), spec.isAbstract(), ABSTRACT));
 		}
-		problems.add(analyse(Modifier.isFinal(actual), spec.isFinal(), FINAL));
-		problems.add(analyse(Modifier.isNative(actual), spec.isNative(), NATIVE));
-		problems.add(analyse(Modifier.isStatic(actual), spec.isStatic(), STATIC));
-		problems.add(analyse(Modifier.isStrict(actual), spec.isStrict(), STRICTFP));
-		problems.add(analyse(Modifier.isSynchronized(actual), spec.isSynchronized(), SYNCHRONIZED));
-		problems.add(analyse(Modifier.isTransient(actual), spec.isTransient(), TRANSIENT));
-		problems.add(analyse(Modifier.isVolatile(actual), spec.isVolatile(), VOLATILE));
+		problems.add(analyze(Modifier.isFinal(actual), spec.isFinal(), FINAL));
+		problems.add(analyze(Modifier.isNative(actual), spec.isNative(), NATIVE));
+		problems.add(analyze(Modifier.isStatic(actual), spec.isStatic(), STATIC));
+		problems.add(analyze(Modifier.isStrict(actual), spec.isStrict(), STRICTFP));
+		problems.add(analyze(Modifier.isSynchronized(actual), spec.isSynchronized(), SYNCHRONIZED));
+		problems.add(analyze(Modifier.isTransient(actual), spec.isTransient(), TRANSIENT));
+		problems.add(analyze(Modifier.isVolatile(actual), spec.isVolatile(), VOLATILE));
 
 		return problems.parallelStream()
 				.filter(Optional::isPresent)
@@ -60,7 +60,7 @@ public abstract class AbstractModifiersAnalysis {
 	 *         specification, an optional with value that contains a
 	 *         {@link ReportProblem} with a matching problem description
 	 */
-	private static Optional<ReportProblem> analyse(boolean actual, State spec, javax.lang.model.element.Modifier modifier) {
+	private static Optional<ReportProblem> analyze(boolean actual, State spec, javax.lang.model.element.Modifier modifier) {
 		ReportProblem problem = null;
 
 		if (spec == State.TRUE && !spec.matches(actual)) {

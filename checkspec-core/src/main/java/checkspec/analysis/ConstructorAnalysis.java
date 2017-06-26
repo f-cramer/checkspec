@@ -8,7 +8,6 @@ import checkspec.report.ConstructorReport;
 import checkspec.report.ParametersReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.spec.ConstructorSpecification;
-import checkspec.spec.ParametersSpecification;
 
 public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 
@@ -24,11 +23,11 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 
 	@Override
 	protected ConstructorReport checkMember(Constructor<?> constructor, ConstructorSpecification spec) {
-		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyse(constructor.getParameters(), spec.getParameters());
+		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(constructor.getParameters(), spec.getParameters());
 		ConstructorReport report = new ConstructorReport(spec, constructor, parametersReport);
 
-		VISIBILITY_ANALYSIS.analyse(constructor, spec).ifPresent(report::addProblem);
-		report.addProblems(MODIFIERS_ANALYSIS.analyse(constructor, spec));
+		VISIBILITY_ANALYSIS.analyze(constructor, spec).ifPresent(report::addProblem);
+		report.addProblems(MODIFIERS_ANALYSIS.analyze(constructor, spec));
 
 		return report;
 	}
@@ -36,11 +35,6 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 	@Override
 	protected ConstructorReport createEmptyReport(ConstructorSpecification specification) {
 		return new ConstructorReport(specification);
-	}
-
-	@Override
-	protected ParametersSpecification getParametersSpecification(ConstructorSpecification specification) {
-		return specification.getParameters();
 	}
 
 	@Override

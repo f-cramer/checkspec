@@ -9,9 +9,9 @@ import checkspec.spec.Specification;
 public class MemberModifiersAnalysis extends AbstractModifiersAnalysis implements Analysis<Member, Specification<? extends Member>, List<ReportProblem>> {
 
 	@Override
-	public List<ReportProblem> analyse(Member actual, Specification<? extends Member> specification) {
+	public List<ReportProblem> analyze(Member actual, Specification<? extends Member> specification) {
 		boolean checkAbstract = !specification.getRawElement().getDeclaringClass().isInterface() || actual.getDeclaringClass().isInterface();
-		return analyse(actual.getModifiers(), specification.getModifiers(), checkAbstract);
+		return analyze(actual.getModifiers(), specification.getModifiers(), checkAbstract);
 	}
 
 }

@@ -4,9 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
@@ -23,23 +23,24 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
 	private static final String DELETED = "removed parameter of type \"%s\" from index %d";
-	private static final String SUBSTITUTE = "parameter at index %d should be of type \"%s\" rather than \"%s\"";
+	private static final String SUBSTITUTE_COMPATIBLE = "parameter at index %d has compatible type \"%s\"";
+	private static final String SUBSTITUTE_INCOMPATIBLE = "parameter at index %d has incompatible type \"%s\"";
 
 	@Override
-	public ParametersReport analyse(Parameter[] actual, ParametersSpecification specification) {
+	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification) {
 		ParametersReport report = new ParametersReport(specification, actual);
 
 		int specParameterCount = specification.getCount();
 
-		ResolvableType[] actualClasses = Arrays.stream(actual).parallel()
-				.map(ParametersAnalysis::getType)
-				.toArray(ResolvableType[]::new);
 		ResolvableType[] specClasses = IntStream.range(0, specParameterCount)
 				.mapToObj(specification::get)
 				.map(ParameterSpecification::getType)
 				.toArray(ResolvableType[]::new);
-		
-		report.addProblems(unlimitedCompare(actualClasses, specClasses));
+		ResolvableType[] actualClasses = Arrays.stream(actual).parallel()
+				.map(ParametersAnalysis::getType)
+				.toArray(ResolvableType[]::new);
+
+		report.addProblems(calculateDistance(specClasses, actualClasses));
 
 		return report;
 	}
@@ -66,75 +67,51 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 		return IntStream.range(0, executable.getParameterCount()).filter(index -> executable.getParameters()[index] == parameter).findFirst();
 	}
 
-	private static List<ReportProblem> unlimitedCompare(ResolvableType[] left, ResolvableType[] right) {
-		int n = left.length;
-		int m = right.length;
-
-		if (n == 0) {
+	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right) {
+		if (left.length == 0) {
 			return Collections.emptyList();
-		} else if (m == 0) {
+		} else if (right.length == 0) {
 			return Collections.emptyList();
 		}
-		boolean swapped = false;
-		if (n > m) {
-			// swap the input strings to consume less memory
-			final ResolvableType[] tmp = left;
-			left = right;
-			right = tmp;
-			n = m;
-			m = right.length;
-			swapped = true;
-		}
+		int[] previousCosts = new int[left.length + 1];
+		int[] costs = new int[left.length + 1];
+		int[] tempD;
+		final int[][] matrix = new int[right.length + 1][left.length + 1];
 
-		int[] p = new int[n + 1]; // 'previous' cost array, horizontally
-		int[] d = new int[n + 1]; // cost array, horizontally
-		int[] tempD; // placeholder to assist in swapping p and d
-		final int[][] matrix = new int[m + 1][n + 1];
-
-		// filling the first row and first column values in the matrix
-		for (int index = 0; index <= n; index++) {
+		for (int index = 0; index <= left.length; index++) {
 			matrix[0][index] = index;
 		}
-		for (int index = 0; index <= m; index++) {
+		for (int index = 0; index <= right.length; index++) {
 			matrix[index][0] = index;
 		}
 
-		// indexes into strings left and right
-		int i; // iterates through left
-		int j; // iterates through right
+		ResolvableType rightJ;
 
-		ResolvableType rightJ; // jth character of right
-
-		int cost; // cost
-		for (i = 0; i <= n; i++) {
-			p[i] = i;
+		int cost;
+		for (int i = 0; i <= left.length; i++) {
+			previousCosts[i] = i;
 		}
 
-		for (j = 1; j <= m; j++) {
+		for (int j = 1; j <= right.length; j++) {
 			rightJ = right[j - 1];
-			d[0] = j;
+			costs[0] = j;
 
-			for (i = 1; i <= n; i++) {
-				cost = ClassUtils.equal(left[i - 1], rightJ) ? 0 : 1;
-				// minimum of cell to the left+1, to the top+1, diagonally left
-				// and up +cost
-				d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
-				// filling the matrix
-				matrix[j][i] = d[i];
+			for (int i = 1; i <= left.length; i++) {
+				cost = ClassUtils.equal(left[i - 1], rightJ) ? 0 : ClassUtils.isAssignable(left[i - 1], rightJ) ? 1 : 2;
+				costs[i] = Math.min(Math.min(costs[i - 1] + 1, previousCosts[i] + 1), previousCosts[i - 1] + cost);
+				matrix[j][i] = costs[i];
 			}
 
-			// copy current distance counts to 'previous row' distance counts
-			tempD = p;
-			p = d;
-			d = tempD;
+			tempD = previousCosts;
+			previousCosts = costs;
+			costs = tempD;
 		}
-		return findDetailedResults(left, right, matrix, swapped);
+		return findDetailedResults(left, right, matrix);
 	}
 
-	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix, final boolean swapped) {
+	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix) {
+		List<ReportProblem> problems = new ArrayList<>();
 
-		List<ReportProblem> problems = new LinkedList<>();
-		
 		int rowIndex = right.length;
 		int columnIndex = left.length;
 
@@ -167,51 +144,40 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			}
 			data = matrix[rowIndex][columnIndex];
 
-			// case in which the character at left and right are the same,
-			// in this case none of the counters will be incremented.
-			if (columnIndex > 0 && rowIndex > 0 && ClassUtils.equal(left[columnIndex - 1], right[rowIndex - 1])) {
+			ResolvableType curLeft = columnIndex > 0 ? left[columnIndex - 1] : null;
+			ResolvableType curRight = rowIndex > 0 ? right[rowIndex - 1] : null;
+			if (columnIndex > 0 && rowIndex > 0 && ClassUtils.equal(curLeft, curRight)) {
 				columnIndex--;
 				rowIndex--;
 				continue;
 			}
 
-			String leftName = columnIndex > 0 ? ClassUtils.getName(left[columnIndex - 1]) : null;
-			String rightName = rowIndex > 0 ? ClassUtils.getName(right[rowIndex - 1]) : null;
+			String leftName = curLeft == null ? null : ClassUtils.getName(curLeft);
+			String rightName = curRight == null ? null : ClassUtils.getName(curRight);
 
-			// handling insert and delete cases.
 			deleted = false;
 			added = false;
 			if (data - 1 == dataAtLeft && (data <= dataAtDiagonal && data <= dataAtTop) || (dataAtDiagonal == -1 && dataAtTop == -1)) { // NOPMD
-				if (swapped) {
-					problems.add(new ReportProblem(1, String.format(ADDED, leftName, columnIndex - 1), Type.ERROR));
-					added = true;
-				} else {
-					problems.add(new ReportProblem(1, String.format(DELETED, rightName, rowIndex - 1), Type.ERROR));
-					deleted = true;
-				}
+				problems.add(0, new ReportProblem(3, String.format(DELETED, leftName, rowIndex - 1), Type.ERROR));
+				deleted = true;
 				columnIndex--;
 			} else if (data - 1 == dataAtTop && (data <= dataAtDiagonal && data <= dataAtLeft) || (dataAtDiagonal == -1 && dataAtLeft == -1)) { // NOPMD
-				if (swapped) {
-					problems.add(new ReportProblem(1, String.format(DELETED, leftName, columnIndex - 1), Type.ERROR));
-					deleted = true;
-				} else {
-					problems.add(new ReportProblem(1, String.format(ADDED, rightName, rowIndex - 1), Type.ERROR));
-					added = true;
-				}
+				problems.add(0, new ReportProblem(3, String.format(ADDED, rightName, rowIndex - 1), Type.ERROR));
+				added = true;
 				rowIndex--;
 			}
 
-			// substituted case
 			if (!added && !deleted) {
-				if (swapped) {
-					problems.add(new ReportProblem(1, String.format(SUBSTITUTE, columnIndex - 1, rightName, leftName), Type.ERROR));
+				if (ClassUtils.isAssignable(curLeft, curRight)) {
+					problems.add(0, new ReportProblem(1, String.format(SUBSTITUTE_COMPATIBLE, columnIndex - 1, rightName), Type.WARNING));
 				} else {
-					problems.add(new ReportProblem(1, String.format(SUBSTITUTE, columnIndex - 1, leftName, rightName), Type.ERROR));
+					problems.add(0, new ReportProblem(2, String.format(SUBSTITUTE_INCOMPATIBLE, columnIndex - 1, rightName), Type.ERROR));
 				}
 				columnIndex--;
 				rowIndex--;
 			}
 		}
+
 		return problems;
 	}
 }

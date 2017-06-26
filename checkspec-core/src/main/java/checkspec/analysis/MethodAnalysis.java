@@ -13,7 +13,6 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
 import checkspec.spec.ClassSpecification;
 import checkspec.spec.MethodSpecification;
-import checkspec.spec.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import lombok.Getter;
@@ -39,11 +38,11 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 
 	@Override
 	protected MethodReport checkMember(Method method, MethodSpecification spec) {
-		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyse(method.getParameters(), spec.getParameters());
+		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(method.getParameters(), spec.getParameters());
 		MethodReport report = new MethodReport(spec, method, parametersReport);
 
-		VISIBILITY_ANALYSIS.analyse(method, spec).ifPresent(report::addProblem);
-		report.addProblems(MODIFIERS_ANALYSIS.analyse(method, spec));
+		VISIBILITY_ANALYSIS.analyze(method, spec).ifPresent(report::addProblem);
+		report.addProblems(MODIFIERS_ANALYSIS.analyze(method, spec));
 
 		String methodName = method.getName();
 		String specName = spec.getName();
@@ -68,11 +67,6 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 	@Override
 	protected MethodReport createEmptyReport(MethodSpecification specification) {
 		return new MethodReport(specification);
-	}
-
-	@Override
-	protected ParametersSpecification getParametersSpecification(MethodSpecification specification) {
-		return specification.getParameters();
 	}
 
 	@Override

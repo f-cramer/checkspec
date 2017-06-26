@@ -5,7 +5,7 @@ public abstract class AlternateCalculatorImpl {
 
 	private int abc;
 
-	public abstract int add(String a, int b);
+	public abstract int add(int a, int b, Integer c);
 
 	public int multiply(int a, int b) {
 		return a * b;

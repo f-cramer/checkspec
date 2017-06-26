@@ -31,7 +31,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	private final Comparator<ReportType> COMPARATOR = Comparator.comparing(report -> report.getSpec().getName());
 
 	@Override
-	public final Collection<? extends ReportType> analyse(ResolvableType type, ClassSpecification spec) {
+	public final Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec) {
 		Class<?> clazz = type.getRawClass();
 		SpecificationType[] specifications = getMemberSpecifications(spec);
 
