@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class MethodSpecification implements Specification<Method>, Comparable<MethodSpecification> {
+public class MethodSpecification implements ExecutableSpecification<Method>, Comparable<MethodSpecification> {
 
 	@NonNull
 	private final String name;

@@ -1,6 +1,6 @@
 package checkspec.analysis;
 
-import java.lang.reflect.Member;
+import java.lang.reflect.Executable;
 import java.util.Comparator;
 
 import checkspec.report.Report;
@@ -8,7 +8,7 @@ import checkspec.spec.ParametersSpecification;
 import checkspec.spec.Specification;
 import checkspec.spring.ResolvableType;
 
-public abstract class MemberWithParametersAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
+public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends Specification<MemberType>, ReportType extends Report<SpecificationType, MemberType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 
 	protected static final ParametersAnalysis PARAMETERS_ANALYSIS = new ParametersAnalysis();
@@ -37,8 +37,4 @@ public abstract class MemberWithParametersAnalysis<MemberType extends Member, Sp
 	}
 
 	protected abstract ParametersSpecification getParametersSpecification(SpecificationType specification);
-
-	protected abstract int getParameterCount(MemberType member);
-
-	protected abstract ResolvableType getResolvableTypeForParameter(MemberType member, int parameterIndex);
 }

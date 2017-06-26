@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConstructorSpecification implements Specification<Constructor<?>>, Comparable<ConstructorSpecification> {
+public class ConstructorSpecification implements ExecutableSpecification<Constructor<?>>, Comparable<ConstructorSpecification> {
 
 	@NonNull
 	private final String name;

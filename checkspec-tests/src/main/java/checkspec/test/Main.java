@@ -1,11 +1,11 @@
 package checkspec.test;
 
-import org.apache.commons.text.similarity.LevenshteinDetailedDistance;
+import checkspec.analysis.LevenshteinDetailedDistance;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		new LevenshteinDetailedDistance().apply("left", "legt");
+		new LevenshteinDetailedDistance().apply("left", "2ldgt1");
 
 		// IntStream.iterate(0, i -> i +
 		// 1).parallel().filter(Character::isMirrored).findFirst().ifPresent(System.out::println);

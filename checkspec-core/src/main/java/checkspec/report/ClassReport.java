@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import checkspec.spec.ClassSpecification;
-import checkspec.spec.ConstructorSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
@@ -70,18 +69,11 @@ public class ClassReport extends Report<ClassSpecification, ResolvableType> {
 
 	public boolean hasAnyImplementation() {
 		List<Report<?, ?>> subReports = getSubReports();
-		if (subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.getImplementation() != null)) {
-			return true;
-		}
+		return subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.isNameFitting());
+	}
 
-		if (subReports.size() == 1) {
-			Report<?, ?> subReport = subReports.get(0);
-			if (subReport instanceof ConstructorReport) {
-				ConstructorSpecification constructorSpec = ((ConstructorReport) subReport).getSpec();
-				return constructorSpec.getParameters().getCount() != 0;
-			}
-		}
-
-		return false;
+	@Override
+	protected String getRawTypeName(ResolvableType raw) {
+		return ClassUtils.getName(raw);
 	}
 }

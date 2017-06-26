@@ -9,9 +9,8 @@ import checkspec.report.ParametersReport;
 import checkspec.spec.ClassSpecification;
 import checkspec.spec.ConstructorSpecification;
 import checkspec.spec.ParametersSpecification;
-import checkspec.spring.ResolvableType;
 
-public class ConstructorAnalysis extends MemberWithParametersAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
+public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 
 	@Override
 	protected ConstructorSpecification[] getMemberSpecifications(ClassSpecification spec) {
@@ -42,16 +41,6 @@ public class ConstructorAnalysis extends MemberWithParametersAnalysis<Constructo
 	@Override
 	protected ParametersSpecification getParametersSpecification(ConstructorSpecification specification) {
 		return specification.getParameters();
-	}
-
-	@Override
-	protected int getParameterCount(Constructor<?> member) {
-		return member.getParameterCount();
-	}
-
-	@Override
-	protected ResolvableType getResolvableTypeForParameter(Constructor<?> member, int parameterIndex) {
-		return ResolvableType.forConstructorParameter(member, parameterIndex);
 	}
 
 	@Override

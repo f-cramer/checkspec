@@ -19,7 +19,7 @@ import checkspec.util.ClassUtils;
 import lombok.Getter;
 
 @Getter
-public class MethodAnalysis extends MemberWithParametersAnalysis<Method, MethodSpecification, MethodReport> {
+public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecification, MethodReport> {
 
 	private static final String NAME = "should have name \"%s\"";
 	private static final String COMPATIBLE_TYPE = "returns compatible type \"%s\"";
@@ -73,16 +73,6 @@ public class MethodAnalysis extends MemberWithParametersAnalysis<Method, MethodS
 	@Override
 	protected ParametersSpecification getParametersSpecification(MethodSpecification specification) {
 		return specification.getParameters();
-	}
-
-	@Override
-	protected int getParameterCount(Method member) {
-		return member.getParameterCount();
-	}
-
-	@Override
-	protected ResolvableType getResolvableTypeForParameter(Method member, int parameterIndex) {
-		return ResolvableType.forMethodParameter(member, parameterIndex);
 	}
 
 	@Override

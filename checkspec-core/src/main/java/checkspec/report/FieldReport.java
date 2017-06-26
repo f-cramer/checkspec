@@ -29,4 +29,9 @@ public class FieldReport extends Report<FieldSpecification, Field> {
 			return bestFitting(createString(getImplementation()), createString(specField));
 		}
 	}
+
+	@Override
+	protected String getRawTypeName(Field raw) {
+		return raw.getName();
+	}
 }

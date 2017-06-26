@@ -16,7 +16,7 @@ import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-public class Report<SpecificationType extends Specification<RawType>, RawType> implements Comparable<Report<?, ?>>, ReportEntry {
+public abstract class Report<SpecificationType extends Specification<RawType>, RawType> implements Comparable<Report<?, ?>>, ReportEntry {
 
 	private final SpecificationType spec;
 	private final RawType implementation;
@@ -56,6 +56,10 @@ public class Report<SpecificationType extends Specification<RawType>, RawType> i
 				.orElseGet(() -> getImplementation() == null ? ProblemType.ERROR : ProblemType.SUCCESS);
 	}
 
+	protected boolean isNameFitting() {
+		return implementation != null && spec.getName().equals(getRawTypeName(implementation));
+	}
+
 	@Override
 	public int getScore() {
 		if (getImplementation() == null) {
@@ -87,4 +91,6 @@ public class Report<SpecificationType extends Specification<RawType>, RawType> i
 
 		return title.compareToIgnoreCase(report.getTitle());
 	}
+	
+	protected abstract String getRawTypeName(RawType rawType);
 }

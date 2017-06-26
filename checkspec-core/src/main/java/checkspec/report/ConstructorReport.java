@@ -5,28 +5,17 @@ import static checkspec.util.MessageUtils.bestFitting;
 import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.List;
 
 import checkspec.spec.ConstructorSpecification;
 
-public class ConstructorReport extends Report<ConstructorSpecification, Constructor<?>> {
-
-	private final ParametersReport parametersReport;
+public class ConstructorReport extends ExecutableReport<ConstructorSpecification, Constructor<?>> {
 
 	public ConstructorReport(ConstructorSpecification specification) {
-		super(specification, null, null);
-		this.parametersReport = new ParametersReport(specification.getParameters());
+		super(specification);
 	}
 
 	public ConstructorReport(ConstructorSpecification specification, Constructor<?> constructor, ParametersReport parametersReport) {
-		super(specification, constructor, null);
-		this.parametersReport = parametersReport;
-	}
-
-	@Override
-	public List<Report<?, ?>> getSubReports() {
-		return Collections.singletonList(parametersReport);
+		super(specification, constructor, parametersReport);
 	}
 
 	@Override
@@ -48,5 +37,10 @@ public class ConstructorReport extends Report<ConstructorSpecification, Construc
 		} else {
 			return bestFitting(createString(getImplementation()), createString(specConstructor));
 		}
+	}
+
+	@Override
+	protected String getRawTypeName(Constructor<?> raw) {
+		return "";
 	}
 }
