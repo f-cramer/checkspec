@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import checkspec.api.Visibility;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.VisibilitySpecification;
+import checkspec.specification.VisibilitySpecification;
 
 public abstract class AbstractVisibilityAnalysis {
 

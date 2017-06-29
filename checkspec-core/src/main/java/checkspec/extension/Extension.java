@@ -1,8 +1,7 @@
 package checkspec.extension;
 
-import checkspec.spec.Extendable;
+public interface Extension<ExtensionPoint extends Extendable, Payload> {
 
-public interface Extension<RawElement, ExtensionPoint extends Extendable> {
-
-	void extend(RawElement rawElement, ExtensionPoint extensionPoint);
+	void extend(ExtensionPoint extensionPoint, Payload payload);
 }
+	

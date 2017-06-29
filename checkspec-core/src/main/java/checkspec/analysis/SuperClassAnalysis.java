@@ -7,7 +7,7 @@ import java.util.Optional;
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.ClassSpecification;
+import checkspec.specification.ClassSpecification;
 import checkspec.spring.ResolvableType;
 
 public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {

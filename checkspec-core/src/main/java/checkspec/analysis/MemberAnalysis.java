@@ -17,8 +17,8 @@ import org.apache.commons.text.similarity.SimilarityScore;
 import com.google.common.collect.Lists;
 
 import checkspec.report.Report;
-import checkspec.spec.ClassSpecification;
-import checkspec.spec.Specification;
+import checkspec.specification.ClassSpecification;
+import checkspec.specification.Specification;
 import checkspec.spring.ResolvableType;
 
 public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
@@ -31,7 +31,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpec().getName());
 
 	@Override
-	public final Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec) {
+	public Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec) {
 		Class<?> clazz = type.getRawClass();
 		SpecificationType[] specifications = getMemberSpecifications(spec);
 

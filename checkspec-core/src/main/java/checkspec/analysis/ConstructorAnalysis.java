@@ -6,8 +6,8 @@ import java.util.Collection;
 import checkspec.report.ClassReport;
 import checkspec.report.ConstructorReport;
 import checkspec.report.ParametersReport;
-import checkspec.spec.ClassSpecification;
-import checkspec.spec.ConstructorSpecification;
+import checkspec.specification.ClassSpecification;
+import checkspec.specification.ConstructorSpecification;
 
 public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import checkspec.api.Inject;
+import checkspec.examples.example1.Calculator;
 
 public class DependencyInjectionTests {
 

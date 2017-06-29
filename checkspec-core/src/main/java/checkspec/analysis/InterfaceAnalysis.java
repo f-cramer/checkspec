@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.ClassSpecification;
-import checkspec.spec.InterfaceSpecification;
+import checkspec.specification.ClassSpecification;
+import checkspec.specification.InterfaceSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 

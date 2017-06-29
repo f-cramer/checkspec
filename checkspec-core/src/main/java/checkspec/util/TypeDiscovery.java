@@ -14,6 +14,7 @@ public class TypeDiscovery {
 
 	private static Reflections REFLECTIONS = ReflectionsUtils.createDefaultReflections();
 	private static Map<Class<?>, List<Class<?>>> SUB_CLASSES = new HashMap<>();
+	private static Map<Class<?>, List<?>> INSTANCES = new HashMap<>();
 	private static Comparator<Class<?>> CLASS_COMPARATOR = Comparator.comparing(ClassUtils::getName);
 
 	public static List<Class<?>> getSubTypesOf(Class<?> type) {
@@ -27,15 +28,30 @@ public class TypeDiscovery {
 		}
 	}
 
-	public static <T> List<T> getInstancesOf(Class<T> type) {
-		return getInstancesOf(type, null);
+	public static <T> List<T> getNewInstancesOf(Class<T> type) {
+		return getNewInstancesOf(type, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> getInstancesOf(Class<T> type, String errorFormat) {
+	public static <T> List<T> getNewInstancesOf(Class<T> type, String errorFormat) {
 		return getSubTypesOf(type).stream()
 				.map(clazz -> (Class<T>) clazz)
 				.flatMap(ClassUtils.instantiate(errorFormat))
 				.collect(Collectors.toList());
+	}
+
+	public static <T> List<T> getUniqueInstancesOf(Class<T> type) {
+		return getUniqueInstancesOf(type, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> getUniqueInstancesOf(Class<T> type, String errorFormat) {
+		if (INSTANCES.containsKey(type)) {
+			return (List<T>) INSTANCES.get(type);
+		} else {
+			List<T> instances = getNewInstancesOf(type, errorFormat);
+			INSTANCES.put(type, instances);
+			return instances;
+		}
 	}
 }

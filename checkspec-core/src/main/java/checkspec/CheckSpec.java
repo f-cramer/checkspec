@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ import checkspec.analysis.AnalysisForClass;
 import checkspec.api.Spec;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
-import checkspec.spec.ClassSpecification;
+import checkspec.specification.ClassSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
@@ -31,8 +32,8 @@ import lombok.NonNull;
 @SuppressWarnings("unchecked")
 public final class CheckSpec {
 
-	private static final String JAVA_CLASS_PATH = "java.class.path";
-	private static final String PATH_SEPARATOR = "path.separator";
+	private static final String JAR_SUFFIX = ".jar";
+	private static final String VALUE = "value";
 
 	private static volatile CheckSpec DEFAULT_INSTANCE;
 	private static final Object DEFAULT_SYNC = new Object();
@@ -55,7 +56,9 @@ public final class CheckSpec {
 		if (DEFAULT_INSTANCE == null) {
 			synchronized (DEFAULT_SYNC) {
 				if (DEFAULT_INSTANCE == null) {
-					DEFAULT_INSTANCE = new CheckSpec();
+					Reflections reflections = ReflectionsUtils.createDefaultReflections();
+					ClassLoader classLoader = ClassUtils.getSystemClassLoader();
+					DEFAULT_INSTANCE = new CheckSpec(reflections, classLoader);
 				}
 			}
 		}
@@ -66,19 +69,23 @@ public final class CheckSpec {
 		if (LIBRARY_LESS_INSTANCE == null) {
 			synchronized (LIBRARY_LESS_SYNC) {
 				if (LIBRARY_LESS_INSTANCE == null) {
-					URL[] urls = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
-							.filter(e -> !e.endsWith(".jar"))
-							.flatMap(ReflectionsUtils::getUrlAsStream)
+					URL[] urls = Arrays.stream(ReflectionsUtils.getUrlsFromClasspath()).parallel()
+							.filter(url -> !url.getPath().endsWith(JAR_SUFFIX))
 							.toArray(URL[]::new);
-					LIBRARY_LESS_INSTANCE = new CheckSpec(urls);
+
+					Reflections reflections = ReflectionsUtils.createReflections(urls);
+					ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getSystemClassLoader());
+					LIBRARY_LESS_INSTANCE = new CheckSpec(reflections, classLoader);
 				}
 			}
 		}
 		return LIBRARY_LESS_INSTANCE;
 	}
 
-	public static CheckSpec getInstanceForClassPath(URL[] classPathEntries) {
-		return new CheckSpec(classPathEntries);
+	public static CheckSpec getInstanceForClassPath(URL[] urls) {
+		Reflections reflections = ReflectionsUtils.createReflections(urls);
+		ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getSystemClassLoader());
+		return new CheckSpec(reflections, classLoader);
 	}
 
 	public static ClassSpecification[] findSpecifications(URL[] urls) {
@@ -103,7 +110,7 @@ public final class CheckSpec {
 	private static boolean hasValueSetToTrue(Annotation annotation) {
 		Method valueMethod;
 		try {
-			valueMethod = annotation.annotationType().getMethod("value");
+			valueMethod = annotation.annotationType().getMethod(VALUE);
 		} catch (NoSuchMethodException | SecurityException e) {
 			return false;
 		}
@@ -131,7 +138,30 @@ public final class CheckSpec {
 	private static final AnalysisForClass<?>[] ANALYSES;
 
 	static {
-		ANALYSES = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
+		Class<?>[] analyses = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
+				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+				.toArray(Class<?>[]::new);
+
+		List<Class<?>> mostConcreteAnalyses = new ArrayList<>();
+
+		// filter for most concrete analyses only
+		// any class that is subclassed is not used
+		for (Class<?> analysis : analyses) {
+			List<Class<?>> moreAbstractSuperClasses = mostConcreteAnalyses.parallelStream()
+					.filter(potentialSuperClass -> ClassUtils.isSuperType(analysis, potentialSuperClass))
+					.collect(Collectors.toList());
+
+			boolean hasSubClassesAdded = mostConcreteAnalyses.parallelStream()
+					.anyMatch(potentialSubClass -> ClassUtils.isSuperType(potentialSubClass, analysis));
+
+			if (!hasSubClassesAdded) {
+				mostConcreteAnalyses.add(analysis);
+			}
+
+			mostConcreteAnalyses.removeAll(moreAbstractSuperClasses);
+		}
+
+		ANALYSES = mostConcreteAnalyses.stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
 				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
@@ -140,14 +170,6 @@ public final class CheckSpec {
 
 	private final Reflections reflections;
 	private final ClassLoader classLoader;
-
-	private CheckSpec() {
-		this(ReflectionsUtils.createDefaultReflections(), ClassUtils.getSystemClassLoader());
-	}
-
-	private CheckSpec(URL[] urls) {
-		this(ReflectionsUtils.createReflections(urls), new URLClassLoader(urls, ClassUtils.getSystemClassLoader()));
-	}
 
 	private CheckSpec(Reflections reflections, ClassLoader classLoader) {
 		this.reflections = reflections;

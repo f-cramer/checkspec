@@ -10,6 +10,10 @@
 			<groupId>de.cramer.checkspec</groupId>
 			<artifactId>checkspec-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.cramer.checkspec</groupId>
+			<artifactId>checkspec-core</artifactId>
+		</dependency>
 	</dependencies>
 
 	<parent>

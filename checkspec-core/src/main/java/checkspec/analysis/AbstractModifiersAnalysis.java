@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.ModifiersSpecification;
-import checkspec.spec.ModifiersSpecification.State;
+import checkspec.specification.ModifiersSpecification;
+import checkspec.specification.ModifiersSpecification.State;
 
 public abstract class AbstractModifiersAnalysis {
 
 	private static final String SHOULD_HAVE = "should have modifier \"%s\"";
 	private static final String SHOULD_NOT_HAVE = "should not have modifier \"%s\"";
 
-	protected static List<ReportProblem> analyze(int actual, ModifiersSpecification spec, boolean checkAbstract) {
+	protected static List<ReportProblem> analyzeModifiers(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
 
 		if (checkAbstract) {

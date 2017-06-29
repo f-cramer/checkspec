@@ -6,7 +6,7 @@ import static checkspec.util.MessageUtils.missing;
 
 import java.lang.reflect.Field;
 
-import checkspec.spec.FieldSpecification;
+import checkspec.specification.FieldSpecification;
 
 public class FieldReport extends Report<Field, FieldSpecification> {
 

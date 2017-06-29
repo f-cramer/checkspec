@@ -3,7 +3,7 @@ package checkspec.report;
 import java.util.Collections;
 import java.util.List;
 
-import checkspec.spec.ClassSpecification;
+import checkspec.specification.ClassSpecification;
 import checkspec.util.ClassUtils;
 import lombok.NonNull;
 import lombok.Value;

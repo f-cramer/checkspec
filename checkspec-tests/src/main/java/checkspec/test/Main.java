@@ -9,12 +9,13 @@ import java.util.stream.IntStream;
 import javax.swing.UIManager;
 
 import checkspec.CheckSpec;
+import checkspec.examples.example1.Calculator;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.report.output.text.TextOutputter;
-import checkspec.spec.ClassSpecification;
+import checkspec.specification.ClassSpecification;
 
 public class Main {
 

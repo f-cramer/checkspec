@@ -4,8 +4,8 @@ import java.lang.reflect.Executable;
 import java.util.Comparator;
 
 import checkspec.report.Report;
-import checkspec.spec.ExecutableSpecification;
-import checkspec.spec.ParametersSpecification;
+import checkspec.specification.ExecutableSpecification;
+import checkspec.specification.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 
 public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>

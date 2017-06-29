@@ -14,8 +14,8 @@ import java.util.stream.IntStream;
 import checkspec.report.ParametersReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.ParameterSpecification;
-import checkspec.spec.ParametersSpecification;
+import checkspec.specification.ParameterSpecification;
+import checkspec.specification.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 

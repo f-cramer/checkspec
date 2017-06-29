@@ -4,7 +4,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import checkspec.spec.ParametersSpecification;
+import checkspec.specification.ParametersSpecification;
 import checkspec.util.ClassUtils;
 
 public class ParametersReport extends Report<Parameter[], ParametersSpecification> {

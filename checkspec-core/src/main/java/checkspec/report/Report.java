@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import checkspec.report.ReportProblem.Type;
-import checkspec.spec.Specification;
+import checkspec.specification.Specification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;

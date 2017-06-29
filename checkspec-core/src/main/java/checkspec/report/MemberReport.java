@@ -2,7 +2,7 @@ package checkspec.report;
 
 import java.lang.reflect.Member;
 
-import checkspec.spec.Specification;
+import checkspec.specification.Specification;
 
 public abstract class MemberReport<MemberType extends Member, SpecificationType extends Specification<MemberType>> extends Report<MemberType, SpecificationType> {
 

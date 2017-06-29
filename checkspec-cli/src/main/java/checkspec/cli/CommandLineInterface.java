@@ -44,7 +44,7 @@ import checkspec.report.output.Outputter;
 import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.report.output.text.TextOutputter;
-import checkspec.spec.ClassSpecification;
+import checkspec.specification.ClassSpecification;
 import checkspec.util.ClassUtils;
 import checkspec.util.Wrapper;
 import lombok.AccessLevel;

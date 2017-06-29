@@ -6,7 +6,7 @@ import static checkspec.util.MethodUtils.createString;
 
 import java.lang.reflect.Method;
 
-import checkspec.spec.MethodSpecification;
+import checkspec.specification.MethodSpecification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

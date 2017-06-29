@@ -4,7 +4,7 @@ import java.lang.reflect.Executable;
 import java.util.Collections;
 import java.util.List;
 
-import checkspec.spec.ExecutableSpecification;
+import checkspec.specification.ExecutableSpecification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import checkspec.api.Visibility;
 import checkspec.spring.ResolvableType;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -155,6 +156,10 @@ public class ClassUtils {
 		}
 
 		return org.apache.commons.lang3.ClassUtils.isAssignable(cls.getRawClass(), toClass.getRawClass());
+	}
+
+	public static boolean isSuperType(@NonNull final Class<?> type, @NonNull final Class<?> superType) {
+		return org.apache.commons.lang3.ClassUtils.isAssignable(type, superType);
 	}
 
 	public static ClassLoader getSystemClassLoader() {

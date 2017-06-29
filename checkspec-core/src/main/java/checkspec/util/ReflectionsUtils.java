@@ -36,7 +36,10 @@ public final class ReflectionsUtils {
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
 		configuration.setExecutorService(threadPool);
-		return new Reflections(configuration);
+
+		Reflections reflections = new Reflections(configuration);
+		reflections.expandSuperTypes();
+		return reflections;
 	}
 
 	public static URL[] getUrlsFromClasspath() {
