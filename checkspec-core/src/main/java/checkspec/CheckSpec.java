@@ -258,7 +258,7 @@ public final class CheckSpec {
 		if (loader == null) {
 			loader = c1.getClassLoader();
 		}
-			
+
 		if (loader != null) {
 			URL resource = loader.getResource(canonicalName);
 			if (resource != null) {

@@ -40,12 +40,12 @@ public final class EnumCommandLineOption<E extends Enum<E>> extends TextCommandL
 			return new CommandLineException(String.format(CANNOT_PARSE_ENUM, value, option.getOpt(), collect));
 		}
 	}
-	
+
 	@Override
 	public EnumCommandLineOption<E> withDefaultValue(E defaultValue) {
 		return new EnumCommandLineOption<E>(getOption(), getArgumentClass(), defaultValue);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<E>> EnumCommandLineOption<E> of(@NonNull Option option, @NonNull E defaultValue) {
 		return new EnumCommandLineOption<>(option, (Class<E>) defaultValue.getClass(), defaultValue);

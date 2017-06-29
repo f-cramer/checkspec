@@ -18,7 +18,7 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 
 	private static final String SHOULD = "should implement interface \"%s\"";
 	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
-	
+
 	@Override
 	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec) {
 		List<ReportProblem> problems = new ArrayList<>();

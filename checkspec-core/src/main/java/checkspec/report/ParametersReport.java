@@ -11,7 +11,7 @@ public class ParametersReport extends Report<Parameter[], ParametersSpecificatio
 
 	private static final String FINE = "parameters are fitting well";
 	private static final String ERROR = "some parameter types are off";
-	
+
 	public ParametersReport(ParametersSpecification spec) {
 		super(spec);
 	}

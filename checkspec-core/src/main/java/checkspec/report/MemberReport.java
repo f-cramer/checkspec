@@ -9,7 +9,7 @@ public abstract class MemberReport<MemberType extends Member, SpecificationType 
 	protected MemberReport(SpecificationType spec) {
 		super(spec);
 	}
-	
+
 	protected MemberReport(SpecificationType spec, MemberType implementation) {
 		super(spec, implementation);
 	}

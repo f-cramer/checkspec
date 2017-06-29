@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 public @interface Spec {
 
 	/**
-	 * Should be set to false if an element should not be included into the generated specification.
+	 * Should be set to false if an element should not be included into the
+	 * generated specification.
 	 * 
 	 * @return whether or not the annotated element is part of the specification
 	 */

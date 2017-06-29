@@ -11,7 +11,7 @@ import checkspec.specification.ClassSpecification;
 import checkspec.spring.ResolvableType;
 
 public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
-	
+
 	private static final String OBJECT_CLASS_NAME = Object.class.getName();
 	private static final String SHOULD = "should not declare any super class";
 	private static final String SHOULD_NOT = "should declare \"%s\" as its super class";

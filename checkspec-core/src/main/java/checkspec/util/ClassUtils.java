@@ -79,7 +79,7 @@ public class ClassUtils {
 	public Function<String, Stream<Class<?>>> systemClassStreamSupplier() {
 		return classStreamSupplier(getSystemClassLoader());
 	}
-	
+
 	public static <T> Function<Class<T>, Stream<T>> instantiate() {
 		return instantiate(null);
 	}

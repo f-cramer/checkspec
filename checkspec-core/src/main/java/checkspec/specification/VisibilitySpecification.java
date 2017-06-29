@@ -16,7 +16,7 @@ public class VisibilitySpecification implements Specification<Integer> {
 
 	@NonNull
 	private final Visibility[] visibilities;
-	
+
 	private final Integer rawElement;
 
 	public VisibilitySpecification(int modifiers, Annotation[] annotations) {
@@ -34,11 +34,11 @@ public class VisibilitySpecification implements Specification<Integer> {
 		visibilities = vis;
 		rawElement = modifiers;
 	}
-	
+
 	public boolean matches(Visibility visibility) {
 		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.INSIGNIFICANT || e == visibility);
 	}
-	
+
 	private Visibility[] fromModifiers(int modifiers) {
 		return new Visibility[] { MemberUtils.getVisibility(modifiers) };
 	}

@@ -96,6 +96,6 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 
 		return title.compareToIgnoreCase(report.getTitle());
 	}
-	
+
 	protected abstract String getRawTypeName(RawType rawType);
 }

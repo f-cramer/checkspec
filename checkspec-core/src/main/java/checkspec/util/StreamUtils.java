@@ -14,11 +14,11 @@ public class StreamUtils {
 	public static <T> Predicate<T> equalsPredicate(@NonNull T t) {
 		return o -> t.equals(o);
 	}
-	
+
 	public static <T, U> Predicate<U> equalsPredicate(@NonNull T t, @NonNull Function<U, T> converter) {
 		return o -> Objects.equal(t, converter.apply(o));
 	}
-	
+
 	public static <T, U> Predicate<T> isNullPredicate(Function<T, U> converter) {
 		return t -> converter.apply(t) != null;
 	}
