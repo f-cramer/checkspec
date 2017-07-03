@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.spring.ResolvableType;
 
@@ -26,7 +26,7 @@ public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProbl
 			} else {
 				format = SHOULD_NOT;
 			}
-			return Optional.of(new ReportProblem(1, String.format(format, getName(rawSpecSuperClass)), Type.ERROR));
+			return Optional.of(new ReportProblem(1, String.format(format, getName(rawSpecSuperClass)), ReportProblemType.ERROR));
 		}
 
 		return Optional.empty();

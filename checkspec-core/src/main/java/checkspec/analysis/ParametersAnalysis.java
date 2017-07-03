@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 import checkspec.report.ParametersReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ParameterSpecification;
 import checkspec.specification.ParametersSpecification;
 import checkspec.spring.ResolvableType;
@@ -158,20 +158,20 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			deleted = false;
 			added = false;
 			if (data - 1 == dataAtLeft && (data <= dataAtDiagonal && data <= dataAtTop) || (dataAtDiagonal == -1 && dataAtTop == -1)) { // NOPMD
-				problems.add(0, new ReportProblem(3, String.format(DELETED, leftName, rowIndex - 1), Type.ERROR));
+				problems.add(0, new ReportProblem(3, String.format(DELETED, leftName, rowIndex - 1), ReportProblemType.ERROR));
 				deleted = true;
 				columnIndex--;
 			} else if (data - 1 == dataAtTop && (data <= dataAtDiagonal && data <= dataAtLeft) || (dataAtDiagonal == -1 && dataAtLeft == -1)) { // NOPMD
-				problems.add(0, new ReportProblem(3, String.format(ADDED, rightName, rowIndex - 1), Type.ERROR));
+				problems.add(0, new ReportProblem(3, String.format(ADDED, rightName, rowIndex - 1), ReportProblemType.ERROR));
 				added = true;
 				rowIndex--;
 			}
 
 			if (!added && !deleted) {
 				if (ClassUtils.isAssignable(curLeft, curRight)) {
-					problems.add(0, new ReportProblem(1, String.format(SUBSTITUTE_COMPATIBLE, columnIndex - 1, rightName), Type.WARNING));
+					problems.add(0, new ReportProblem(1, String.format(SUBSTITUTE_COMPATIBLE, columnIndex - 1, rightName), ReportProblemType.WARNING));
 				} else {
-					problems.add(0, new ReportProblem(2, String.format(SUBSTITUTE_INCOMPATIBLE, columnIndex - 1, rightName), Type.ERROR));
+					problems.add(0, new ReportProblem(2, String.format(SUBSTITUTE_INCOMPATIBLE, columnIndex - 1, rightName), ReportProblemType.ERROR));
 				}
 				columnIndex--;
 				rowIndex--;

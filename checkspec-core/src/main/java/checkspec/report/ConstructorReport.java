@@ -1,8 +1,7 @@
 package checkspec.report;
 
-import static checkspec.util.ConstructorUtils.createString;
-import static checkspec.util.MessageUtils.bestFitting;
-import static checkspec.util.MessageUtils.missing;
+import static checkspec.util.ConstructorUtils.*;
+import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Constructor;
 

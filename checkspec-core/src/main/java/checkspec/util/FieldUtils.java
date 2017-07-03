@@ -1,21 +1,22 @@
 package checkspec.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import checkspec.api.Visibility;
 import checkspec.spring.ResolvableType;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
-public class FieldUtils {
+@UtilityClass
+public final class FieldUtils {
 
-	public static String createString(@NonNull Field field) {
-		return toString(field);
-	}
+	private static final String TO_STRING_FORMAT = "%s %s %s";
 
 	public static String toString(@NonNull Field field) {
-		Visibility visibility = getVisibility(field);
+		String modifiers = Modifier.toString(field.getModifiers());
 		String typeName = getTypeName(field);
-		return String.format("%s %s %s", visibility, typeName, field.getName()).trim();
+		return String.format(TO_STRING_FORMAT, modifiers, typeName, field.getName()).trim();
 	}
 
 	public static ResolvableType getType(@NonNull Field field) {

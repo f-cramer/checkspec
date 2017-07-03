@@ -4,13 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NonNull;
 
 public class AbstractExtendable<ExtensionPoint extends Extendable, Payload> implements Extendable {
 
-	@Getter(AccessLevel.NONE)
 	private final Map<Class<?>, Object> extensions = new HashMap<>();
 
 	@Override

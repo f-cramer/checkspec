@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import checkspec.api.Visibility;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.VisibilitySpecification;
 
 public abstract class AbstractVisibilityAnalysis {
@@ -24,14 +24,14 @@ public abstract class AbstractVisibilityAnalysis {
 		if (!spec.matches(actualVisibility)) {
 			Visibility[] visibilities = spec.getVisibilities();
 			if (visibilities.length == 1 && visibilities[0] == Visibility.PACKAGE) {
-				problem = new ReportProblem(1, SHOULD_NOT_HAVE_ANY, Type.ERROR);
+				problem = new ReportProblem(1, SHOULD_NOT_HAVE_ANY, ReportProblemType.ERROR);
 			} else if (visibilities.length == 1) {
-				problem = new ReportProblem(1, String.format(SHOULD_HAVE_SINGLE, visibilities[0]), Type.ERROR);
+				problem = new ReportProblem(1, String.format(SHOULD_HAVE_SINGLE, visibilities[0]), ReportProblemType.ERROR);
 			} else {
 				String visibilityString = Arrays.stream(visibilities)
 						.map(Visibility::toString)
 						.collect(Collectors.joining(", "));
-				problem = new ReportProblem(1, String.format(SHOULD_HAVE_MULTIPLE, visibilityString), Type.ERROR);
+				problem = new ReportProblem(1, String.format(SHOULD_HAVE_MULTIPLE, visibilityString), ReportProblemType.ERROR);
 			}
 		}
 

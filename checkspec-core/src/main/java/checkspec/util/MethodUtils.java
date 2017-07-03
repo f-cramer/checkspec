@@ -8,18 +8,19 @@ import java.util.stream.IntStream;
 import checkspec.api.Visibility;
 import checkspec.spring.ResolvableType;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
-public class MethodUtils {
+@UtilityClass
+public final class MethodUtils {
 
-	public static String createString(@NonNull Method method) {
-		return toString(method);
-	}
+	private static final String TO_STRING_FORMAT = "%s %s %s(%s)";
+	private static final int MAX_COST_PER_STEP = 20;
 
 	public static String toString(@NonNull Method method) {
-		Visibility visibility = getVisibility(method);
+		String modifiers = Modifier.toString(method.getModifiers());
 		String returnTypeName = getReturnTypeName(method);
 		String parameterList = getParameterList(method);
-		return String.format("%s %s %s(%s)", visibility, returnTypeName, method.getName(), parameterList);
+		return String.format(TO_STRING_FORMAT, modifiers, returnTypeName, method.getName(), parameterList);
 	}
 
 	public static Visibility getVisibility(@NonNull Method method) {
@@ -41,11 +42,7 @@ public class MethodUtils {
 		return Modifier.isAbstract(method.getModifiers());
 	}
 
-	public static int calculateParameterDistance(ResolvableType[] left, ResolvableType[] right) {
-		if (left == null || right == null) {
-			throw new IllegalArgumentException("Strings must not be null");
-		}
-
+	public static int calculateParameterDistance(@NonNull ResolvableType[] left, @NonNull ResolvableType[] right) {
 		/*
 		 * This implementation use two variable to record the previous cost
 		 * counts, So this implementation use less memory than previous impl.
@@ -55,9 +52,9 @@ public class MethodUtils {
 		int rightLength = right.length; // length of right
 
 		if (leftLength == 0) {
-			return rightLength;
+			return rightLength * MAX_COST_PER_STEP;
 		} else if (rightLength == 0) {
-			return leftLength;
+			return leftLength * MAX_COST_PER_STEP;
 		}
 
 		int[] costs = new int[leftLength + 1];
@@ -72,21 +69,21 @@ public class MethodUtils {
 		int cost; // cost
 
 		for (leftIterator = 0; leftIterator <= leftLength; leftIterator++) {
-			costs[leftIterator] = leftIterator;
+			costs[leftIterator] = leftIterator * MAX_COST_PER_STEP;
 		}
 
 		for (rightIterator = 1; rightIterator <= rightLength; rightIterator++) {
 			upperLeft = costs[0];
 			rightJ = right[rightIterator - 1];
-			costs[0] = rightIterator;
+			costs[0] = rightIterator * MAX_COST_PER_STEP;
 
 			for (leftIterator = 1; leftIterator <= leftLength; leftIterator++) {
 				upper = costs[leftIterator];
 				ResolvableType leftJ = left[leftIterator - 1];
-				cost = leftJ.equals(rightJ) ? 0 : leftJ.getRawClass() == rightJ.getRawClass() ? 2 : ClassUtils.isAssignable(leftJ, rightJ) ? 5 : 10;
+				cost = leftJ.getRawClass() == rightJ.getRawClass() ? 0 : ClassUtils.isAssignable(leftJ, rightJ) ? 5 : 10;
 				// minimum of cell to the left+1, to the top+1, diagonally left
 				// and up +cost
-				costs[leftIterator] = Math.min(Math.min(costs[leftIterator - 1] + 1, costs[leftIterator] + 1), upperLeft + cost);
+				costs[leftIterator] = Math.min(Math.min(costs[leftIterator - 1] + 20, costs[leftIterator] + 20), upperLeft + cost);
 				upperLeft = upper;
 			}
 		}

@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ModifiersSpecification;
 import checkspec.specification.ModifiersSpecification.State;
 
@@ -64,11 +64,11 @@ public abstract class AbstractModifiersAnalysis {
 		ReportProblem problem = null;
 
 		if (spec == State.TRUE && !spec.matches(actual)) {
-			problem = new ReportProblem(1, String.format(SHOULD_HAVE, modifier), Type.WARNING);
+			problem = new ReportProblem(1, String.format(SHOULD_HAVE, modifier), ReportProblemType.WARNING);
 		}
 
 		if (spec == State.FALSE && !spec.matches(actual)) {
-			problem = new ReportProblem(1, String.format(SHOULD_NOT_HAVE, modifier), Type.WARNING);
+			problem = new ReportProblem(1, String.format(SHOULD_NOT_HAVE, modifier), ReportProblemType.WARNING);
 		}
 
 		return Optional.ofNullable(problem);

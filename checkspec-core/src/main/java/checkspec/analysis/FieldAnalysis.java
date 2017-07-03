@@ -9,7 +9,7 @@ import java.util.Comparator;
 import checkspec.report.ClassReport;
 import checkspec.report.FieldReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.FieldSpecification;
 import checkspec.spring.ResolvableType;
@@ -44,7 +44,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		String specName = spec.getName();
 		if (!fieldName.equals(specName)) {
 			int score = calculateDistance(fieldName, specName);
-			report.addProblem(new ReportProblem(score, String.format(NAME, specName), Type.WARNING));
+			report.addProblem(new ReportProblem(score, String.format(NAME, specName), ReportProblemType.WARNING));
 		}
 
 		VISIBILITY_ANALYSIS.analyze(field, spec).ifPresent(report::addProblem);
@@ -60,7 +60,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
 			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
 			String message = String.format(format, fieldTypeName, specTypeName);
-			report.addProblem(new ReportProblem(1, message, compatible ? Type.WARNING : Type.ERROR));
+			report.addProblem(new ReportProblem(1, message, compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR));
 		}
 
 		return report;

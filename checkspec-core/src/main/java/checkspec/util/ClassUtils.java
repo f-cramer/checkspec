@@ -1,5 +1,6 @@
 package checkspec.util;
 
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.function.Function;
@@ -11,7 +12,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ClassUtils {
+public final class ClassUtils {
 
 	private static String TO_STRING_FORMAT = "%s %s %s";
 
@@ -19,28 +20,28 @@ public class ClassUtils {
 	private static final Object SYSTEM_CLASS_LOAD_SYNC = new Object();
 
 	public static String toString(ResolvableType type) {
-		Visibility visibility = getVisibility(type);
+		String modifiers = Modifier.toString(type.getRawClass().getModifiers());
 		ClassType classType = getType(type);
 		String name = getName(type);
-		return String.format(TO_STRING_FORMAT, visibility, classType, name);
+		return String.format(TO_STRING_FORMAT, modifiers, classType, name);
 	}
 
-	public static String toString(Class<?> clazz) {
+	public static String toString(@NonNull Class<?> clazz) {
 		return toString(ResolvableType.forClass(clazz));
 	}
 
-	public static String getName(ResolvableType type) {
+	public static String getName(@NonNull ResolvableType type) {
 		if (type.isArray()) {
 			return getName(type.getComponentType()) + "[]";
 		}
 		return type.toString();
 	}
 
-	public static String getName(Class<?> clazz) {
+	public static String getName(@NonNull Class<?> clazz) {
 		return getName(ResolvableType.forClass(clazz));
 	}
 
-	public static Class<?> getClass(String className) {
+	public static Class<?> getClass(@NonNull String className) {
 		try {
 			return Class.forName(className);
 		} catch (ClassNotFoundException e) {
@@ -48,7 +49,7 @@ public class ClassUtils {
 		}
 	}
 
-	public static Stream<Class<?>> getClassAsStream(String className) {
+	public static Stream<Class<?>> getClassAsStream(@NonNull String className) {
 		try {
 			return Stream.of(Class.forName(className));
 		} catch (ClassNotFoundException | NoClassDefFoundError e) {
@@ -56,7 +57,32 @@ public class ClassUtils {
 		}
 	}
 
-	public Function<String, Class<?>> classSupplier(ClassLoader loader) {
+	public static String getPackage(@NonNull ResolvableType type) {
+		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());
+	}
+
+	public static String getPackage(@NonNull Class<?> clazz) {
+		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
+	}
+
+	public static String getPackage(@NonNull String className) {
+		return org.apache.commons.lang3.ClassUtils.getPackageName(className);
+	}
+
+	public static ClassType getType(@NonNull ResolvableType type) {
+		Class<?> clazz = type.getRawClass();
+		if (clazz.isEnum()) {
+			return ClassType.ENUM;
+		} else if (clazz.isAnnotation()) {
+			return ClassType.ANNOTATION;
+		} else if (clazz.isInterface()) {
+			return ClassType.INTERFACE;
+		} else {
+			return ClassType.CLASS;
+		}
+	}
+
+	public Function<String, Class<?>> classSupplier(@NonNull ClassLoader loader) {
 		return name -> {
 			try {
 				return loader.loadClass(name);
@@ -66,7 +92,7 @@ public class ClassUtils {
 		};
 	}
 
-	public Function<String, Stream<Class<?>>> classStreamSupplier(ClassLoader loader) {
+	public Function<String, Stream<Class<?>>> classStreamSupplier(@NonNull ClassLoader loader) {
 		return name -> {
 			try {
 				return Stream.of(loader.loadClass(name));
@@ -80,11 +106,11 @@ public class ClassUtils {
 		return classStreamSupplier(getSystemClassLoader());
 	}
 
-	public static <T> Function<Class<T>, Stream<T>> instantiate() {
+	public static <T> Function<Class<? extends T>, Stream<? extends T>> instantiate() {
 		return instantiate(null);
 	}
 
-	public static <T> Function<Class<T>, Stream<T>> instantiate(String errorFormat) {
+	public static <T> Function<Class<? extends T>, Stream<? extends T>> instantiate(String errorFormat) {
 		return clazz -> {
 			try {
 				return Stream.of(clazz.newInstance());
@@ -95,31 +121,6 @@ public class ClassUtils {
 				return Stream.empty();
 			}
 		};
-	}
-
-	public static String getPackage(ResolvableType type) {
-		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());
-	}
-
-	public static String getPackage(Class<?> clazz) {
-		return org.apache.commons.lang3.ClassUtils.getPackageName(clazz);
-	}
-
-	public static String getPackage(String className) {
-		return org.apache.commons.lang3.ClassUtils.getPackageName(className);
-	}
-
-	public static ClassType getType(ResolvableType type) {
-		Class<?> clazz = type.getRawClass();
-		if (clazz.isEnum()) {
-			return ClassType.ENUM;
-		} else if (clazz.isAnnotation()) {
-			return ClassType.ANNOTATION;
-		} else if (clazz.isInterface()) {
-			return ClassType.INTERFACE;
-		} else {
-			return ClassType.CLASS;
-		}
 	}
 
 	// public static ClassType getType(Class<?> clazz) {
@@ -134,7 +135,7 @@ public class ClassUtils {
 	// }
 	// }
 
-	public static Visibility getVisibility(ResolvableType type) {
+	public static Visibility getVisibility(@NonNull ResolvableType type) {
 		return MemberUtils.getVisibility(type.getRawClass().getModifiers());
 	}
 
@@ -175,7 +176,7 @@ public class ClassUtils {
 		return SYSTEM_CLASS_LOADER;
 	}
 
-	public static boolean equal(ResolvableType t1, ResolvableType t2) {
+	public static boolean equal(@NonNull ResolvableType t1, @NonNull ResolvableType t2) {
 		if (t1.equals(t2)) {
 			return true;
 		}
@@ -183,7 +184,7 @@ public class ClassUtils {
 		return equal(t1.getRawClass(), t2.getRawClass());
 	}
 
-	public static boolean equal(Class<?> t1, Class<?> t2) {
+	public static boolean equal(@NonNull Class<?> t1, @NonNull Class<?> t2) {
 		if (t1 == t2) {
 			return true;
 		}

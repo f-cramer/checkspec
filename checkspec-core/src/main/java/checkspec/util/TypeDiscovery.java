@@ -10,7 +10,10 @@ import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
 
-public class TypeDiscovery {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public final class TypeDiscovery {
 
 	private static Reflections REFLECTIONS = ReflectionsUtils.createDefaultReflections();
 	private static Map<Class<?>, List<Class<?>>> SUB_CLASSES = new HashMap<>();

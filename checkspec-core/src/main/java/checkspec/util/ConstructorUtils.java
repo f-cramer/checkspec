@@ -8,14 +8,12 @@ import java.util.stream.Stream;
 import checkspec.api.Visibility;
 import checkspec.spring.ResolvableType;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
-public class ConstructorUtils {
+@UtilityClass
+public final class ConstructorUtils {
 
-	public static String createString(Constructor<?> constructor) {
-		return toString(constructor);
-	}
-
-	public static String toString(Constructor<?> constructor) {
+	public static String createString(@NonNull Constructor<?> constructor) {
 		Visibility visibility = getVisibility(constructor);
 		String parameterList = getParametersAsString(constructor);
 		return String.format("%s <init>(%s)", visibility, parameterList);
@@ -36,7 +34,7 @@ public class ConstructorUtils {
 				.collect(Collectors.joining(", "));
 	}
 
-	private static Stream<ResolvableType> getParameterList(Constructor<?> constructor) {
+	private static Stream<ResolvableType> getParameterList(@NonNull Constructor<?> constructor) {
 		return IntStream.range(0, constructor.getParameterCount()).parallel()
 				.mapToObj(i -> ResolvableType.forConstructorParameter(constructor, i));
 	}

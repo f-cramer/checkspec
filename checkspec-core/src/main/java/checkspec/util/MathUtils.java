@@ -1,6 +1,9 @@
 package checkspec.util;
 
-public class MathUtils {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public final class MathUtils {
 
 	public static int multiplyWithoutOverflow(int x, int y) {
 		try {

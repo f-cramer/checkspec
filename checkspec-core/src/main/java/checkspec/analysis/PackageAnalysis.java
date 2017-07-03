@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.PackageSpecification;
 import checkspec.spring.ResolvableType;
@@ -20,7 +20,7 @@ public class PackageAnalysis implements AnalysisForClass<Optional<ReportProblem>
 
 		String actualPackageName = actual.getRawClass().getPackage().getName();
 		if (!packageName.equals(actualPackageName)) {
-			ReportProblem problem = new ReportProblem(1, String.format(FORMAT, packageName), Type.ERROR);
+			ReportProblem problem = new ReportProblem(1, String.format(FORMAT, packageName), ReportProblemType.ERROR);
 			return Optional.of(problem);
 		}
 

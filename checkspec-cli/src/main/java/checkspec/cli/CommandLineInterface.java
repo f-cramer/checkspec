@@ -187,7 +187,7 @@ public final class CommandLineInterface {
 		URL[] specPaths = SPEC_PATH.parseMultiple(commandLine);
 
 		if (specPaths.length == 0) {
-			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel().map(CommandLineInterface::parseWrappedUrl).flatMap(Wrapper::getWrappedAsStream).toArray(URL[]::new);
+			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel().map(CommandLineInterface::parseWrappedUrl).flatMap(Wrapper::getValueAsStream).toArray(URL[]::new);
 		} else {
 			return specPaths;
 		}
@@ -199,7 +199,7 @@ public final class CommandLineInterface {
 		if (implementationPaths.length == 0) {
 			return Arrays.stream(JAVA_CLASS_PATH.split(PATH_SEPARATOR)).parallel()
 					.map(CommandLineInterface::parseWrappedUrl)
-					.flatMap(Wrapper::getWrappedAsStream)
+					.flatMap(Wrapper::getValueAsStream)
 					.toArray(URL[]::new);
 		} else {
 			return implementationPaths;

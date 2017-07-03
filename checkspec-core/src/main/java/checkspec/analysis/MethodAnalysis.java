@@ -10,7 +10,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
 import checkspec.report.ParametersReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.MethodSpecification;
 import checkspec.spring.ResolvableType;
@@ -49,7 +49,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 
 		if (!methodName.equals(specName)) {
 			int score = calculateDistance(methodName, specName);
-			report.addProblem(new ReportProblem(score, String.format(NAME, specName), Type.ERROR));
+			report.addProblem(new ReportProblem(score, String.format(NAME, specName), ReportProblemType.ERROR));
 		}
 
 		ResolvableType specReturnType = spec.getReturnType();
@@ -57,7 +57,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 		if (methodReturnType.getRawClass() != specReturnType.getRawClass()) {
 			boolean compatible = ClassUtils.isAssignable(methodReturnType, specReturnType);
 			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
-			Type type = compatible ? Type.WARNING : Type.ERROR;
+			ReportProblemType type = compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR;
 			report.addProblem(new ReportProblem(1, String.format(format, getName(methodReturnType)), type));
 		}
 

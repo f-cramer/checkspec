@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import checkspec.report.ReportProblem.Type;
 import checkspec.specification.Specification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,7 +54,7 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 
 	public ProblemType getType() {
 		Stream<ProblemType> reportTypes = getSubReports().parallelStream().map(Report::getType);
-		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(Type::toProblemType);
+		Stream<ProblemType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(ReportProblemType::toProblemType);
 
 		return Stream.concat(reportTypes, problemTypes).parallel()
 				.max(Comparator.naturalOrder())

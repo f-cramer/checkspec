@@ -8,26 +8,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReportProblem {
 
+	private static final String FORMAT = "%s [%d]";
+
 	private final int score;
 	@NonNull
 	private final String content;
 	@NonNull
-	private final Type type;
+	private final ReportProblemType type;
 
 	@Override
 	public String toString() {
-		return score == 0 ? content : String.format("%s [%d]", content, score);
-	}
-
-	@RequiredArgsConstructor
-	public static enum Type {
-		WARNING(ProblemType.WARNING), ERROR(ProblemType.ERROR);
-
-		@NonNull
-		private final ProblemType problemType;
-
-		public ProblemType toProblemType() {
-			return problemType;
-		}
+		return score == 0 ? content : String.format(FORMAT, content, score);
 	}
 }

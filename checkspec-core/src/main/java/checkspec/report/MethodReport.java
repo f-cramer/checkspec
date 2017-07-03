@@ -1,12 +1,11 @@
 package checkspec.report;
 
-import static checkspec.util.MessageUtils.bestFitting;
-import static checkspec.util.MessageUtils.missing;
-import static checkspec.util.MethodUtils.createString;
+import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Method;
 
 import checkspec.specification.MethodSpecification;
+import checkspec.util.MethodUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -26,11 +25,11 @@ public class MethodReport extends ExecutableReport<Method, MethodSpecification> 
 	public String getTitle() {
 		Method specMethod = getSpec().getRawElement();
 		if (getImplementation() == null) {
-			return missing(createString(specMethod));
+			return missing(MethodUtils.toString(specMethod));
 		} else if (getType() == ProblemType.SUCCESS) {
-			return createString(specMethod);
+			return MethodUtils.toString(specMethod);
 		} else {
-			return bestFitting(createString(getImplementation()), createString(specMethod));
+			return bestFitting(MethodUtils.toString(getImplementation()), MethodUtils.toString(specMethod));
 		}
 	}
 

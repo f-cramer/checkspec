@@ -1,12 +1,11 @@
 package checkspec.report;
 
-import static checkspec.util.FieldUtils.createString;
-import static checkspec.util.MessageUtils.bestFitting;
-import static checkspec.util.MessageUtils.missing;
+import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Field;
 
 import checkspec.specification.FieldSpecification;
+import checkspec.util.FieldUtils;
 
 public class FieldReport extends Report<Field, FieldSpecification> {
 
@@ -22,11 +21,11 @@ public class FieldReport extends Report<Field, FieldSpecification> {
 	public String getTitle() {
 		Field specField = getSpec().getRawElement();
 		if (getImplementation() == null) {
-			return missing(createString(specField));
+			return missing(FieldUtils.toString(specField));
 		} else if (getType() == ProblemType.SUCCESS) {
-			return createString(specField);
+			return FieldUtils.toString(specField);
 		} else {
-			return bestFitting(createString(getImplementation()), createString(specField));
+			return bestFitting(FieldUtils.toString(getImplementation()), FieldUtils.toString(specField));
 		}
 	}
 

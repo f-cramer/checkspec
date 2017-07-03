@@ -12,6 +12,9 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public final class ReflectionsUtils {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
@@ -47,7 +50,7 @@ public final class ReflectionsUtils {
 			synchronized (URLS_SYNC) {
 				if (URLS == null) {
 					URLS = Arrays.stream(System.getProperty(JAVA_CLASS_PATH).split(System.getProperty(PATH_SEPARATOR)))
-							.flatMap(ReflectionsUtils::getUrlAsStream)
+							.flatMap(ReflectionsUtils::getAsUrlStream)
 							.toArray(URL[]::new);
 				}
 			}
@@ -55,11 +58,15 @@ public final class ReflectionsUtils {
 		return URLS;
 	}
 
-	public static Stream<URL> getUrlAsStream(String path) {
+	public static Stream<URL> getAsUrlStream(String path) {
 		try {
-			return Stream.of(new File(path).toURI().toURL());
-		} catch (Exception e) {
-			return Stream.empty();
+			File file = new File(path);
+			if (file.exists()) {
+				return Stream.of(file.toURI().toURL());
+			}
+		} catch (Exception expected) {
 		}
+
+		return Stream.empty();
 	}
 }

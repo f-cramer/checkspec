@@ -138,9 +138,9 @@ public final class CheckSpec {
 	private static final AnalysisForClass<?>[] ANALYSES;
 
 	static {
-		Class<?>[] analyses = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
+		List<Class<?>> analyses = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-				.toArray(Class<?>[]::new);
+				.collect(Collectors.toList());
 
 		List<Class<?>> mostConcreteAnalyses = new ArrayList<>();
 

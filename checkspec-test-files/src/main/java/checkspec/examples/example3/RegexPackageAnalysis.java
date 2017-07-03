@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 
 import checkspec.analysis.PackageAnalysis;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.spring.ResolvableType;
 
@@ -22,7 +22,7 @@ public class RegexPackageAnalysis extends PackageAnalysis {
 			Package pkg = actual.getRawClass().getPackage();
 			Matcher matcher = spec.getPackagePattern().matcher(pkg.getName());
 			if (!matcher.matches()) {
-				ReportProblem problem = new ReportProblem(1, String.format(FORMAT, spec.getPackagePattern().pattern()), Type.ERROR);
+				ReportProblem problem = new ReportProblem(1, String.format(FORMAT, spec.getPackagePattern().pattern()), ReportProblemType.ERROR);
 				return Optional.of(problem);
 			}
 		} else {

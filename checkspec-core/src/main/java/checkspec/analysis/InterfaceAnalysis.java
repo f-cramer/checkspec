@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblem.Type;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.InterfaceSpecification;
 import checkspec.spring.ResolvableType;
@@ -38,12 +38,12 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 			if (interf.isPresent()) {
 				notFoundInterfaces.remove(interf.get());
 			} else {
-				problems.add(new ReportProblem(1, String.format(SHOULD, ClassUtils.getName(interf.get())), Type.ERROR));
+				problems.add(new ReportProblem(1, String.format(SHOULD, ClassUtils.getName(interf.get())), ReportProblemType.ERROR));
 			}
 		}
 
 		for (ResolvableType notFoundInterface : notFoundInterfaces) {
-			problems.add(new ReportProblem(1, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), Type.ERROR));
+			problems.add(new ReportProblem(1, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), ReportProblemType.ERROR));
 		}
 
 		return problems;

@@ -68,7 +68,7 @@ public class TextCommandLineOption<E> implements ArgumentCommandLineOption<E> {
 		}
 
 		return wrapped.parallelStream()
-				.map(Wrapper::getWrapped)
+				.flatMap(Wrapper::getValueAsStream)
 				.toArray(i -> (E[]) Array.newInstance(argumentClass, i));
 	}
 
