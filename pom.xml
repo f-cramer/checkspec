@@ -152,7 +152,7 @@
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
-						<artifactId>slfj4-api</artifactId>
+						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -226,7 +226,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>${assembly.plugin.version}</version>
 					<configuration>
 						<linkXRef>true</linkXRef>
 					</configuration>

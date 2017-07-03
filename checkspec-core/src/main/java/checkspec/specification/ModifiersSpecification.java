@@ -70,6 +70,11 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 				.orElseGet(() -> from(booleanFunction.apply(modifiers)));
 	}
 
+	@Override
+	public String getName() {
+		return "";
+	}
+
 	private static State from(checkspec.api.State state) {
 		switch (state) {
 		case TRUE:
@@ -83,11 +88,6 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 		}
 
 		return null;
-	}
-
-	@Override
-	public String getName() {
-		return "";
 	}
 
 	private static State from(boolean state) {

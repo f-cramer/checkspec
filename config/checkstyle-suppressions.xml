@@ -7,6 +7,5 @@
 <suppressions>
 	<suppress checks="." files="checkspec[\\/]spring[\\/]" />
 	<suppress checks="." files="checkspec[\\/]test[\\/]" />
-<!-- 	<suppress checks="." files="[\\/]checkspec[\\/]spring[\\/].*$" /> -->
-<!-- 	<suppress checks="." files="[\\/]checkspec[\\/]test[\\/].*$" /> -->
+	<suppress checks="." files="checkspec[\\/]examples[\\/]" />
 </suppressions>
