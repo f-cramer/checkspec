@@ -85,7 +85,7 @@ public class WrapperTest {
 		result = exceptionWrapper.equals(otherExceptionWrapper);
 		assertThat(result, is(false));
 	}
-	
+
 	@Test
 	public void hashCodeTest() {
 		int result = valueWrapper.hashCode();

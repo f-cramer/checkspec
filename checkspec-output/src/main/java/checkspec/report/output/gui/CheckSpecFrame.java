@@ -221,8 +221,7 @@ class CheckSpecFrame extends JFrame {
 		}
 
 		/**
-		 * Performs the export and returns any {@link Throwable} that was
-		 * thrown.
+		 * Performs the export and returns any {@link Throwable} that was thrown.
 		 *
 		 * @return
 		 *         <ul>

@@ -179,17 +179,17 @@ public final class CheckSpec {
 	}
 
 	/**
-	 * Creates a {@link SpecReport} for the given specification {@code spec}
-	 * that is populated with a {@link ClassReport} for any class that in any
-	 * way matches {@code spec}.
+	 * Creates a {@link SpecReport} for the given specification {@code spec} that is
+	 * populated with a {@link ClassReport} for any class that in any way matches
+	 * {@code spec}.
 	 * <p>
 	 * Behaves the same as a call to {@code checkSpec(spec, "")}.
 	 *
 	 * @param spec
-	 *            the non-null specification the return {@code SpecReport}
-	 *            should be based on
-	 * @return a {@code SpecReport} that is populated with a {@code ClassReport}
-	 *         for any class that in any way matches {@code spec}
+	 *            the non-null specification the return {@code SpecReport} should be
+	 *            based on
+	 * @return a {@code SpecReport} that is populated with a {@code ClassReport} for
+	 *         any class that in any way matches {@code spec}
 	 */
 	public SpecReport checkSpec(@NonNull ClassSpecification spec) {
 		return checkSpec(spec, "");

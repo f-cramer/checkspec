@@ -37,8 +37,7 @@ interface MultiValueMap<K, V> extends Map<K, List<V>> {
 	V getFirst(K key);
 
 	/**
-	 * Add the given single value to the current list of values for the given
-	 * key.
+	 * Add the given single value to the current list of values for the given key.
 	 * 
 	 * @param key
 	 *            the key

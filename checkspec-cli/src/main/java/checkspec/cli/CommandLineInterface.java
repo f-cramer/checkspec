@@ -69,10 +69,10 @@ public final class CommandLineInterface {
 	private static final ArgumentCommandLineOption<String> SPECS = TextCommandLineOption.of(SPECS_OPTION, String.class, Parser.IDENTITY);
 	private static final Option SPEC_PATH_OPTION = Option.builder("p").longOpt("specpath").hasArgs().argName("paths")
 			.desc("Sets the classpath to load the specifications from. If not set the default classpath is used.").build();
-	private static final ArgumentCommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL>of(SPEC_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
+	private static final ArgumentCommandLineOption<URL> SPEC_PATH = TextCommandLineOption.<URL> of(SPEC_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
 	private static final Option IMPLEMENTATION_PATH_OPTION = Option.builder("i").longOpt("implpath").hasArg().argName("paths")
 			.desc("Sets the classpath to load the implementations from. If not set the default classpath is used.").build();
-	private static final ArgumentCommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL>of(IMPLEMENTATION_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
+	private static final ArgumentCommandLineOption<URL> IMPLEMENTATION_PATH = TextCommandLineOption.<URL> of(IMPLEMENTATION_PATH_OPTION, URL.class, CommandLineInterface::parseUrl);
 	private static final Option BASE_PACKAGE_OPTION = Option.builder("b").longOpt("basepackage").hasArg().argName("package")
 			.desc("Sets the base package that is used to load implementations. Each found implemenation will be inside of this package or in one of its child packages")
 			.build();

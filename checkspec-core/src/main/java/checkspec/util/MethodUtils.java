@@ -44,8 +44,8 @@ public final class MethodUtils {
 
 	public static int calculateParameterDistance(@NonNull ResolvableType[] left, @NonNull ResolvableType[] right) {
 		/*
-		 * This implementation use two variable to record the previous cost
-		 * counts, So this implementation use less memory than previous impl.
+		 * This implementation use two variable to record the previous cost counts, So
+		 * this implementation use less memory than previous impl.
 		 */
 
 		int leftLength = left.length; // length of left

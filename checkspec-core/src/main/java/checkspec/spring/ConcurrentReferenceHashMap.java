@@ -28,10 +28,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.commons.lang3.Validate;
 
 /**
  * A {@link ConcurrentHashMap} that uses {@link ReferenceType#SOFT soft} or
@@ -65,8 +68,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V> {
 
-	private static final int DEFAULT_INITIAL_CAPACITY = 16;
-
 	private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
 	private static final int DEFAULT_CONCURRENCY_LEVEL = 16;
@@ -94,8 +95,8 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	private final ReferenceType referenceType;
 
 	/**
-	 * The shift value used to calculate the size of the segments array and an
-	 * index from the hash.
+	 * The shift value used to calculate the size of the segments array and an index
+	 * from the hash.
 	 */
 	private final int shift;
 
@@ -103,13 +104,6 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	 * Late binding entry set.
 	 */
 	private Set<Map.Entry<K, V>> entrySet;
-
-	/**
-	 * Create a new {@code ConcurrentReferenceHashMap} instance.
-	 */
-	public ConcurrentReferenceHashMap() {
-		this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL, DEFAULT_REFERENCE_TYPE);
-	}
 
 	/**
 	 * Create a new {@code ConcurrentReferenceHashMap} instance.
@@ -127,75 +121,21 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	 * @param initialCapacity
 	 *            the initial capacity of the map
 	 * @param loadFactor
-	 *            the load factor. When the average number of references per
-	 *            table exceeds this value resize will be attempted
-	 */
-	public ConcurrentReferenceHashMap(int initialCapacity, float loadFactor) {
-		this(initialCapacity, loadFactor, DEFAULT_CONCURRENCY_LEVEL, DEFAULT_REFERENCE_TYPE);
-	}
-
-	/**
-	 * Create a new {@code ConcurrentReferenceHashMap} instance.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the map
+	 *            the load factor. When the average number of references per table
+	 *            exceeds this value, resize will be attempted.
 	 * @param concurrencyLevel
-	 *            the expected number of threads that will concurrently write to
-	 *            the map
-	 */
-	public ConcurrentReferenceHashMap(int initialCapacity, int concurrencyLevel) {
-		this(initialCapacity, DEFAULT_LOAD_FACTOR, concurrencyLevel, DEFAULT_REFERENCE_TYPE);
-	}
-
-	/**
-	 * Create a new {@code ConcurrentReferenceHashMap} instance.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the map
-	 * @param referenceType
-	 *            the reference type used for entries (soft or weak)
-	 */
-	public ConcurrentReferenceHashMap(int initialCapacity, ReferenceType referenceType) {
-		this(initialCapacity, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL, referenceType);
-	}
-
-	/**
-	 * Create a new {@code ConcurrentReferenceHashMap} instance.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the map
-	 * @param loadFactor
-	 *            the load factor. When the average number of references per
-	 *            table exceeds this value, resize will be attempted.
-	 * @param concurrencyLevel
-	 *            the expected number of threads that will concurrently write to
-	 *            the map
-	 */
-	public ConcurrentReferenceHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-		this(initialCapacity, loadFactor, concurrencyLevel, DEFAULT_REFERENCE_TYPE);
-	}
-
-	/**
-	 * Create a new {@code ConcurrentReferenceHashMap} instance.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the map
-	 * @param loadFactor
-	 *            the load factor. When the average number of references per
-	 *            table exceeds this value, resize will be attempted.
-	 * @param concurrencyLevel
-	 *            the expected number of threads that will concurrently write to
-	 *            the map
+	 *            the expected number of threads that will concurrently write to the
+	 *            map
 	 * @param referenceType
 	 *            the reference type used for entries (soft or weak)
 	 */
 	@SuppressWarnings("unchecked")
 	public ConcurrentReferenceHashMap(int initialCapacity, float loadFactor, int concurrencyLevel, ReferenceType referenceType) {
-
-		Assert.isTrue(initialCapacity >= 0, "Initial capacity must not be negative");
-		Assert.isTrue(loadFactor > 0f, "Load factor must be positive");
-		Assert.isTrue(concurrencyLevel > 0, "Concurrency level must be positive");
-		Assert.notNull(referenceType, "Reference type must not be null");
+		Validate.isTrue(initialCapacity >= 0, "Initial capacity must not be negative");
+		Validate.isTrue(loadFactor > 0f, "Load factor must be positive");
+		Validate.isTrue(concurrencyLevel > 0, "Concurrency level must be positive");
+		Objects.requireNonNull(referenceType, "Reference type must not be null");
+		
 		this.loadFactor = loadFactor;
 		this.shift = calculateShift(concurrencyLevel, MAXIMUM_CONCURRENCY_LEVEL);
 		int size = 1 << this.shift;
@@ -211,17 +151,9 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		return this.loadFactor;
 	}
 
-	protected final int getSegmentsSize() {
-		return this.segments.length;
-	}
-
-	protected final Segment getSegment(int index) {
-		return this.segments[index];
-	}
-
 	/**
-	 * Factory method that returns the {@link ReferenceManager}. This method
-	 * will be called once for each {@link Segment}.
+	 * Factory method that returns the {@link ReferenceManager}. This method will be
+	 * called once for each {@link Segment}.
 	 * 
 	 * @return a new reference manager
 	 */
@@ -230,10 +162,10 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	}
 
 	/**
-	 * Get the hash for a given object, apply an additional hash function to
-	 * reduce collisions. This implementation uses the same Wang/Jenkins
-	 * algorithm as {@link ConcurrentHashMap}. Subclasses can override to
-	 * provide alternative hashing.
+	 * Get the hash for a given object, apply an additional hash function to reduce
+	 * collisions. This implementation uses the same Wang/Jenkins algorithm as
+	 * {@link ConcurrentHashMap}. Subclasses can override to provide alternative
+	 * hashing.
 	 * 
 	 * @param o
 	 *            the object to hash (may be null)
@@ -373,9 +305,9 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	/**
 	 * Remove any entries that have been garbage collected and are no longer
 	 * referenced. Under normal circumstances garbage collected entries are
-	 * automatically purged as items are added or removed from the Map. This
-	 * method can be used to force a purge, and is useful when the Map is read
-	 * frequently but updated less often.
+	 * automatically purged as items are added or removed from the Map. This method
+	 * can be used to force a purge, and is useful when the Map is read frequently
+	 * but updated less often.
 	 */
 	public void purgeUnreferencedEntries() {
 		for (Segment segment : this.segments) {
@@ -457,16 +389,16 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		private final int initialSize;
 
 		/**
-		 * Array of references indexed using the low order bits from the hash.
-		 * This property should only be set via {@link #setReferences} to ensure
-		 * that the {@code resizeThreshold} is maintained.
+		 * Array of references indexed using the low order bits from the hash. This
+		 * property should only be set via {@link #setReferences} to ensure that the
+		 * {@code resizeThreshold} is maintained.
 		 */
 		private volatile Reference<K, V>[] references;
 
 		/**
-		 * The total number of references contained in this segment. This
-		 * includes chained references and references that have been garbage
-		 * collected but not purged.
+		 * The total number of references contained in this segment. This includes
+		 * chained references and references that have been garbage collected but not
+		 * purged.
 		 */
 		private volatile int count = 0;
 
@@ -497,8 +429,8 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		}
 
 		/**
-		 * Apply an update operation to this segment. The segment will be locked
-		 * during the update.
+		 * Apply an update operation to this segment. The segment will be locked during
+		 * the update.
 		 * 
 		 * @param hash
 		 *            the hash of the key
@@ -558,9 +490,9 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		}
 
 		/**
-		 * Restructure the underlying data structure when it becomes necessary.
-		 * This method can increase the size of the references table as well as
-		 * purge any references that have been garbage collected.
+		 * Restructure the underlying data structure when it becomes necessary. This
+		 * method can increase the size of the references table as well as purge any
+		 * references that have been garbage collected.
 		 * 
 		 * @param allowResize
 		 *            if resizing is permitted
@@ -649,8 +581,7 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		}
 
 		/**
-		 * Replace the references with a new value, recalculating the
-		 * resizeThreshold.
+		 * Replace the references with a new value, recalculating the resizeThreshold.
 		 * 
 		 * @param references
 		 *            the new references
@@ -658,13 +589,6 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		private void setReferences(Reference<K, V>[] references) {
 			this.references = references;
 			this.resizeThreshold = (int) (references.length * getLoadFactor());
-		}
-
-		/**
-		 * @return the size of the current references array
-		 */
-		public final int getSize() {
-			return this.references.length;
 		}
 
 		/**
@@ -683,8 +607,8 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 	protected interface Reference<K, V> {
 
 		/**
-		 * Returns the referenced entry or {@code null} if the entry is no
-		 * longer available.
+		 * Returns the referenced entry or {@code null} if the entry is no longer
+		 * available.
 		 * 
 		 * @return the entry or {@code null}
 		 */
@@ -798,8 +722,8 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		}
 
 		/**
-		 * Convenience method that can be used for tasks that do not need access
-		 * to {@link Entries}.
+		 * Convenience method that can be used for tasks that do not need access to
+		 * {@link Entries}.
 		 * 
 		 * @param reference
 		 *            the found reference or {@code null}
@@ -952,7 +876,7 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 
 		@Override
 		public void remove() {
-			Assert.state(this.last != null, "No element to remove");
+			Objects.requireNonNull(this.last, "No element to remove");
 			ConcurrentReferenceHashMap.this.remove(this.last.getKey());
 		}
 	}
@@ -992,11 +916,10 @@ class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements Conc
 		}
 
 		/**
-		 * Return any reference that has been garbage collected and can be
-		 * purged from the underlying structure or {@code null} if no references
-		 * need purging. This method must be thread safe and ideally should not
-		 * block when returning {@code null}. References should be returned once
-		 * and only once.
+		 * Return any reference that has been garbage collected and can be purged from
+		 * the underlying structure or {@code null} if no references need purging. This
+		 * method must be thread safe and ideally should not block when returning
+		 * {@code null}. References should be returned once and only once.
 		 * 
 		 * @return a reference to purge or {@code null}
 		 */

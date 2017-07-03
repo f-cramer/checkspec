@@ -27,7 +27,7 @@ import checkspec.spring.ResolvableType;
 import lombok.Value;
 
 public class ClassUtilsTest {
-	
+
 	private static final ClassLoader SYSTEM_CLASS_LOADER = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) (() -> ClassLoader.getSystemClassLoader()));
 
 	private static final Class<?> CLASS = ClassUtilsTest.class;
@@ -38,7 +38,7 @@ public class ClassUtilsTest {
 
 	@Rule
 	public final ExpectedException exception = ExpectedException.none();
-	
+
 	private ByteArrayOutputStream baos;
 	private PrintStream errorCache;
 
@@ -76,7 +76,7 @@ public class ClassUtilsTest {
 	public void getNameResolvableTypeTest() {
 		String result = getName(TYPE);
 		assertThat(result, is("checkspec.util.ClassUtilsTest"));
-		
+
 		result = getName(ResolvableType.forClass(Integer[].class));
 		assertThat(result, is("java.lang.Integer[]"));
 

@@ -46,12 +46,12 @@ public abstract class AbstractModifiersAnalysis {
 	}
 
 	/**
-	 * Creates and returns a {@link ReportProblem} if the actual state of the
-	 * given modifiers does not match the given modifier specification state.
+	 * Creates and returns a {@link ReportProblem} if the actual state of the given
+	 * modifiers does not match the given modifier specification state.
 	 *
 	 * @param actual
-	 *            the actual modifier state - {@code true} if the modifier is
-	 *            set, {@code false} otherwise
+	 *            the actual modifier state - {@code true} if the modifier is set,
+	 *            {@code false} otherwise
 	 * @param spec
 	 *            the modifier specification
 	 * @param modifier

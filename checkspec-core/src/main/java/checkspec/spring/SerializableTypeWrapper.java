@@ -29,6 +29,7 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.Objects;
 
 /**
  * Internal utility class that can be used to obtain wrapped
@@ -65,7 +66,7 @@ abstract class SerializableTypeWrapper {
 	 * Return a {@link Serializable} variant of {@link Field#getGenericType()}.
 	 */
 	public static Type forField(Field field) {
-		Assert.notNull(field, "Field must not be null");
+		Objects.requireNonNull(field, "Field must not be null");
 		return forTypeProvider(new FieldTypeProvider(field));
 	}
 
@@ -111,8 +112,7 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
-	 * Return a {@link Serializable} variant of
-	 * {@link Class#getTypeParameters()}.
+	 * Return a {@link Serializable} variant of {@link Class#getTypeParameters()}.
 	 */
 	@SuppressWarnings("serial")
 	public static Type[] forTypeParameters(final Class<?> type) {
@@ -130,8 +130,8 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
-	 * Unwrap the given type, effectively returning the original
-	 * non-serializable type.
+	 * Unwrap the given type, effectively returning the original non-serializable
+	 * type.
 	 * 
 	 * @param type
 	 *            the type to unwrap
@@ -147,11 +147,10 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
-	 * Return a {@link Serializable} {@link Type} backed by a
-	 * {@link TypeProvider} .
+	 * Return a {@link Serializable} {@link Type} backed by a {@link TypeProvider} .
 	 */
 	static Type forTypeProvider(final TypeProvider provider) {
-		Assert.notNull(provider, "Provider must not be null");
+		Objects.requireNonNull(provider, "Provider must not be null");
 		if (provider.getType() instanceof Serializable || provider.getType() == null) {
 			return provider.getType();
 		}
@@ -200,8 +199,7 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
-	 * Default implementation of {@link TypeProvider} with a {@code null}
-	 * source.
+	 * Default implementation of {@link TypeProvider} with a {@code null} source.
 	 */
 	@SuppressWarnings("serial")
 	private abstract static class DefaultTypeProvider implements TypeProvider {
@@ -214,8 +212,8 @@ abstract class SerializableTypeWrapper {
 
 	/**
 	 * {@link Serializable} {@link InvocationHandler} used by the proxied
-	 * {@link Type}. Provides serialization support and enhances any methods
-	 * that return {@code Type} or {@code Type[]}.
+	 * {@link Type}. Provides serialization support and enhances any methods that
+	 * return {@code Type} or {@code Type[]}.
 	 */
 	@SuppressWarnings("serial")
 	private static class TypeProxyInvocationHandler implements InvocationHandler, Serializable {
@@ -352,8 +350,7 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
-	 * {@link TypeProvider} for {@link Type}s obtained by invoking a no-arg
-	 * method.
+	 * {@link TypeProvider} for {@link Type}s obtained by invoking a no-arg method.
 	 */
 	@SuppressWarnings("serial")
 	static class MethodInvokeTypeProvider implements TypeProvider {
