@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.cramer.checkspec</groupId>
-	<artifactId>checkspec-parent</artifactId>
+	<artifactId>checkspec.parent</artifactId>
 	<version>1.0.0</version>
 
 	<name>CheckSpec</name>
@@ -18,7 +18,7 @@
 	<distributionManagement>
 		<site>
 			<id>default</id>
-			<url>file://${project.basedir}/../checkspec-parent/target/stage/</url>
+			<url>file://${project.basedir}/../target/stage/</url>
 		</site>
 	</distributionManagement>
 
@@ -63,37 +63,37 @@
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-api</artifactId>
+				<artifactId>checkspec.api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-cli</artifactId>
+				<artifactId>checkspec.cli</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-core</artifactId>
+				<artifactId>checkspec.core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-output</artifactId>
+				<artifactId>checkspec.output</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-test-files</artifactId>
+				<artifactId>checkspec.test</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec-test-files</artifactId>
+				<artifactId>checkspec.test.files</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -309,11 +309,11 @@
 	</reporting>
 
 	<modules>
-		<module>checkspec-api</module>
-		<module>checkspec-cli</module>
-		<module>checkspec-core</module>
-		<module>checkspec-output</module>
-		<module>checkspec-test-files</module>
-		<module>checkspec-tests</module>
+		<module>checkspec.api</module>
+		<module>checkspec.cli</module>
+		<module>checkspec.core</module>
+		<module>checkspec.output</module>
+		<module>checkspec.test</module>
+		<module>checkspec.test.files</module>
 	</modules>
 </project>
