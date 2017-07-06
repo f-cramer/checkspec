@@ -63,7 +63,7 @@ local.properties
 
 # Eclipse Core
 .project
-!checkspec-eclipse/.project
+!checkspec.eclipse*/.project
 
 # External tool builders
 .externalToolBuilders/
@@ -73,7 +73,7 @@ local.properties
 
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-!checkspec-eclipse/.classpath
+!checkspec.eclipse*/.classpath
 
 # Java annotation processor (APT)
 .factorypath

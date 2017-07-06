@@ -43,9 +43,11 @@
 		<slf4j.version>1.7.25</slf4j.version>
 		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 
+		<bundle.plugin.version>3.3.0</bundle.plugin.version>
 		<checkstyle.plugin.version>2.17</checkstyle.plugin.version>
 		<dependency.plugin.version>3.0.1</dependency.plugin.version>
 		<findbugs.plugin.version>3.0.4</findbugs.plugin.version>
+		<resources.plugin.version>3.0.2</resources.plugin.version>
 		<jacoco.plugin.version>0.7.9</jacoco.plugin.version>
 		<javadoc.plugin.version>2.10.4</javadoc.plugin.version>
 		<jxr.plugin.version>2.5</jxr.plugin.version>
@@ -229,6 +231,18 @@
 					<configuration>
 						<linkXRef>true</linkXRef>
 					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>${bundle.plugin.version}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${resources.plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

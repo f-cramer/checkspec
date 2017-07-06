@@ -5,6 +5,10 @@
 	<artifactId>checkspec.core</artifactId>
 	<name>CheckSpec Core</name>
 
+	<properties>
+		<bundle.final.name>${project.artifactId}.bundle</bundle.final.name>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
@@ -30,7 +34,7 @@
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>

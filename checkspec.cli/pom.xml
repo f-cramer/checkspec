@@ -1,8 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<artifactId>checkspec.cli</artifactId>
 	<name>CheckSpec CLI</name>
+
+	<properties>
+		<bundle.final.name>${project.artifactId}-${project.version}-standalone</bundle.final.name>
+		<bundle.static.final.name>checkspec.bundle.jar</bundle.static.final.name>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -27,8 +32,51 @@
 							<mainClass>checkspec.cli.CommandLineInterface</mainClass>
 						</transformer>
 					</transformers>
-					<finalName>${project.artifactId}-${project.version}-standalone</finalName>
+					<finalName>${bundle.final.name}</finalName>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.coderplus.maven.plugins</groupId>
+				<artifactId>copy-rename-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>rename</goal>
+						</goals>
+						<configuration>
+							<sourceFile>${project.build.directory}/${bundle.final.name}.jar</sourceFile>
+							<destinationFile>${project.basedir}/../checkspec.eclipse.launching/lib/${bundle.static.final.name}</destinationFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<targetPath>${project.basedir}/../checkspec.eclipse.launching/lib</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>${bundle.final.name}.jar</include>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

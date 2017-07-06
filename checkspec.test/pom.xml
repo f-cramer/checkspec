@@ -2,7 +2,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec.tests</artifactId>
+	<artifactId>checkspec.test</artifactId>
 	<name>CheckSpec Tests</name>
 
 	<dependencies>
