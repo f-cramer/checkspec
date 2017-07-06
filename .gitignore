@@ -56,13 +56,13 @@ tmp/
 *.swp
 *~.nib
 local.properties
-.settings/
+#.settings/
 .loadpath
 .recommenders
 !checkspec-eclipse/.settings/
 
 # Eclipse Core
-.project
+#.project
 !checkspec.eclipse*/.project
 
 # External tool builders
@@ -72,7 +72,7 @@ local.properties
 *.launch
 
 # JDT-specific (Eclipse Java Development Tools)
-.classpath
+#.classpath
 !checkspec.eclipse*/.classpath
 
 # Java annotation processor (APT)
