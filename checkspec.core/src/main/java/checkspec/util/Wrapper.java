@@ -26,7 +26,7 @@ public final class Wrapper<T, E extends Throwable> {
 		return new Wrapper<>(value, null);
 	}
 
-	public static <T, E extends Throwable> Wrapper<T, E> ofException(@NonNull E exception) {
+	public static <T, E extends Throwable> Wrapper<T, E> ofThrowable(@NonNull E exception) {
 		return new Wrapper<>(null, exception);
 	}
 }

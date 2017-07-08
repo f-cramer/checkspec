@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 /**
  * Miscellaneous methods that are working on instances of {@link Class} and / or
  * {@link ResolvableType}. Mainly for internal use within the framework itself.
- * 
+ *
  * @author Florian Cramer
  * @see Class
  * @see ResolvableType
@@ -29,15 +29,15 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a string representation of the given {@link ResolvableType}. This
-	 * looks exactly like the type header you would write to define the given type
-	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
-	 * "public final class String" for an instance of {@link ResolvableType} that
-	 * was created from {@code java.lang.String}.
+	 * looks exactly like the type header you would write to define the given
+	 * type excluding any {@code extends} and / or {@code implements} statement.
+	 * E.g. "public final class String" for an instance of
+	 * {@link ResolvableType} that was created from {@code java.lang.String}.
 	 * <p>
-	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link Modifier#toString(int)}, the class name is given in the form that is
-	 * given by {@link Class#getName()}.
-	 * 
+	 * The modifiers of the given type are sorted using the canonical order
+	 * found in {@link Modifier#toString(int)}, the class name is given in the
+	 * form that is given by {@link Class#getName()}.
+	 *
 	 * @param type
 	 *            the non-null type
 	 * @throws NullPointerException
@@ -70,10 +70,10 @@ public final class ClassUtils {
 	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
 	 * "public final class String" for {@code java.lang.String}.
 	 * <p>
-	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link Modifier#toString(int)}, the class name is given in the form that is
-	 * given by {@link Class#getName()}.
-	 * 
+	 * The modifiers of the given type are sorted using the canonical order
+	 * found in {@link Modifier#toString(int)}, the class name is given in the
+	 * form that is given by {@link Class#getName()}.
+	 *
 	 * @param type
 	 *            the non-null type
 	 * @throws NullPointerException
@@ -87,7 +87,7 @@ public final class ClassUtils {
 	/**
 	 * Returns the fully-qualified name of the given type including all type
 	 * parameters. Returns "&lt;component-type&gt;[]" for an array type.
-	 * 
+	 *
 	 * @param type
 	 *            the non-null type
 	 * @throws NullPointerException
@@ -101,7 +101,7 @@ public final class ClassUtils {
 	/**
 	 * Returns the fully-qualified name of the given type including all type
 	 * parameters. Returns "&lt;component-type&gt;[]" for an array type.
-	 * 
+	 *
 	 * @param type
 	 *            the non-null type
 	 * @throws NullPointerException
@@ -113,16 +113,16 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Returns the runtime class descriptor for the class that is associated with
-	 * the given fully-qualified name. If such class could not be found {@code null}
-	 * is returned.
-	 * 
+	 * Returns the runtime class descriptor for the class that is associated
+	 * with the given fully-qualified name. If such class could not be found
+	 * {@code null} is returned.
+	 *
 	 * @param className
 	 *            the class name
 	 * @throws NullPointerException
 	 *             if {@code className} is {@code null}
-	 * @return the class associated with the given class name if one could be found,
-	 *         null otherwise
+	 * @return the class associated with the given class name if one could be
+	 *         found, null otherwise
 	 * @see #getClassAsStream(String)
 	 * @see Class#forName(String)
 	 */
@@ -138,13 +138,14 @@ public final class ClassUtils {
 	 * Returns a {@code Stream} containing the runtime class descriptor for the
 	 * class that is associcated with the given fully-qualified name. Returns an
 	 * empty stream if such class could not be found.
-	 * 
+	 *
 	 * @param className
 	 *            the class name
 	 * @throws NullPointerException
 	 *             if {@code className} is {@code null}
-	 * @return a {@code Stream} containing the class associated with the given class
-	 *         name if one could be found, an empty {@code Stream} otherwise.
+	 * @return a {@code Stream} containing the class associated with the given
+	 *         class name if one could be found, an empty {@code Stream}
+	 *         otherwise.
 	 * @see #getClass(String)
 	 * @see Class#forName(String)
 	 */
@@ -157,16 +158,16 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for a {@link ResolvableType} that was created from an instance of
-	 * {@code java.lang.String}.
-	 * 
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for a {@link ResolvableType} that was created from an
+	 * instance of {@code java.lang.String}.
+	 *
 	 * @param type
 	 *            the type
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @see #getPackage(Class)
 	 * @see #getPackage(String)
 	 */
@@ -175,15 +176,15 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for {@code java.lang.String}.
-	 * 
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for {@code java.lang.String}.
+	 *
 	 * @param type
 	 *            the type
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @see #getPackage(Class)
 	 * @see #getPackage(String)
 	 */
@@ -192,15 +193,15 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for "java.lang.String".
-	 * 
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for "java.lang.String".
+	 *
 	 * @param className
 	 *            the class name
 	 * @throws NullPointerException
 	 *             if {@code class name} is {@code null}
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @see #getPackage(Class)
 	 * @see #getPackage(String)
 	 */
@@ -213,7 +214,7 @@ public final class ClassUtils {
 	 * {@link ClassLoader}. If no such class could be found, i.e. if
 	 * {@link ClassLoader#loadClass(String) loadClass(String)} throws a
 	 * {@link ClassNotFoundException}, {@code null} is returned.
-	 * 
+	 *
 	 * @param loader
 	 *            the class loader
 	 * @return a lambda function that loads a class from the given class loader
@@ -234,14 +235,15 @@ public final class ClassUtils {
 
 	/**
 	 * Creates a lambda function that loads a class by its name from the given
-	 * {@link ClassLoader} and wraps it in a {@link Stream}. If no such class could
-	 * be found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)}
-	 * throws a {@link ClassNotFoundException}, an empty stream is returned.
-	 * 
+	 * {@link ClassLoader} and wraps it in a {@link Stream}. If no such class
+	 * could be found, i.e. if {@link ClassLoader#loadClass(String)
+	 * loadClass(String)} throws a {@link ClassNotFoundException}, an empty
+	 * stream is returned.
+	 *
 	 * @param loader
 	 *            the class loader
-	 * @return a lambda function that loads a class from the given class loader and
-	 *         wraps it in an instance of {@link Stream}
+	 * @return a lambda function that loads a class from the given class loader
+	 *         and wraps it in an instance of {@link Stream}
 	 * @see #getClassAsStream(String)
 	 * @see ClassLoader#loadClass(String)
 	 */
@@ -258,11 +260,11 @@ public final class ClassUtils {
 	/**
 	 * Creates a lambda function that loads a class by its name from the system
 	 * class loader and wraps it in a {@link Stream}. If no such class could be
-	 * found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)} throws
-	 * a {@link ClassNotFoundException}, an empty stream is returned.
-	 * 
-	 * @return a lambda function that loads a class from the given class loader and
-	 *         wraps it in an instance of {@link Stream}
+	 * found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)}
+	 * throws a {@link ClassNotFoundException}, an empty stream is returned.
+	 *
+	 * @return a lambda function that loads a class from the given class loader
+	 *         and wraps it in an instance of {@link Stream}
 	 * @see #getClassAsStream(String)
 	 * @see #getSystemClassLoader()
 	 * @see ClassLoader#loadClass(String)
@@ -273,12 +275,12 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a lambda function that creates and instance for a given class and
-	 * wrappes it in a {@link Stream}. If the given class could not be instantiated,
-	 * i.e. if throws an {@link InstantiationException}, an empty stream is
-	 * returned.
-	 * 
-	 * @return a lambda function that instantiates a given class and wraps it in an
-	 *         instance of {@link Stream}
+	 * wrappes it in a {@link Stream}. If the given class could not be
+	 * instantiated, i.e. if throws an {@link InstantiationException}, an empty
+	 * stream is returned.
+	 *
+	 * @return a lambda function that instantiates a given class and wraps it in
+	 *         an instance of {@link Stream}
 	 * @see #instantiate(String)
 	 */
 	public static <T> Function<Class<? extends T>, Stream<? extends T>> instantiate() {
@@ -287,16 +289,17 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a lambda function that creates and instance for a given class and
-	 * wrappes it in a {@link Stream}. If the given class could not be instantiated,
-	 * i.e. if throws an {@link InstantiationException}, the given error message is
-	 * printed to {@link System#err} and an empty stream is returned.
-	 * 
+	 * wrappes it in a {@link Stream}. If the given class could not be
+	 * instantiated, i.e. if throws an {@link InstantiationException}, the given
+	 * error message is printed to {@link System#err} and an empty stream is
+	 * returned.
+	 *
 	 * @param errorFormat
 	 *            the error format
 	 * @throws NullPointerException
 	 *             if {@code errorFormat} is {@code null}
-	 * @return a lambda function that instantiates a given class and wraps it in an
-	 *         instance of {@link Stream}
+	 * @return a lambda function that instantiates a given class and wraps it in
+	 *         an instance of {@link Stream}
 	 * @see #instantiate()
 	 */
 	public static <T> Function<Class<? extends T>, Stream<? extends T>> instantiate(String errorFormat) {
@@ -314,9 +317,10 @@ public final class ClassUtils {
 
 	/**
 	 * Returns the {@link Visibility} of the given type, e.g.
-	 * {@link Visibility#PUBLIC PUBLIC} for an instance of @{@link ResolvableType}
-	 * created from {@code checkspec.util.ClassUtils}.
-	 * 
+	 * {@link Visibility#PUBLIC PUBLIC} for an instance
+	 * of @{@link ResolvableType} created from
+	 * {@code checkspec.util.ClassUtils}.
+	 *
 	 * @param type
 	 *            the type
 	 * @throws NullPointerException
@@ -328,13 +332,13 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if instances the resolvable type {@code clazz} are assignable to to a
-	 * variable of the static type that is represented by {@code toClass}. This
-	 * method handles primitive types correctly by taking in account that
-	 * {@code null} values are not assignable to variables or fields of primitive
-	 * types. It also checks for primitive type widenings as occuring e.g. when
-	 * assigning a {@code short} value to a field of type {@code int}.
-	 * 
+	 * Checks if instances the resolvable type {@code clazz} are assignable to
+	 * to a variable of the static type that is represented by {@code toClass}.
+	 * This method handles primitive types correctly by taking in account that
+	 * {@code null} values are not assignable to variables or fields of
+	 * primitive types. It also checks for primitive type widenings as occuring
+	 * e.g. when assigning a {@code short} value to a field of type {@code int}.
+	 *
 	 * @param clazz
 	 *            type that should be assigned to a field
 	 * @param toClass
@@ -359,13 +363,13 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if a type {@code superType} is a super type of {@code type}. This is
-	 * {@code true} any of the following checks are {@code true}
+	 * Checks if a type {@code superType} is a super type of {@code type}. This
+	 * is {@code true} any of the following checks are {@code true}
 	 * <ul>
-	 * <li>{@code type} and {@code superType} describe the same class or the same
-	 * interface.
-	 * <li>{@code type} and {@code superType} describe different classes and any of
-	 * the following checks are {@code true}
+	 * <li>{@code type} and {@code superType} describe the same class or the
+	 * same interface.
+	 * <li>{@code type} and {@code superType} describe different classes and any
+	 * of the following checks are {@code true}
 	 * <ul>
 	 * <li>it is the direct super class of {@code type}</li>
 	 * <li>it is a super type of the direct super class {@code superClass} of
@@ -373,8 +377,8 @@ public final class ClassUtils {
 	 * {@code true}</li>
 	 * </ul>
 	 * </li>
-	 * <li>{@code type} describes a class and {@code superType} an interface and any
-	 * of the following checks are {@code true}
+	 * <li>{@code type} describes a class and {@code superType} an interface and
+	 * any of the following checks are {@code true}
 	 * <ul>
 	 * <li>it is implemented by {@code type}</li>
 	 * <li>it is a super type of the direct super class {@code superClass} of
@@ -386,8 +390,8 @@ public final class ClassUtils {
 	 * {@code interf} in {@code interfs}
 	 * </ul>
 	 * </li>
-	 * <li>{@code type} and {@code superType} describe different interfaces and any
-	 * of the following checks are {@code true}
+	 * <li>{@code type} and {@code superType} describe different interfaces and
+	 * any of the following checks are {@code true}
 	 * <ul>
 	 * <li>{@code type} directly extends {@code superType}</li>
 	 * <li>any of the interfaces {@code interfs} that are directly extended by
@@ -397,7 +401,7 @@ public final class ClassUtils {
 	 * </ul>
 	 * </li>
 	 * </ul>
-	 * 
+	 *
 	 * @param type
 	 *            the type
 	 * @param superType
@@ -424,18 +428,23 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks whether the given types refer to the same class or the same interface
-	 * 
+	 * Checks whether the given types refer to the same class or the same
+	 * interface
+	 *
 	 * @param t1
 	 *            the first type
 	 * @param t2
 	 *            the second type
 	 * @throws NullPointerException
 	 *             if {@code t1} or {@code t2} are {@code null}
-	 * @return whether or not the given types refer to the same class or the same
-	 *         interface
+	 * @return whether or not the given types refer to the same class or the
+	 *         same interface
 	 */
-	public static boolean equal(@NonNull ResolvableType t1, @NonNull ResolvableType t2) {
+	public static boolean equal(ResolvableType t1, ResolvableType t2) {
+		if (t1 == null || t2 == null) {
+			return t1 == t2;
+		}
+
 		if (t1.equals(t2)) {
 			return true;
 		}
@@ -443,20 +452,24 @@ public final class ClassUtils {
 		return equal(t1.getRawClass(), t2.getRawClass());
 	}
 
-
 	/**
-	 * Checks whether the given types refer to the same class or the same interface
-	 * 
+	 * Checks whether the given types refer to the same class or the same
+	 * interface
+	 *
 	 * @param t1
 	 *            the first type
 	 * @param t2
 	 *            the second type
 	 * @throws NullPointerException
 	 *             if {@code t1} or {@code t2} are {@code null}
-	 * @return whether or not the given types refer to the same class or the same
-	 *         interface
+	 * @return whether or not the given types refer to the same class or the
+	 *         same interface
 	 */
-	public static boolean equal(@NonNull Class<?> t1, @NonNull Class<?> t2) {
+	public static boolean equal(Class<?> t1, Class<?> t2) {
+		if (t1 == null || t2 == null) {
+			return t1 == t2;
+		}
+
 		if (t1 == t2) {
 			return true;
 		}

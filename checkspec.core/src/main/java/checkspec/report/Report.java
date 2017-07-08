@@ -61,7 +61,7 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 		}
 
 		Stream<ReportType> reportTypes = getSubReports().parallelStream().map(Report::getType);
-		Stream<ReportType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(ReportProblemType::toProblemType);
+		Stream<ReportType> problemTypes = problems.parallelStream().map(ReportProblem::getType).map(ReportProblemType::toReportType);
 
 		return Stream.concat(reportTypes, problemTypes).parallel()
 				.max(Comparator.naturalOrder())

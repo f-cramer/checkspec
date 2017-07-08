@@ -8,9 +8,9 @@ public enum ReportProblemType {
 	WARNING(ReportType.WARNING), ERROR(ReportType.ERROR);
 
 	@NonNull
-	private final ReportType problemType;
+	private final ReportType reportType;
 
-	public ReportType toProblemType() {
-		return problemType;
+	public ReportType toReportType() {
+		return reportType;
 	}
 }

@@ -105,7 +105,7 @@ public class HtmlOutputter implements Outputter {
 	}
 
 	private static Mark getMark(ReportProblem problem) {
-		return getMark(problem.getType().toProblemType());
+		return getMark(problem.getType().toReportType());
 	}
 
 	private static Mark getMark(Report<?, ?> report) {

@@ -1,7 +1,10 @@
 package checkspec.report;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +81,7 @@ public class ReportTest {
 
 	@Test
 	public void getSubReportsTest() {
-		List<Report<?,?>> result = report.getSubReports();
+		List<Report<?, ?>> result = report.getSubReports();
 		assertThat(result, is(empty()));
 	}
 
@@ -101,7 +104,7 @@ public class ReportTest {
 		report.addProblems(Arrays.asList(warning, null));
 		assertThat(report.getProblems(), hasSize(5));
 	}
-	
+
 	@Test(expected = NullPointerException.class)
 	public void addProblemsNullTest() {
 		report.addProblems(null);
@@ -116,7 +119,6 @@ public class ReportTest {
 		assertThat(result, is(ReportType.SUCCESS));
 
 		reportWithoutProblems.addProblem(warning);
-		System.out.println(reportWithoutProblems.getProblems());
 		result = reportWithoutProblems.getType();
 		assertThat(result, is(ReportType.WARNING));
 
@@ -140,7 +142,7 @@ public class ReportTest {
 
 		result = reportWithoutImplementation.getScore();
 		assertThat(result, is(100));
-		
+
 		result = reportWithoutProblems.getScore();
 		assertThat(result, is(0));
 	}

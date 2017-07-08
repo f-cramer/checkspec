@@ -42,7 +42,7 @@ public class TextCommandLineOption<E> implements ArgumentCommandLineOption<E> {
 		try {
 			return Wrapper.<E, CommandLineException> ofValue(parser.parse(value));
 		} catch (CommandLineException e) {
-			return Wrapper.<E, CommandLineException> ofException(e);
+			return Wrapper.<E, CommandLineException> ofThrowable(e);
 		}
 	}
 

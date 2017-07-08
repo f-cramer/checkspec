@@ -21,7 +21,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		IntStream.iterate(0, i -> i +
-				1).parallel().filter(Character::isMirrored).findFirst().ifPresent(System.out::println);
+				1).parallel().filter(Character::isMirrored).mapToObj(i -> (char) i).findFirst().ifPresent(System.out::println);
 
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 

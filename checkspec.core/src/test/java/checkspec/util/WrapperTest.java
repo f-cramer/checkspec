@@ -17,7 +17,7 @@ public class WrapperTest {
 	@Before
 	public void setUp() {
 		valueWrapper = Wrapper.ofValue("");
-		exceptionWrapper = Wrapper.ofException(new NullPointerException());
+		exceptionWrapper = Wrapper.ofThrowable(new NullPointerException());
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class WrapperTest {
 
 	@Test(expected = NullPointerException.class)
 	public void ofExceptionNullTest() {
-		Wrapper.ofException(null);
+		Wrapper.ofThrowable(null);
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class WrapperTest {
 		result = valueWrapper.equals(otherValueWrapper);
 		assertThat(result, is(false));
 
-		Wrapper<String, Exception> otherExceptionWrapper = Wrapper.ofException(new RuntimeException());
+		Wrapper<String, Exception> otherExceptionWrapper = Wrapper.ofThrowable(new RuntimeException());
 		result = exceptionWrapper.equals(otherExceptionWrapper);
 		assertThat(result, is(false));
 	}

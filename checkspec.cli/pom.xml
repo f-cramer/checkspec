@@ -37,43 +37,29 @@
 			</plugin>
 
 			<plugin>
-				<groupId>com.coderplus.maven.plugins</groupId>
-				<artifactId>copy-rename-maven-plugin</artifactId>
-				<version>1.0.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>rename</goal>
-						</goals>
-						<configuration>
-							<sourceFile>${project.build.directory}/${bundle.final.name}.jar</sourceFile>
-							<destinationFile>${project.basedir}/../checkspec.eclipse.launching/lib/${bundle.static.final.name}</destinationFile>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Export-Package>checkspec.api</Export-Package>
+						<Private-Package>*</Private-Package>
+						<Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
+					</instructions>
+				</configuration>
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
+				<groupId>com.coderplus.maven.plugins</groupId>
+				<artifactId>copy-rename-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
 						<phase>package</phase>
 						<goals>
-							<goal>copy-resources</goal>
+							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<resources>
-								<resource>
-									<targetPath>${project.basedir}/../checkspec.eclipse.launching/lib</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>${bundle.final.name}.jar</include>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
+							<sourceFile>${project.build.directory}/${bundle.final.name}.jar</sourceFile>
+							<destinationFile>${project.basedir}/../checkspec.eclipse/lib/${bundle.static.final.name}</destinationFile>
 						</configuration>
 					</execution>
 				</executions>

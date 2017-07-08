@@ -67,8 +67,11 @@ public class ClassReport extends Report<ResolvableType, ClassSpecification> {
 		return Collections.unmodifiableList(methodReports);
 	}
 
-	public boolean hasAnyImplementation() {
+	public boolean isAnyImplemenationMatching() {
 		List<Report<?, ?>> subReports = getSubReports();
+		if (subReports.size() == constructorReports.size()) {
+			return true;
+		}
 		return subReports.isEmpty() || subReports.parallelStream().anyMatch(e -> e.isNameFitting());
 	}
 

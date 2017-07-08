@@ -170,7 +170,7 @@ class CheckSpecFrame extends JFrame {
 				} else {
 					ReportType type = null;
 					if (userObject instanceof ReportProblem) {
-						type = ((ReportProblem) userObject).getType().toProblemType();
+						type = ((ReportProblem) userObject).getType().toReportType();
 					} else if (userObject instanceof Report) {
 						type = ((Report<?, ?>) userObject).getType();
 					}
