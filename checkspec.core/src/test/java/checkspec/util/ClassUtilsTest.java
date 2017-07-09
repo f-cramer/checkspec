@@ -296,7 +296,7 @@ public class ClassUtilsTest {
 
 	@Test
 	public void getSystemClassLoaderTest() {
-		ClassLoader result = getSystemClassLoader();
+		ClassLoader result = getBaseClassLoader();
 		assertThat(result, is(SYSTEM_CLASS_LOADER));
 	}
 

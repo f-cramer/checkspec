@@ -24,6 +24,7 @@ public final class ClassUtils {
 
 	private static String TO_STRING_FORMAT = "%s %s %s";
 
+	private static ClassLoader BASE_CLASS_LOADER;
 	private static volatile ClassLoader SYSTEM_CLASS_LOADER;
 	private static final Object SYSTEM_CLASS_LOAD_SYNC = new Object();
 
@@ -266,11 +267,11 @@ public final class ClassUtils {
 	 * @return a lambda function that loads a class from the given class loader
 	 *         and wraps it in an instance of {@link Stream}
 	 * @see #getClassAsStream(String)
-	 * @see #getSystemClassLoader()
+	 * @see #getBaseClassLoader()
 	 * @see ClassLoader#loadClass(String)
 	 */
 	public Function<String, Stream<Class<?>>> systemClassStreamSupplier() {
-		return classStreamSupplier(getSystemClassLoader());
+		return classStreamSupplier(getBaseClassLoader());
 	}
 
 	/**
@@ -414,7 +415,19 @@ public final class ClassUtils {
 		return org.apache.commons.lang3.ClassUtils.isAssignable(type, superType);
 	}
 
-	public static ClassLoader getSystemClassLoader() {
+	public static ClassLoader getBaseClassLoader() {
+		if (BASE_CLASS_LOADER == null) {
+			return getSystemClassLoader();
+		} else {
+			return BASE_CLASS_LOADER;
+		}
+	}
+
+	public static void setBaseClassLoader(ClassLoader classLoader) {
+		BASE_CLASS_LOADER = classLoader;
+	}
+
+	private static ClassLoader getSystemClassLoader() {
 		if (SYSTEM_CLASS_LOADER == null) {
 			synchronized (SYSTEM_CLASS_LOAD_SYNC) {
 				if (SYSTEM_CLASS_LOADER == null) {

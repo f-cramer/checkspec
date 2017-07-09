@@ -69,7 +69,7 @@ public class CheckSpecLaunchConfigurationDelegate2 extends JavaLaunchDelegate {
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = super.getClasspath(configuration);
 
-		Bundle bundle = CheckSpecPlugin.getInstance().getBundle(CheckSpecPlugin.getPluginId());
+		Bundle bundle = CheckSpecPlugin.getInstance().getBundle(CheckSpecPlugin.PLUGIN_ID);
 
 		String[] libraries = stream(bundle.getEntryPaths("/lib"))
 				.map(bundle::getEntry)

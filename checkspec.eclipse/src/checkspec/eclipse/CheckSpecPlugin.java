@@ -21,7 +21,7 @@ import checkspec.eclipse.util.DisplayUtils;
 
 public class CheckSpecPlugin extends AbstractUIPlugin implements BundleActivator {
 
-	private static final String PLUGIN_ID = "checkspec.eclipse";
+	public static final String PLUGIN_ID = "checkspec.eclipse";
 	private static BundleContext context;
 	private static CheckSpecPlugin plugin;
 
@@ -42,10 +42,6 @@ public class CheckSpecPlugin extends AbstractUIPlugin implements BundleActivator
 
 	public static CheckSpecPlugin getInstance() {
 		return plugin;
-	}
-
-	public static String getPluginId() {
-		return PLUGIN_ID;
 	}
 
 	public Bundle getBundle(String bundleName) {

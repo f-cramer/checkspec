@@ -61,9 +61,7 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 
 	private static State get(int modifiers, IntToBooleanFunction booleanFunction, Annotation[] annotations, Function<Modifiers, checkspec.api.State> stateFunction) {
 		return Arrays.stream(annotations).parallel()
-				.peek(System.out::println)
 				.filter(Spec.class::isInstance)
-				.peek(System.err::println)
 				.map(Spec.class::cast)
 				.findAny()
 				.map(Spec::modifiers)

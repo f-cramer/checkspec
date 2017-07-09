@@ -108,13 +108,13 @@ public class CommandLineInterface {
 		Outputter outputter = parseOutputter(commandLine);
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		String basePackage = parseBasePackage(commandLine);
-		ClassLoader systemClassLoader = ClassUtils.getSystemClassLoader();
 
-		return run(specifications, specificationClasspath, implementationUrls, basePackage, outputter, systemClassLoader);
+		return run(specifications, specificationClasspath, implementationUrls, basePackage, outputter);
 	}
 
-	public final SpecReport[] run(String[] specificationClassNames, URL[] specificationClasspath, URL[] implementationClasspath, String basePackage, Outputter outputter, ClassLoader baseClassLoader)
+	public final SpecReport[] run(String[] specificationClassNames, URL[] specificationClasspath, URL[] implementationClasspath, String basePackage, Outputter outputter)
 			throws CommandLineException {
+		ClassLoader baseClassLoader = ClassUtils.getBaseClassLoader();
 		ClassLoader specificationClassLoader = specificationClasspath.length == 0 ? baseClassLoader : new URLClassLoader(specificationClasspath, baseClassLoader);
 
 		Class<?>[] specificationClasses;

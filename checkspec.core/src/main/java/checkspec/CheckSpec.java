@@ -37,7 +37,7 @@ public final class CheckSpec {
 	private static final ClassLoader BOOT_CLASS_LOADER;
 
 	static {
-		ClassLoader loader = ClassUtils.getSystemClassLoader();
+		ClassLoader loader = ClassUtils.getBaseClassLoader();
 		while (loader.getParent() != null) {
 			loader = loader.getParent();
 		}
@@ -50,7 +50,7 @@ public final class CheckSpec {
 			synchronized (DEFAULT_SYNC) {
 				if (DEFAULT_INSTANCE == null) {
 					Reflections reflections = ReflectionsUtils.createDefaultReflections();
-					ClassLoader classLoader = ClassUtils.getSystemClassLoader();
+					ClassLoader classLoader = ClassUtils.getBaseClassLoader();
 					DEFAULT_INSTANCE = new CheckSpec(reflections, classLoader);
 				}
 			}
@@ -67,7 +67,7 @@ public final class CheckSpec {
 							.toArray(URL[]::new);
 
 					Reflections reflections = ReflectionsUtils.createReflections(urls);
-					ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getSystemClassLoader());
+					ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getBaseClassLoader());
 					LIBRARY_LESS_INSTANCE = new CheckSpec(reflections, classLoader);
 				}
 			}
@@ -77,7 +77,7 @@ public final class CheckSpec {
 
 	public static CheckSpec getInstanceForClassPath(URL[] urls) {
 		Reflections reflections = ReflectionsUtils.createReflections(urls);
-		ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getSystemClassLoader());
+		ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getBaseClassLoader());
 		return new CheckSpec(reflections, classLoader);
 	}
 

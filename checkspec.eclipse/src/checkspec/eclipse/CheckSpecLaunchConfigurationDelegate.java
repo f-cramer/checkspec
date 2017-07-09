@@ -35,9 +35,11 @@ import checkspec.cli.CommandLineException;
 import checkspec.cli.CommandLineInterface;
 import checkspec.eclipse.ui.view.ResultView;
 import checkspec.eclipse.util.DisplayUtils;
+import checkspec.eclipse.util.ReverseURLClassLoader;
 import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
+import checkspec.util.ClassUtils;
 
 /**
  * Launch configuration delegate for a CheckSpec specification check as a Java
@@ -53,16 +55,23 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		CommandLineInterface cli = new CommandLineInterface();
-		String[] specificationClassNames = findSpecificationClassNames(configuration);
-		URL[] specificationClasspath = findSpecificationClasspath(configuration);
-		System.out.println(Arrays.toString(specificationClasspath));
-		URL[] implementationClasspath = findImplementationClasspath(configuration);
-		String basePackage = findBasePackage(configuration);
 		try {
-			SpecReport[] reports = cli.run(specificationClassNames, specificationClasspath, implementationClasspath, basePackage, Outputter.NULL_OUTPUTTER, getClass().getClassLoader());
+			CommandLineInterface cli = new CommandLineInterface();
+			String[] specificationClassNames = findSpecificationClassNames(configuration);
+			URL[] specificationClasspath = findSpecificationClasspath(configuration);
+			URL[] implementationClasspath = findImplementationClasspath(configuration);
+			String basePackage = findBasePackage(configuration);
+			URL[] extensionsClasspath = findExtensionClasspath(configuration);
+
+			ClassLoader baseLoader = getClass().getClassLoader();
+			if (extensionsClasspath.length > 0) {
+				baseLoader = new ReverseURLClassLoader(baseLoader, extensionsClasspath);
+			}
+			ClassUtils.setBaseClassLoader(baseLoader);
+			SpecReport[] reports = cli.run(specificationClassNames, specificationClasspath, implementationClasspath, basePackage, Outputter.NULL_OUTPUTTER);
 			ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
 			DisplayUtils.asyncExec(() -> resultView.setReports(reports));
+			ClassUtils.setBaseClassLoader(null);
 		} catch (CommandLineException e) {
 			throw new CoreException(new Status(Status.ERROR, Constants.PLUGIN_ID, e.getMessage()));
 		}
@@ -74,15 +83,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	}
 
 	private URL[] findSpecificationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		URL[] cp = ClassPath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
-		// try {
-		// URL url =
-		// FileLocator.toFileURL(CheckSpecPlugin.getInstance().getBundle().getEntry(Constants.FULL_LIBRARY_PATH));
-		// cp = Arrays.copyOf(cp, cp.length + 1);
-		// cp[cp.length - 1] = url;
-		// } catch (IOException e) {
-		// }
-		return cp;
+		return ClassPath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
 	}
 
 	private URL[] findImplementationClasspath(ILaunchConfiguration configuration) throws CoreException {
@@ -91,6 +92,10 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 	private String findBasePackage(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(Constants.ATTR_BASE_PACKAGE, "");
+	}
+
+	private URL[] findExtensionClasspath(ILaunchConfiguration configuration) throws CoreException {
+		return ClassPath.from(configuration.getAttribute(Constants.ATTR_EXTENSION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
 	}
 
 	private ResultView findOpenedResultView() throws PartInitException {
@@ -131,7 +136,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = super.getClasspath(configuration);
 
-		Bundle bundle = CheckSpecPlugin.getInstance().getBundle(CheckSpecPlugin.getPluginId());
+		Bundle bundle = CheckSpecPlugin.getInstance().getBundle();
 
 		String[] libraries = stream(bundle.getEntryPaths("/lib"))
 				.map(bundle::getEntry)

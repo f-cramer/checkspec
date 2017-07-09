@@ -2,12 +2,13 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            configTypeID="checkspec.eclipse.checkSpec"
-            icon="img/checkspec.png"
-            id="checkspec.eclipse.ui.launchConfigurationTypeImage.checkSpec">
-      </launchConfigurationTypeImage>
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="checkspec.eclipse.CheckSpecLaunchConfigurationDelegate"
+            id="checkspec.eclipse.checkSpec"
+            modes="run"
+            name="CheckSpec">
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -16,6 +17,14 @@
             id="checkspec.eclipse.ui.launchConfigurationTabGroup.checkSpec"
             type="checkspec.eclipse.checkSpec">
       </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="checkspec.eclipse.checkSpec"
+            icon="img/checkspec.png"
+            id="checkspec.eclipse.ui.launchConfigurationTypeImage.checkSpec">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
@@ -44,6 +53,13 @@
       </shortcut>
    </extension>
    <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="checkspec.eclipse.classpath.CheckSpecContainerInitializer"
+            id="checkspec.eclipse.CHECKSPEC_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
       <classpathContainerPage
             class="checkspec.eclipse.ui.classpath.ClasspathContainerPage"
@@ -54,6 +70,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="org.eclipse.jdt.ui.java"
             class="checkspec.eclipse.ui.view.ResultView"
             fastViewWidthRatio="0.40"
             icon="img/checkspec.png"
@@ -62,21 +79,4 @@
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            delegate="checkspec.eclipse.CheckSpecLaunchConfigurationDelegate"
-            id="checkspec.eclipse.checkSpec"
-            modes="run, debug"
-            name="CheckSpec">
-      </launchConfigurationType>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.core.classpathContainerInitializer">
-      <classpathContainerInitializer
-            class="checkspec.eclipse.classpath.CheckSpecContainerInitializer"
-            id="checkspec.eclipse.CHECKSPEC_CONTAINER">
-      </classpathContainerInitializer>
-   </extension>
-
 </plugin>

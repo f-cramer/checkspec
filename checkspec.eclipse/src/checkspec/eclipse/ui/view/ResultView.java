@@ -18,7 +18,7 @@ import checkspec.report.SpecReport;
 
 public class ResultView extends ViewPart {
 
-	public static final String VIEW_ID = Constants.CHECKSPEC_PREFIX + ".ui.resultView";
+	public static final String VIEW_ID = Constants.PLUGIN_ID + ".ui.resultView";
 	private Tree tree;
 	private SpecReport[] reports;
 

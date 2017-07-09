@@ -270,7 +270,6 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		try {
 			entries = project.getResolvedClasspath(true);
 			for (IClasspathEntry entry : entries) {
-				System.out.println(entry);
 				switch (entry.getEntryKind()) {
 				case IClasspathEntry.CPE_SOURCE:
 					classPath.add(new SourceClassPathEntry(entry.getOutputLocation()));
