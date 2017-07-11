@@ -19,7 +19,7 @@ import checkspec.specification.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 
-public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport> {
+public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], ParametersSpecification, ParametersReport> {
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
 	private static final String DELETED = "removed parameter of type \"%s\" from index %d";
@@ -27,7 +27,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 	private static final String SUBSTITUTE_INCOMPATIBLE = "parameter at index %d has incompatible type \"%s\"";
 
 	@Override
-	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification) {
+	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, Void payload) {
 		ParametersReport report = new ParametersReport(specification, actual);
 
 		int specParameterCount = specification.getCount();

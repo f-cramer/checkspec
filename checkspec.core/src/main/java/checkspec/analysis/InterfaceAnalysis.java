@@ -20,7 +20,7 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec) {
+	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, List<ClassReport> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		List<ResolvableType> notFoundInterfaces = Arrays.stream(actual.getRawClass().getInterfaces())

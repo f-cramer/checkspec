@@ -1,5 +1,6 @@
 package checkspec.analysis;
 
+import java.util.List;
 import java.util.Optional;
 
 import checkspec.report.ClassReport;
@@ -10,7 +11,7 @@ import checkspec.spring.ResolvableType;
 public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, List<ClassReport> oldReports) {
 		return analyseVisibility(actual.getRawClass().getModifiers(), specification.getVisibility());
 	}
 

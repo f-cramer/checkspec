@@ -11,7 +11,7 @@ import checkspec.spring.ResolvableType;
 public class ClassModifiersAnalysis extends AbstractModifiersAnalysis implements AnalysisForClass<List<ReportProblem>> {
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec) {
+	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, List<ClassReport> oldReports) {
 		ModifiersSpecification modifiersSpec = spec.getModifiers();
 		return analyzeModifiers(actual.getRawClass().getModifiers(), modifiersSpec, !modifiersSpec.isInterface() || actual.getRawClass().isInterface());
 	}

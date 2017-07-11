@@ -5,12 +5,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
+
+import com.google.common.base.Objects;
 
 import checkspec.analysis.AnalysisForClass;
 import checkspec.report.ClassReport;
@@ -153,12 +157,30 @@ public final class CheckSpec {
 	}
 
 	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull String basePackageName) {
-		List<ClassReport> classReports = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values().parallelStream()
+		URL specLocation = getLocation(spec.getRawElement().getRawClass());
+		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
+		List<Class<?>> possibleClasses = classNames.parallelStream()
 				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
-				.filter(StreamUtils.equalsPredicate(getLocation(spec.getRawElement().getRawClass()), CheckSpec::getLocation).negate())
+				.filter(StreamUtils.equalsPredicate(specLocation, CheckSpec::getLocation).negate())
 				.filter(this::loadedFromValidLocation)
-				.map(e -> checkImplements(e, spec))
+				.collect(Collectors.toList());
+
+		List<ClassReport> reports = Collections.emptyList();
+
+		int maxIterations = 10;
+		for (int iteration = 0; iteration <= maxIterations; iteration++) {
+			List<ClassReport> oldReports = reports;
+			reports = possibleClasses.parallelStream()
+					.map(e -> checkImplements(e, spec, oldReports))
+					.collect(Collectors.toList());
+
+			if (Objects.equal(oldReports, reports)) {
+				break;
+			}
+		}
+
+		List<ClassReport> classReports = reports.parallelStream()
 				.filter(ClassReport::isAnyImplemenationMatching)
 				.sorted()
 				.collect(Collectors.toList());
@@ -166,19 +188,19 @@ public final class CheckSpec {
 		return new SpecReport(spec, classReports);
 	}
 
-	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec) {
+	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, List<ClassReport> reports) {
 		ClassReport report = new ClassReport(spec, clazz);
 		ResolvableType type = ResolvableType.forClass(clazz);
 
 		for (final AnalysisForClass<?> analysis : ANALYSES) {
-			performAnalysis(analysis, type, spec, report);
+			performAnalysis(analysis, type, spec, reports, report);
 		}
 
 		return report;
 	}
 
-	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, ClassReport report) {
-		ReturnType returnValue = analysis.analyze(clazz, spec);
+	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, List<ClassReport> reports, ClassReport report) {
+		ReturnType returnValue = analysis.analyze(clazz, spec, reports);
 		analysis.add(report, returnValue);
 	}
 

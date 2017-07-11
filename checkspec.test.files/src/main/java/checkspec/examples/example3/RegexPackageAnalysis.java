@@ -1,9 +1,11 @@
 package checkspec.examples.example3;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
 import checkspec.analysis.PackageAnalysis;
+import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
@@ -14,7 +16,7 @@ public class RegexPackageAnalysis extends PackageAnalysis {
 	private static final String FORMAT = "package name should match pattern \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, List<ClassReport> oldReports) {
 		Optional<RegexPackageSpecification> optional = specification.getExtension(RegexPackageSpecification.class);
 		if (optional.isPresent()) {
 			RegexPackageSpecification spec = optional.get();
@@ -26,7 +28,7 @@ public class RegexPackageAnalysis extends PackageAnalysis {
 				return Optional.of(problem);
 			}
 		} else {
-			return super.analyze(actual, specification);
+			return super.analyze(actual, specification, oldReports);
 		}
 
 		return Optional.empty();
