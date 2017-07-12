@@ -5,6 +5,7 @@
 
 # Package Files #
 *.jar
+!.mvn/wrapper/maven-wrapper.jar
 *.war
 *.ear
 
