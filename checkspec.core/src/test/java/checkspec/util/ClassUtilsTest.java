@@ -312,19 +312,15 @@ public class ClassUtilsTest {
 		assertThat(result, is(false));
 	}
 
-	@Test(expected = NullPointerException.class)
 	public void equalResolvableTypeNullTest() {
-		equal(null, ResolvableType.forClass(Integer.TYPE));
-	}
+		boolean result = equal(null, ResolvableType.forClass(Integer.TYPE));
+		assertThat(result, is(false));
+		
+		result = equal(ResolvableType.forClass(Integer.TYPE), null);
+		assertThat(result, is(false));
 
-	@Test(expected = NullPointerException.class)
-	public void equalResolvableTypeNullTest2() {
-		equal(ResolvableType.forClass(Integer.TYPE), null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void equalResolvableTypeNullTest3() {
 		equal((ResolvableType) null, null);
+		assertThat(result, is(false));
 	}
 
 	@Test
@@ -339,19 +335,15 @@ public class ClassUtilsTest {
 		assertThat(result, is(false));
 	}
 
-	@Test(expected = NullPointerException.class)
 	public void equalClassNullTest() {
-		equal(null, Integer.TYPE);
-	}
+		boolean result = equal(null, Integer.TYPE);
+		assertThat(result, is(false));
 
-	@Test(expected = NullPointerException.class)
-	public void equalClassNullTest2() {
-		equal(Integer.TYPE, null);
-	}
+		result = equal(Integer.TYPE, null);
+		assertThat(result, is(false));
 
-	@Test(expected = NullPointerException.class)
-	public void equalClassNullTest3() {
-		equal((Class<?>) null, null);
+		result = equal((Class<?>) null, null);
+		assertThat(result, is(true));
 	}
 
 	@Value

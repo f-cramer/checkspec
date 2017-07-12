@@ -1,18 +1,15 @@
 package checkspec.report.output.html;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
-@Value
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class Mark {
+enum Mark {
+
+	SUCCESS("mark-success", "✓"), ERROR("mark-error", "✗"), WARNING("mark-warning", " ! ");
 
 	private final String className;
 	private final String text;
-
-	public static Mark SUCCESS = new Mark("mark-success", "✓");
-	public static Mark ERROR = new Mark("mark-error", "✗");
-	// public static Mark WARNING = new Mark("mark-warning", "！");
-	public static Mark WARNING = new Mark("mark-warning", " ! ");
 }

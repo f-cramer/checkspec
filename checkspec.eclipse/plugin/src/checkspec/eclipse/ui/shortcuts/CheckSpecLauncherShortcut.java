@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -269,12 +270,26 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		ClassPath classPath = ClassPath.empty();
 		try {
 			entries = project.getResolvedClasspath(true);
+
+			IPath path = project.getOutputLocation();
+			if (path != null) {
+				classPath.add(new SourceClassPathEntry(path));
+			}
+
 			for (IClasspathEntry entry : entries) {
+				CheckSpecPlugin.logError(entry.toString());
 				switch (entry.getEntryKind()) {
 				case IClasspathEntry.CPE_SOURCE:
-					classPath.add(new SourceClassPathEntry(entry.getOutputLocation()));
+					path = entry.getOutputLocation();
+					if (path != null) {
+						classPath.add(new SourceClassPathEntry(path));
+					}
+					break;
 				case IClasspathEntry.CPE_PROJECT:
-					classPath.add(new ProjectClassPathEntry(entry.getPath()));
+					path = entry.getPath();
+					if (path != null) {
+						classPath.add(new ProjectClassPathEntry(path));
+					}
 					break;
 				}
 			}

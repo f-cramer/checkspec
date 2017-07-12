@@ -3,6 +3,7 @@ package checkspec.analysis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, List<ClassReport> oldReports) {
+	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, Map<ClassSpecification, ClassReport> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		List<ResolvableType> notFoundInterfaces = Arrays.stream(actual.getRawClass().getInterfaces())

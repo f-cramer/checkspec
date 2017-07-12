@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CheckSpec Eclipse Plugin
-Bundle-SymbolicName: checkspec.eclipse;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: checkspec.eclipse.plugin;singleton:=true
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: checkspec.eclipse.CheckSpecPlugin
 Bundle-Vendor: Florian Cramer
 Require-Bundle: org.eclipse.ui,

@@ -59,7 +59,7 @@
 						</goals>
 						<configuration>
 							<sourceFile>${project.build.directory}/${bundle.final.name}.jar</sourceFile>
-							<destinationFile>${project.basedir}/../checkspec.eclipse/lib/${bundle.static.final.name}</destinationFile>
+							<destinationFile>${project.basedir}/../checkspec.eclipse/plugin/lib/${bundle.static.final.name}</destinationFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -70,7 +70,7 @@
 	<parent>
 		<groupId>de.cramer.checkspec</groupId>
 		<artifactId>checkspec.parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 </project>

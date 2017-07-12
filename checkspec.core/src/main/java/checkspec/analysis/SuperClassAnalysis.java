@@ -1,8 +1,8 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.getName;
+import static checkspec.util.ClassUtils.*;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import checkspec.report.ClassReport;
@@ -18,7 +18,7 @@ public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProbl
 	private static final String SHOULD_NOT = "should declare \"%s\" as its super class";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, List<ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
 		ResolvableType rawSpecSuperClass = specification.getSuperClassSpecification().getRawElement();
 		if (actual.getRawClass().getSuperclass() != rawSpecSuperClass.getRawClass()) {
 			String format;

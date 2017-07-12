@@ -22,7 +22,7 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 	}
 
 	@Override
-	protected ConstructorReport checkMember(Constructor<?> constructor, ConstructorSpecification spec) {
+	protected ConstructorReport checkMember(Constructor<?> constructor, ConstructorSpecification spec, ClassReport oldReport) {
 		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(constructor.getParameters(), spec.getParameters());
 		ConstructorReport report = new ConstructorReport(spec, constructor, parametersReport);
 

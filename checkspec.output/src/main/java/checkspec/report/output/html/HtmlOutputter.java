@@ -12,15 +12,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
 import checkspec.report.ClassReport;
-import checkspec.report.ReportType;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
+import checkspec.report.ReportType;
 import checkspec.report.SpecReport;
 import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
@@ -28,17 +23,6 @@ import checkspec.report.output.Outputter;
 public class HtmlOutputter implements Outputter {
 
 	private static final String DIR_IS_NO_DIR = "file %s is not a directory";
-	private static final TemplateEngine ENGINE;
-
-	static {
-		ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
-		resolver.setTemplateMode(TemplateMode.HTML);
-		resolver.setPrefix("/checkspec/report/output/template/");
-		resolver.setSuffix(".html");
-
-		ENGINE = new TemplateEngine();
-		ENGINE.setTemplateResolver(resolver);
-	}
 
 	private final Path directory;
 
@@ -56,19 +40,23 @@ public class HtmlOutputter implements Outputter {
 
 	@Override
 	public void output(SpecReport report) throws OutputException {
-		List<Row> rows = getRows(report);
+		List<Row> rawRows = getRows(report);
 
-		Context context = new Context();
-		context.setVariable("title", report.toString());
-		context.setVariable("rows", rows.subList(0, rows.size() - 1));
+		String title = report.toString();
+		List<Row> rows = rawRows.subList(0, rawRows.size() - 1);
 
 		Path index = directory.resolve("index.html");
 		try (Writer writer = Files.newBufferedWriter(index, StandardOpenOption.CREATE)) {
-			ENGINE.process("index", context, writer);
+			createHtmlFile(title, rows, writer);
 			copyElements(directory);
 		} catch (IOException e) {
 			throw new OutputException(e);
 		}
+	}
+
+	private static void createHtmlFile(String title, List<Row> rows, Writer writer) throws IOException {
+		HtmlFile file = new HtmlFile(title, rows);
+		writer.write(file.toString());
 	}
 
 	private static void copyElements(Path directory) throws IOException {

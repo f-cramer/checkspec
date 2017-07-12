@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>de.cramer.checkspec</groupId>
 		<artifactId>checkspec.parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -49,11 +49,11 @@
 							<fileSets>
 								<fileSet>
 									<sourceFile>${project.build.directory}/${final.name}</sourceFile>
-									<destinationFile>${project.basedir}/../checkspec.eclipse/lib/${static.final.name}</destinationFile>
+									<destinationFile>${project.basedir}/../checkspec.eclipse/plugin/lib/${static.final.name}</destinationFile>
 								</fileSet>
 								<fileSet>
 									<sourceFile>${project.build.directory}/${source.name}</sourceFile>
-									<destinationFile>${project.basedir}/../checkspec.eclipse/lib/${static.source.name}</destinationFile>
+									<destinationFile>${project.basedir}/../checkspec.eclipse/plugin/lib/${static.source.name}</destinationFile>
 								</fileSet>
 							</fileSets>
 						</configuration>

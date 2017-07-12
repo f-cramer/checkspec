@@ -1,11 +1,16 @@
 package checkspec.analysis;
 
+import static checkspec.util.ClassUtils.*;
+
 import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +23,8 @@ import com.google.common.collect.Lists;
 
 import checkspec.report.ClassReport;
 import checkspec.report.Report;
+import checkspec.report.ReportProblem;
+import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.Specification;
 import checkspec.spring.ResolvableType;
@@ -32,15 +39,15 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpec().getName());
 
 	@Override
-	public Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec, List<ClassReport> oldReports) {
+	public Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec, Map<ClassSpecification, ClassReport> oldReports) {
 		Class<?> clazz = type.getRawClass();
 		SpecificationType[] specifications = getMemberSpecifications(spec);
+		ClassReport oldReport = oldReports.get(spec);
 
 		List<ReportType> reports = Arrays.stream(specifications).parallel()
 				.flatMap(getMapperFunction(clazz))
-				.map(pair -> checkMember(pair.getLeft(), pair.getRight()))
-				.sorted(Comparator.comparingInt(Report::getScore))
-				.collect(Collectors.toList());
+				.map(pair -> checkMember(pair.getLeft(), pair.getRight(), oldReport))
+				.sorted(Comparator.comparingInt(Report::getScore)).collect(Collectors.toList());
 
 		List<MemberType> unusedMembers = Lists.newArrayList(getMembers(clazz));
 		List<SpecificationType> notFoundSpecs = Lists.newArrayList(specifications);
@@ -59,12 +66,9 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 		}
 
 		Stream<ReportType> foundMembers = reports.parallelStream();
-		Stream<ReportType> notFoundMembers = notFoundSpecs.parallelStream()
-				.map(this::createEmptyReport);
+		Stream<ReportType> notFoundMembers = notFoundSpecs.parallelStream().map(this::createEmptyReport);
 
-		return Stream.concat(foundMembers, notFoundMembers)
-				.sorted(comparator)
-				.collect(Collectors.toList());
+		return Stream.concat(foundMembers, notFoundMembers).sorted(comparator).collect(Collectors.toList());
 	}
 
 	private Function<SpecificationType, Stream<Pair<MemberType, SpecificationType>>> getMapperFunction(Class<?> clazz) {
@@ -72,11 +76,11 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 				.map(member -> Pair.of(member, spec));
 	}
 
-	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec);
+	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec); 
 
 	protected abstract MemberType[] getMembers(Class<?> clazz);
 
-	protected abstract ReportType checkMember(MemberType member, SpecificationType specification);
+	protected abstract ReportType checkMember(MemberType member, SpecificationType specification, ClassReport oldSpecificationReport);
 
 	protected abstract ReportType createEmptyReport(SpecificationType specification);
 
@@ -87,5 +91,39 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	protected final int calculateDistance(String left, String right) {
 		Integer distance = NAME_DISTANCE.apply(left, right);
 		return distance == null ? Integer.MAX_VALUE : Math.abs(distance);
+	}
+
+	protected final Optional<ReportProblem> compareTypes(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport, BiPredicate<ResolvableType, ResolvableType> compatibilityChecker, String compatible, String incompatible) {
+		if (isTypeMatching(specification, actual, currentSpecificationReport)) {
+			return Optional.empty();
+		}
+
+		if (isCompatible(specification, actual, currentSpecificationReport, compatibilityChecker)) {
+			return Optional.of(new ReportProblem(5, compatible, ReportProblemType.WARNING));
+		} else {
+			return Optional.of(new ReportProblem(10, incompatible, ReportProblemType.ERROR));
+		}
+	}
+
+	protected final boolean isTypeMatching(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport) {
+		if (equal(specification, actual)) {
+			return true;
+		}
+
+		if (currentSpecificationReport == null) {
+			return false;
+		}
+		return equal(specification, currentSpecificationReport.getSpec().getRawElement()) && equal(actual, currentSpecificationReport.getImplementation());
+	}
+
+	private boolean isCompatible(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport, BiPredicate<ResolvableType, ResolvableType> compatibilityChecker) {
+		if (compatibilityChecker.test(specification, actual)) {
+			return true;
+		}
+
+		if (currentSpecificationReport == null) {
+			return false;
+		}
+		return equal(specification, currentSpecificationReport.getSpec().getRawElement()) && compatibilityChecker.test(currentSpecificationReport.getImplementation(), actual);
 	}
 }

@@ -15,7 +15,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class TypeDiscovery {
 
-	private static Reflections REFLECTIONS = ReflectionsUtils.createDefaultReflections();
+	private static Reflections REFLECTIONS = ReflectionsUtils.createReflectionsFromClasspath();
 	private static Map<Class<?>, List<Class<?>>> SUB_CLASSES = new HashMap<>();
 	private static Map<Class<?>, List<?>> INSTANCES = new HashMap<>();
 	private static Comparator<Class<?>> CLASS_COMPARATOR = Comparator.comparing(ClassUtils::getName);

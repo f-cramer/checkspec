@@ -1,6 +1,6 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.getName;
+import static checkspec.util.ClassUtils.*;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 	}
 
 	@Override
-	protected FieldReport checkMember(Field field, FieldSpecification spec) {
+	protected FieldReport checkMember(Field field, FieldSpecification spec, ClassReport oldReport) {
 		FieldReport report = new FieldReport(spec, field);
 
 		String fieldName = field.getName();
@@ -53,7 +53,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		ResolvableType fieldType = FieldUtils.getType(field);
 		ResolvableType specType = spec.getType();
 
-		if (fieldType.getRawClass() != specType.getRawClass()) {
+		if (!ClassUtils.equal(fieldType, specType)) {
 			String fieldTypeName = getName(fieldType);
 			String specTypeName = getName(specType);
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="checkspec.eclipse.plugin" version="1.0.0.qualifier">
+      <category name="checkspec.eclipse.category"/>
+   </bundle>
+   <category-def name="checkspec.eclipse.category" label="CheckSpec"/>
+</site>

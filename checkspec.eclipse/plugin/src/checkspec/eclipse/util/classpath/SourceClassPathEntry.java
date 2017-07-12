@@ -3,6 +3,7 @@ package checkspec.eclipse.util.classpath;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
@@ -14,6 +15,7 @@ public class SourceClassPathEntry implements ClassPathEntry {
 	private final IPath path;
 
 	public SourceClassPathEntry(IPath path) {
+		Objects.requireNonNull(path, "path");
 		this.path = path;
 	}
 

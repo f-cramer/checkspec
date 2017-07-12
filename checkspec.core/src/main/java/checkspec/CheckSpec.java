@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
@@ -122,6 +124,7 @@ public final class CheckSpec {
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
 				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
+				.peek(analysis -> System.out.println(analysis.getClass().getSimpleName()))
 				.toArray(length -> new AnalysisForClass<?>[length]);
 	}
 
@@ -172,7 +175,7 @@ public final class CheckSpec {
 		for (int iteration = 0; iteration <= maxIterations; iteration++) {
 			List<ClassReport> oldReports = reports;
 			reports = possibleClasses.parallelStream()
-					.map(e -> checkImplements(e, spec, oldReports))
+					.map(e -> checkImplements(e, spec, filterForBest(oldReports)))
 					.collect(Collectors.toList());
 
 			if (Objects.equal(oldReports, reports)) {
@@ -188,7 +191,7 @@ public final class CheckSpec {
 		return new SpecReport(spec, classReports);
 	}
 
-	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, List<ClassReport> reports) {
+	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, Map<ClassSpecification, ClassReport> reports) {
 		ClassReport report = new ClassReport(spec, clazz);
 		ResolvableType type = ResolvableType.forClass(clazz);
 
@@ -199,7 +202,7 @@ public final class CheckSpec {
 		return report;
 	}
 
-	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, List<ClassReport> reports, ClassReport report) {
+	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, Map<ClassSpecification, ClassReport> reports, ClassReport report) {
 		ReturnType returnValue = analysis.analyze(clazz, spec, reports);
 		analysis.add(report, returnValue);
 	}
@@ -242,5 +245,18 @@ public final class CheckSpec {
 		}
 
 		return BOOT_CLASS_LOADER.getResource(canonicalName);
+	}
+
+	private static Map<ClassSpecification, ClassReport> filterForBest(List<ClassReport> reports) {
+		return reports.parallelStream()
+				.collect(Collectors.toMap(ClassReport::getSpec, Function.identity(), CheckSpec::merge));
+	}
+
+	private static ClassReport merge(ClassReport l1, ClassReport l2) {
+		if (l1.getScore() <= l2.getScore()) {
+			return l1;
+		} else {
+			return l2;
+		}
 	}
 }

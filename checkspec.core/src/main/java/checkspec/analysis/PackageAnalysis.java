@@ -1,6 +1,6 @@
 package checkspec.analysis;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import checkspec.report.ClassReport;
@@ -15,7 +15,7 @@ public class PackageAnalysis implements AnalysisForClass<Optional<ReportProblem>
 	private static final String FORMAT = "should live in package \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, List<ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
 		PackageSpecification packageSpecification = specification.getPackage();
 		String packageName = packageSpecification.getName();
 

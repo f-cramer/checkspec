@@ -1,6 +1,6 @@
 package checkspec.examples.example3;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
@@ -16,7 +16,7 @@ public class RegexPackageAnalysis extends PackageAnalysis {
 	private static final String FORMAT = "package name should match pattern \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, List<ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
 		Optional<RegexPackageSpecification> optional = specification.getExtension(RegexPackageSpecification.class);
 		if (optional.isPresent()) {
 			RegexPackageSpecification spec = optional.get();

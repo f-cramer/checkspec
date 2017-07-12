@@ -34,6 +34,10 @@ public final class ReflectionsUtils {
 		return createReflections(null);
 	}
 
+	public static Reflections createReflectionsFromClasspath() {
+		return createReflections(getUrlsFromClasspath());
+	}
+
 	public static Reflections createReflections(URL[] urls) {
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")

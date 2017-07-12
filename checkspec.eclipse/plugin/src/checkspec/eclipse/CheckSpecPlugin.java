@@ -5,7 +5,9 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
@@ -97,5 +99,23 @@ public class CheckSpecPlugin extends AbstractUIPlugin implements BundleActivator
 		URL url = FileLocator.find(plugin.getBundle(), path, null);
 		Image image = ImageDescriptor.createFromURL(url).createImage();
 		return image == null ? ImageDescriptor.getMissingImageDescriptor().createImage() : image;
+	}
+
+	public static void logInfo(String warning) {
+		if (plugin != null) {
+			plugin.getLog().log(new Status(IStatus.INFO, PLUGIN_ID, warning));
+		}
+	}
+
+	public static void logWarning(String warning) {
+		if (plugin != null) {
+			plugin.getLog().log(new Status(IStatus.WARNING, PLUGIN_ID, warning));
+		}
+	}
+
+	public static void logError(String warning) {
+		if (plugin != null) {
+			plugin.getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, warning));
+		}
 	}
 }

@@ -5,7 +5,7 @@
 
 	<groupId>de.cramer.checkspec</groupId>
 	<artifactId>checkspec.parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<name>CheckSpec</name>
 	<packaging>pom</packaging>
@@ -55,6 +55,7 @@
 		<jxr.plugin.version>2.5</jxr.plugin.version>
 		<lombok.plugin.version>${lombok.version}.0</lombok.plugin.version>
 		<shade.plugin.version>3.0.0</shade.plugin.version>
+		<source.plugin.version>3.0.1</source.plugin.version>
 		<versions.plugin.version>2.3</versions.plugin.version>
 
 		<checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
@@ -248,6 +249,12 @@
 				</plugin>
 
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${source.plugin.version}</version>
+				</plugin>
+
+				<plugin>
 					<groupId>com.coderplus.maven.plugins</groupId>
 					<artifactId>copy-rename-maven-plugin</artifactId>
 					<version>${rename.plugin.version}</version>
@@ -335,6 +342,7 @@
 		<module>checkspec.cli</module>
 		<module>checkspec.core</module>
 		<module>checkspec.output</module>
+		<module>checkspec.eclipse</module>
 		<module>checkspec.test</module>
 		<module>checkspec.test.files</module>
 	</modules>

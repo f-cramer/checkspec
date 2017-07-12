@@ -2,6 +2,8 @@ package checkspec.eclipse.util.classpath;
 
 import org.eclipse.core.runtime.Path;
 
+import checkspec.eclipse.CheckSpecPlugin;
+
 public final class ClassPathEntrySerializer {
 
 	private static final String SEPARATOR = "\r";
@@ -20,6 +22,7 @@ public final class ClassPathEntrySerializer {
 		if (entry instanceof ProjectClassPathEntry) {
 			return String.format(PROJECT_FORMAT, ((ProjectClassPathEntry) entry).getProjectPath().toPortableString());
 		} else if (entry instanceof SourceClassPathEntry) {
+			CheckSpecPlugin.logInfo(String.valueOf(((SourceClassPathEntry) entry).getPath()));
 			return String.format(SOURCE_FORMAT, ((SourceClassPathEntry) entry).getPath().toPortableString());
 		} else {
 			throw new IllegalArgumentException("entry: " + entry);

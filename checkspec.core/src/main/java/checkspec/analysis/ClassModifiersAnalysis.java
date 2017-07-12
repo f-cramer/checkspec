@@ -1,6 +1,7 @@
 package checkspec.analysis;
 
 import java.util.List;
+import java.util.Map;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
@@ -11,7 +12,7 @@ import checkspec.spring.ResolvableType;
 public class ClassModifiersAnalysis extends AbstractModifiersAnalysis implements AnalysisForClass<List<ReportProblem>> {
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, List<ClassReport> oldReports) {
+	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, Map<ClassSpecification, ClassReport> oldReports) {
 		ModifiersSpecification modifiersSpec = spec.getModifiers();
 		return analyzeModifiers(actual.getRawClass().getModifiers(), modifiersSpec, !modifiersSpec.isInterface() || actual.getRawClass().isInterface());
 	}

@@ -1,6 +1,6 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.getName;
+import static checkspec.util.ClassUtils.*;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 	}
 
 	@Override
-	protected MethodReport checkMember(Method method, MethodSpecification spec) {
+	protected MethodReport checkMember(Method method, MethodSpecification spec, ClassReport oldReport) {
 		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(method.getParameters(), spec.getParameters());
 		MethodReport report = new MethodReport(spec, method, parametersReport);
 
