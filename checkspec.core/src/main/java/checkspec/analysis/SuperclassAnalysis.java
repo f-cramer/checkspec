@@ -11,7 +11,7 @@ import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.ResolvableType;
 
-public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
+public class SuperclassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
 
 	private static final String OBJECT_CLASS_NAME = Object.class.getName();
 	private static final String SHOULD = "should not declare any super class";
@@ -19,7 +19,7 @@ public class SuperClassAnalysis implements AnalysisForClass<Optional<ReportProbl
 
 	@Override
 	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
-		ResolvableType rawSpecSuperClass = specification.getSuperClassSpecification().getRawElement();
+		ResolvableType rawSpecSuperClass = specification.getSuperclassSpecification().getRawElement();
 		if (actual.getRawClass().getSuperclass() != rawSpecSuperClass.getRawClass()) {
 			String format;
 			if (OBJECT_CLASS_NAME.equals(rawSpecSuperClass.getRawClass().getName())) {
