@@ -11,7 +11,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.FieldSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.FieldUtils;
 import lombok.Getter;
 

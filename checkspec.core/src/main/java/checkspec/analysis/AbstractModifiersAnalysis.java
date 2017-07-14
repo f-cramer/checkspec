@@ -1,13 +1,6 @@
 package checkspec.analysis;
 
-import static javax.lang.model.element.Modifier.ABSTRACT;
-import static javax.lang.model.element.Modifier.FINAL;
-import static javax.lang.model.element.Modifier.NATIVE;
-import static javax.lang.model.element.Modifier.STATIC;
-import static javax.lang.model.element.Modifier.STRICTFP;
-import static javax.lang.model.element.Modifier.SYNCHRONIZED;
-import static javax.lang.model.element.Modifier.TRANSIENT;
-import static javax.lang.model.element.Modifier.VOLATILE;
+import static javax.lang.model.element.Modifier.*;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;

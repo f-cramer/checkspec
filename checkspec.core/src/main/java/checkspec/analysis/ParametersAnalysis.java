@@ -18,7 +18,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ParameterSpecification;
 import checkspec.specification.ParametersSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
 public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, Map<ResolvableType, ClassReport>> {

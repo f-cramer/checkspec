@@ -22,7 +22,7 @@ import checkspec.analysis.AnalysisForClass;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.specification.ClassSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;

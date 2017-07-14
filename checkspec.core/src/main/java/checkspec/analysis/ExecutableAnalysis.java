@@ -6,7 +6,7 @@ import java.util.Comparator;
 import checkspec.report.Report;
 import checkspec.specification.ExecutableSpecification;
 import checkspec.specification.ParametersSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {

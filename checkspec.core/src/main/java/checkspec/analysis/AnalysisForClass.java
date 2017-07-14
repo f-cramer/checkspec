@@ -4,7 +4,7 @@ import java.util.Map;
 
 import checkspec.report.ClassReport;
 import checkspec.specification.ClassSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public interface AnalysisForClass<ReturnType> extends Analysis<ResolvableType, ClassSpecification, ReturnType, Map<ClassSpecification, ClassReport>> {
 

@@ -6,7 +6,7 @@ import java.util.Optional;
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.specification.ClassSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
 

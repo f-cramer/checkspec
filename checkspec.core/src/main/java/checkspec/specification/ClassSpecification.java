@@ -8,7 +8,7 @@ import java.util.List;
 
 import checkspec.api.Spec;
 import checkspec.extension.AbstractExtendable;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.Getter;

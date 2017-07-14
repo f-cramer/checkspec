@@ -12,7 +12,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.InterfaceSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
 public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> {

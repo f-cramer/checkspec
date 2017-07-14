@@ -6,7 +6,7 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import lombok.AccessLevel;
 import lombok.Getter;
 

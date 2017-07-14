@@ -8,7 +8,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.PackageSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class PackageAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
 

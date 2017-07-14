@@ -1,6 +1,6 @@
 package checkspec.analysis;
 
-import static checkspec.util.MemberUtils.getVisibility;
+import static checkspec.util.MemberUtils.*;
 
 import java.util.Arrays;
 import java.util.Optional;

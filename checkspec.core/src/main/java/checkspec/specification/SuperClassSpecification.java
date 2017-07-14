@@ -3,7 +3,7 @@ package checkspec.specification;
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.TypeDiscovery;
 import lombok.Getter;

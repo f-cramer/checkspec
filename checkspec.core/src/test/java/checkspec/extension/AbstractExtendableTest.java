@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ClassSpecificationExtension;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class AbstractExtendableTest {
 

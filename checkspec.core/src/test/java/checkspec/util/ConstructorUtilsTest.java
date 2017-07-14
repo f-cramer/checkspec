@@ -9,7 +9,7 @@ import java.lang.reflect.Constructor;
 import org.junit.Test;
 
 import checkspec.api.Visibility;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class ConstructorUtilsTest {
 

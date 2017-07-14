@@ -1,10 +1,7 @@
 package checkspec.report;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import checkspec.specification.ClassSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
 public class ReportTest {

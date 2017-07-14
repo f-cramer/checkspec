@@ -21,7 +21,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.Specification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		implements AnalysisForClass<Collection<? extends ReportType>> {

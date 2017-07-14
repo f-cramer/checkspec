@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

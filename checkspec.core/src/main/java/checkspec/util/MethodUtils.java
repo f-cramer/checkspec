@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import checkspec.api.Visibility;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 

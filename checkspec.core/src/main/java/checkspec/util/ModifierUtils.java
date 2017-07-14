@@ -2,7 +2,7 @@ package checkspec.util;
 
 import java.lang.reflect.Modifier;
 
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 

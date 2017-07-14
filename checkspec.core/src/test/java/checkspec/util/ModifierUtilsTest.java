@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class ModifierUtilsTest {
 

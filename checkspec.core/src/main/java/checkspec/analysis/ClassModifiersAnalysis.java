@@ -7,7 +7,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ModifiersSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class ClassModifiersAnalysis extends AbstractModifiersAnalysis implements AnalysisForClass<List<ReportProblem>> {
 

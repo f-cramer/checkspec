@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import checkspec.specification.ClassSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 

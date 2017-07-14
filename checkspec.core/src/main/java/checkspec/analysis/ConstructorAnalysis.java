@@ -9,7 +9,7 @@ import checkspec.report.ConstructorReport;
 import checkspec.report.ParametersReport;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ConstructorSpecification;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 

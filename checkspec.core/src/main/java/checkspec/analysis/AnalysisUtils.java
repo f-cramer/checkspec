@@ -9,7 +9,7 @@ import java.util.function.BinaryOperator;
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 import lombok.experimental.UtilityClass;
 

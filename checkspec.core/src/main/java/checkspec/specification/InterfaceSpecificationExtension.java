@@ -1,7 +1,7 @@
 package checkspec.specification;
 
 import checkspec.extension.Extension;
-import checkspec.spring.ResolvableType;
+import checkspec.type.ResolvableType;
 
 public interface InterfaceSpecificationExtension extends Extension<InterfaceSpecification, ResolvableType> {
 
