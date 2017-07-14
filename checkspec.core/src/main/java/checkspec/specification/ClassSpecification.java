@@ -64,7 +64,7 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, R
 		pkg = new PackageSpecification(clazz.getPackage(), clazz.getAnnotations());
 		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
 		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
-		superclassSpecification = rawElement.getSuperType();
+		superclassSpecification = new SuperclassSpecification(rawElement.getSuperType());
 
 		interfaceSpecifications = Arrays.stream(rawElement.getInterfaces()).parallel()
 				.map(InterfaceSpecification::new)
