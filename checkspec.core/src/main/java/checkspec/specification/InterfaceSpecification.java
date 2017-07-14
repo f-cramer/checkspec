@@ -29,10 +29,6 @@ public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecific
 	@NonNull
 	private final ResolvableType rawElement;
 
-	public InterfaceSpecification(Class<?> interf) {
-		this(ResolvableType.forClass(interf));
-	}
-
 	public InterfaceSpecification(ResolvableType interf) {
 		this.name = ClassUtils.getName(interf);
 		rawElement = interf;

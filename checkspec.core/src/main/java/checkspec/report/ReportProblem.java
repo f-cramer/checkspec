@@ -12,12 +12,12 @@ public class ReportProblem {
 
 	private final int score;
 	@NonNull
-	private final String content;
+	private final String message;
 	@NonNull
 	private final ReportProblemType type;
 
 	@Override
 	public String toString() {
-		return score == 0 ? content : String.format(FORMAT, content, score);
+		return score == 0 ? message : String.format(FORMAT, message, score);
 	}
 }

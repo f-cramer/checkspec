@@ -466,7 +466,7 @@ public final class ClassUtils {
 			return true;
 		}
 
-		return equal(t1.getRawClass(), t2.getRawClass());
+		return t1.isAssignableFrom(t2) && t2.isAssignableFrom(t1);
 	}
 
 	/**

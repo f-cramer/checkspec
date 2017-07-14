@@ -46,9 +46,12 @@ public class HtmlOutputter implements Outputter {
 		List<Row> rows = rawRows.subList(0, rawRows.size() - 1);
 
 		Path index = directory.resolve("index.html");
-		try (Writer writer = Files.newBufferedWriter(index, StandardOpenOption.CREATE)) {
-			createHtmlFile(title, rows, writer);
-			copyElements(directory);
+		try {
+			Files.deleteIfExists(index);
+			try (Writer writer = Files.newBufferedWriter(index, StandardOpenOption.CREATE)) {
+				createHtmlFile(title, rows, writer);
+				copyElements(directory);
+			}			
 		} catch (IOException e) {
 			throw new OutputException(e);
 		}
