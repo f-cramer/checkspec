@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  * @since 2.0
  * @see org.springframework.core.annotation.SynthesizingMethodParameter
  */
-public class MethodParameter {
+class MethodParameter {
 
 	private final Method method;
 

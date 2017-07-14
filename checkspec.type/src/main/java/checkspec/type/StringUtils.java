@@ -57,7 +57,7 @@ import javax.annotation.Nullable;
  * @author Brian Clozel
  * @since 16 April 2001
  */
-public abstract class StringUtils {
+abstract class StringUtils {
 
 	private static final String FOLDER_SEPARATOR = "/";
 

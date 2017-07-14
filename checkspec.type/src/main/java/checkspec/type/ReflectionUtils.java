@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  * @author Chris Beams
  * @since 1.2.2
  */
-public abstract class ReflectionUtils {
+abstract class ReflectionUtils {
 
 	/**
 	 * Naming prefix for CGLIB-renamed methods.

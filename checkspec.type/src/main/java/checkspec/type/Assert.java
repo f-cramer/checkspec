@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
  * @author Rob Harrop
  * @since 1.1.2
  */
-public abstract class Assert {
+abstract class Assert {
 
 	/**
 	 * Assert a boolean expression, throwing an {@code IllegalStateException}

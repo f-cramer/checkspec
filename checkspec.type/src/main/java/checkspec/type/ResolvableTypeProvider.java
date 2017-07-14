@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * @author Stephane Nicoll
  * @since 4.2
  */
-public interface ResolvableTypeProvider {
+interface ResolvableTypeProvider {
 
 	/**
 	 * Return the {@link ResolvableType} describing this instance

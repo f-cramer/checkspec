@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  * @see TypeUtils
  * @see ReflectionUtils
  */
-public abstract class ClassUtils {
+abstract class ClassUtils {
 
 	/** Suffix for array class names: "[]" */
 	public static final String ARRAY_SUFFIX = "[]";

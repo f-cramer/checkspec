@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * @author Arjen Poutsma
  * @since 3.0
  */
-public interface MultiValueMap<K, V> extends Map<K, List<V>> {
+interface MultiValueMap<K, V> extends Map<K, List<V>> {
 
 	/**
 	 * Return the first value for the given key.

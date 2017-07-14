@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
  * @author Adrian Colyer
  * @since 2.0
  */
-public interface ParameterNameDiscoverer {
+interface ParameterNameDiscoverer {
 
 	/**
 	 * Return parameter names for this method,

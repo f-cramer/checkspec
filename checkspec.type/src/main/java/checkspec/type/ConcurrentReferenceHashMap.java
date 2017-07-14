@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V> {
+class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V> {
 
 	private static final int DEFAULT_INITIAL_CAPACITY = 16;
 

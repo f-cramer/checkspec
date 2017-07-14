@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * @see CollectionUtils
  * @see StringUtils
  */
-public abstract class ObjectUtils {
+abstract class ObjectUtils {
 
 	private static final int INITIAL_HASH = 7;
 	private static final int MULTIPLIER = 31;
