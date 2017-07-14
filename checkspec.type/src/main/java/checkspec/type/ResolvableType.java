@@ -932,6 +932,99 @@ public class ResolvableType implements Serializable {
 		return result.toString();
 	}
 
+	public State matches(ResolvableType other, Map<Class<?>, Class<?>> matches) {
+		// If we cannot resolve types, we are not assignable
+		if (this == NONE || other == NONE) {
+			return State.NOT;
+		}
+
+		ResolvableType our = this;
+	
+		// Deal with array by delegating to the component type
+		if (our.isArray()) {
+			return other.isArray() ? our.getComponentType().matches(other.getComponentType(), matches) : State.NOT;
+		}
+	
+		// Deal with wildcard bounds
+		WildcardBounds bounds = WildcardBounds.get(our);
+		WildcardBounds oBounds = WildcardBounds.get(other);
+	
+		// In the form X is assignable to <? extends Number>
+		if (oBounds != null) {
+			if (bounds == null || !bounds.isSameKind(oBounds)) {
+				return State.NOT;
+			} else {
+				return bounds.matches(oBounds.getBounds(), matches);
+			}
+		}
+	
+		// In the form <? extends Number> is assignable to X...
+		if (bounds != null) {
+			return bounds.matches(other, matches);
+		}
+	
+		// Main assignability check about to follow
+		boolean checkGenerics = true;
+		Class<?> ourResolved = null;
+		if (our.type instanceof TypeVariable) {
+			TypeVariable<?> variable = (TypeVariable<?>) our.type;
+			// Try default variable resolution
+			if (our.variableResolver != null) {
+				ResolvableType resolved = our.variableResolver.resolveVariable(variable);
+				if (resolved != null) {
+					ourResolved = resolved.resolve();
+				}
+			}
+			if (ourResolved == null) {
+				// Try variable resolution against target type
+				if (other.variableResolver != null) {
+					ResolvableType resolved = other.variableResolver.resolveVariable(variable);
+					if (resolved != null) {
+						ourResolved = resolved.resolve();
+						checkGenerics = false;
+					}
+				}
+			}
+		}
+		if (ourResolved == null) {
+			ourResolved = our.resolve(Object.class);
+		}
+		Class<?> otherResolved = other.resolve(Object.class);
+	
+		State state = State.COMPLETE;
+		if (!ClassUtils.isAssignable(ourResolved, otherResolved)) {
+			Class<?> match = matches.get(ourResolved);
+			if (match != null) {
+				ourResolved = match;
+				our = ResolvableType.forClass(match);
+				if (!ClassUtils.isAssignable(ourResolved, otherResolved)) {
+					return State.NOT;
+				}
+			} else {
+				return State.NOT;
+			}
+		}
+	
+		if (checkGenerics) {
+			// Recursively check each generic
+			ResolvableType[] ourGenerics = our.getGenerics();
+			ResolvableType[] typeGenerics = other.as(ourResolved).getGenerics();
+			if (ourGenerics.length != typeGenerics.length) {
+				return State.NOT;
+			}
+
+			for (int i = 0; i < ourGenerics.length; i++) {
+				State newState = ourGenerics[i].matches(typeGenerics[i], matches);
+				state = state.ordinal() < newState.ordinal() ? newState : state;
+			}
+		}
+
+		if (ourResolved.equals(otherResolved)) {
+			return state;
+		} 
+		return state == State.NOT ? State.NOT : State.INCOMPLETE;
+	}
+
 
 	// Factory methods
 
@@ -1537,6 +1630,25 @@ public class ResolvableType implements Serializable {
 
 		private boolean isAssignable(ResolvableType source, ResolvableType from) {
 			return (this.kind == Kind.UPPER ? source.isAssignableFrom(from) : from.isAssignableFrom(source));
+		}
+
+		public State matches(ResolvableType type, Map<Class<?>, Class<?>> matches) {
+			return matches(new ResolvableType[] { type }, matches);
+		}
+
+		public State matches(ResolvableType[] types, Map<Class<?>, Class<?>> matches) {
+			State state = State.COMPLETE;
+			for (ResolvableType bound : this.bounds) {
+				for (ResolvableType type : types) {
+					State newState = matches(bound, type, matches);
+					state = state.ordinal() < newState.ordinal() ? newState : state;
+				}
+			}
+			return state;
+		}
+
+		private State matches(ResolvableType source, ResolvableType from, Map<Class<?>, Class<?>> matches) {
+			return source.matches(from, matches);
 		}
 
 		/**
