@@ -1,10 +1,9 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.*;
-
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
 
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
@@ -14,7 +13,6 @@ import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.MethodSpecification;
 import checkspec.spring.ResolvableType;
-import checkspec.util.ClassUtils;
 import lombok.Getter;
 
 @Getter
@@ -37,8 +35,8 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 	}
 
 	@Override
-	protected MethodReport checkMember(Method method, MethodSpecification spec, ClassReport oldReport) {
-		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(method.getParameters(), spec.getParameters());
+	protected MethodReport checkMember(Method method, MethodSpecification spec, Map<ResolvableType, ClassReport> oldReports) {
+		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(method.getParameters(), spec.getParameters(), oldReports);
 		MethodReport report = new MethodReport(spec, method, parametersReport);
 
 		VISIBILITY_ANALYSIS.analyze(method, spec).ifPresent(report::addProblem);
@@ -54,12 +52,14 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 
 		ResolvableType specReturnType = spec.getReturnType();
 		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method);
-		if (methodReturnType.getRawClass() != specReturnType.getRawClass()) {
-			boolean compatible = ClassUtils.isAssignable(methodReturnType, specReturnType);
-			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
-			ReportProblemType type = compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR;
-			report.addProblem(new ReportProblem(1, String.format(format, getName(methodReturnType)), type));
-		}
+		AnalysisUtils.compareTypes(specReturnType, methodReturnType, oldReports, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
+				.ifPresent(report::addProblem);
+//		if (methodReturnType.getRawClass() != specReturnType.getRawClass()) {
+//			boolean compatible = ClassUtils.isAssignable(methodReturnType, specReturnType);
+//			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
+//			ReportProblemType type = compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR;
+//			report.addProblem(new ReportProblem(1, String.format(format, getName(methodReturnType)), type));
+//		}
 
 		return report;
 	}

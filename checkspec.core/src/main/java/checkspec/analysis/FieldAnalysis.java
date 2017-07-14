@@ -1,10 +1,9 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.*;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
 
 import checkspec.report.ClassReport;
 import checkspec.report.FieldReport;
@@ -13,7 +12,6 @@ import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.FieldSpecification;
 import checkspec.spring.ResolvableType;
-import checkspec.util.ClassUtils;
 import checkspec.util.FieldUtils;
 import lombok.Getter;
 
@@ -37,7 +35,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 	}
 
 	@Override
-	protected FieldReport checkMember(Field field, FieldSpecification spec, ClassReport oldReport) {
+	protected FieldReport checkMember(Field field, FieldSpecification spec, Map<ResolvableType, ClassReport> oldReports) {
 		FieldReport report = new FieldReport(spec, field);
 
 		String fieldName = field.getName();
@@ -53,15 +51,17 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		ResolvableType fieldType = FieldUtils.getType(field);
 		ResolvableType specType = spec.getType();
 
-		if (!ClassUtils.equal(fieldType, specType)) {
-			String fieldTypeName = getName(fieldType);
-			String specTypeName = getName(specType);
-
-			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
-			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
-			String message = String.format(format, fieldTypeName, specTypeName);
-			report.addProblem(new ReportProblem(1, message, compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR));
-		}
+		AnalysisUtils.compareTypes(specType, fieldType, oldReports, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
+				.ifPresent(report::addProblem);
+//		if (!ClassUtils.equal(fieldType, specType)) {
+//			String fieldTypeName = getName(fieldType);
+//			String specTypeName = getName(specType);
+//
+//			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
+//			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
+//			String message = String.format(format, fieldTypeName, specTypeName);
+//			report.addProblem(new ReportProblem(1, message, compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR));
+//		}
 
 		return report;
 	}

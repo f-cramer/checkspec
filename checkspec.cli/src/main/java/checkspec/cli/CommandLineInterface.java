@@ -1,6 +1,7 @@
 package checkspec.cli;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -86,7 +87,9 @@ public class CommandLineInterface {
 			new CommandLineInterface().parse(args);
 		} catch (CommandLineException e) {
 			System.err.println(e.getMessage());
-			HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
+			if (!(e.getCause() instanceof HeadlessException)) {
+				HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
+			}
 		}
 	}
 
@@ -157,7 +160,7 @@ public class CommandLineInterface {
 		OutputFormat format = FORMAT.parse(commandLine);
 		Outputter outputter = null;
 		if (format == OutputFormat.GUI && GraphicsEnvironment.isHeadless()) {
-			throw new CommandLineException("jvm is headless, gui cannot be shown");
+			throw new CommandLineException("jvm is headless, gui cannot be shown", new HeadlessException());
 		}
 
 		switch (format) {

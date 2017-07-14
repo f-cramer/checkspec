@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
+import checkspec.report.ClassReport;
 import checkspec.report.ParametersReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
@@ -19,7 +21,7 @@ import checkspec.specification.ParametersSpecification;
 import checkspec.spring.ResolvableType;
 import checkspec.util.ClassUtils;
 
-public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], ParametersSpecification, ParametersReport> {
+public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, Map<ResolvableType, ClassReport>> {
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
 	private static final String DELETED = "removed parameter of type \"%s\" from index %d";
@@ -27,20 +29,15 @@ public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], P
 	private static final String SUBSTITUTE_INCOMPATIBLE = "parameter at index %d has incompatible type \"%s\"";
 
 	@Override
-	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, Void payload) {
+	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, Map<ResolvableType, ClassReport> oldReports) {
 		ParametersReport report = new ParametersReport(specification, actual);
 
 		int specParameterCount = specification.getCount();
 
-		ResolvableType[] specClasses = IntStream.range(0, specParameterCount)
-				.mapToObj(specification::get)
-				.map(ParameterSpecification::getType)
-				.toArray(ResolvableType[]::new);
-		ResolvableType[] actualClasses = Arrays.stream(actual).parallel()
-				.map(ParametersAnalysis::getType)
-				.toArray(ResolvableType[]::new);
+		ResolvableType[] specClasses = IntStream.range(0, specParameterCount).mapToObj(specification::get).map(ParameterSpecification::getType).toArray(ResolvableType[]::new);
+		ResolvableType[] actualClasses = Arrays.stream(actual).parallel().map(ParametersAnalysis::getType).toArray(ResolvableType[]::new);
 
-		report.addProblems(calculateDistance(specClasses, actualClasses));
+		report.addProblems(calculateDistance(specClasses, actualClasses, oldReports));
 
 		return report;
 	}
@@ -67,7 +64,7 @@ public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], P
 		return IntStream.range(0, executable.getParameterCount()).filter(index -> executable.getParameters()[index] == parameter).findFirst();
 	}
 
-	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right) {
+	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right, Map<ResolvableType, ClassReport> oldReports) {
 		if (left.length == 0) {
 			return Collections.emptyList();
 		} else if (right.length == 0) {
@@ -97,7 +94,7 @@ public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], P
 			costs[0] = j;
 
 			for (int i = 1; i <= left.length; i++) {
-				cost = ClassUtils.equal(left[i - 1], rightJ) ? 0 : ClassUtils.isAssignable(left[i - 1], rightJ) ? 1 : 2;
+				cost = ClassUtils.equal(left[i - 1], rightJ) ? 0 : ClassUtils.isCompatible(left[i - 1], rightJ) ? 1 : 2;
 				costs[i] = Math.min(Math.min(costs[i - 1] + 1, previousCosts[i] + 1), previousCosts[i - 1] + cost);
 				matrix[j][i] = costs[i];
 			}
@@ -106,10 +103,10 @@ public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], P
 			previousCosts = costs;
 			costs = tempD;
 		}
-		return findDetailedResults(left, right, matrix);
+		return findDetailedResults(left, right, matrix, oldReports);
 	}
 
-	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix) {
+	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix, Map<ResolvableType, ClassReport> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int rowIndex = right.length;
@@ -168,11 +165,9 @@ public class ParametersAnalysis implements AnalysisWithoutPayload<Parameter[], P
 			}
 
 			if (!added && !deleted) {
-				if (ClassUtils.isAssignable(curLeft, curRight)) {
-					problems.add(0, new ReportProblem(1, String.format(SUBSTITUTE_COMPATIBLE, columnIndex - 1, rightName), ReportProblemType.WARNING));
-				} else {
-					problems.add(0, new ReportProblem(2, String.format(SUBSTITUTE_INCOMPATIBLE, columnIndex - 1, rightName), ReportProblemType.ERROR));
-				}
+				int index = columnIndex;
+				AnalysisUtils.compareTypes(curLeft, curRight, oldReports, (s, a) -> String.format(SUBSTITUTE_COMPATIBLE, index - 1, rightName),
+						(s, a) -> String.format(SUBSTITUTE_INCOMPATIBLE, index - 1, rightName)).ifPresent(problems::add);
 				columnIndex--;
 				rowIndex--;
 			}

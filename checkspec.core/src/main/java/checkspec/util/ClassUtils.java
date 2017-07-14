@@ -415,6 +415,10 @@ public final class ClassUtils {
 		return org.apache.commons.lang3.ClassUtils.isAssignable(type, superType);
 	}
 
+	public static boolean isCompatible(@NonNull final ResolvableType type1, @NonNull final ResolvableType type2) {
+		return type1.isAssignableFrom(type2) && type2.isAssignableFrom(type1);
+	}
+
 	public static ClassLoader getBaseClassLoader() {
 		if (BASE_CLASS_LOADER == null) {
 			return getSystemClassLoader();

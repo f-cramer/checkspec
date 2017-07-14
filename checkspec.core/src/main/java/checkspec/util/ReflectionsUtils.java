@@ -41,6 +41,7 @@ public final class ReflectionsUtils {
 	public static Reflections createReflections(URL[] urls) {
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
+				.setExpandSuperTypes(true)
 				.setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner());
 
 		if (urls != null) {
@@ -51,9 +52,7 @@ public final class ReflectionsUtils {
 		ExecutorService threadPool = Executors.newFixedThreadPool(availableProcessors, new DaemonThreadFactory());
 		configuration.setExecutorService(threadPool);
 
-		Reflections reflections = new Reflections(configuration);
-		reflections.expandSuperTypes();
-		return reflections;
+		return new Reflections(configuration);
 	}
 
 	public static URL[] getUrlsFromClasspath() {

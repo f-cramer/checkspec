@@ -20,6 +20,10 @@ public final class TypeDiscovery {
 	private static Map<Class<?>, List<?>> INSTANCES = new HashMap<>();
 	private static Comparator<Class<?>> CLASS_COMPARATOR = Comparator.comparing(ClassUtils::getName);
 
+	public static void setReflections(Reflections reflections) {
+		REFLECTIONS = reflections;
+	}
+
 	public static List<Class<?>> getSubTypesOf(Class<?> type) {
 		if (SUB_CLASSES.containsKey(type)) {
 			return SUB_CLASSES.get(type);

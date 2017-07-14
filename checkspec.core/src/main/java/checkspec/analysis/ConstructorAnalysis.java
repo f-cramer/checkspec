@@ -2,12 +2,14 @@ package checkspec.analysis;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.Map;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ConstructorReport;
 import checkspec.report.ParametersReport;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ConstructorSpecification;
+import checkspec.spring.ResolvableType;
 
 public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 
@@ -22,8 +24,8 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 	}
 
 	@Override
-	protected ConstructorReport checkMember(Constructor<?> constructor, ConstructorSpecification spec, ClassReport oldReport) {
-		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(constructor.getParameters(), spec.getParameters());
+	protected ConstructorReport checkMember(Constructor<?> constructor, ConstructorSpecification spec, Map<ResolvableType, ClassReport> oldReports) {
+		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(constructor.getParameters(), spec.getParameters(), oldReports);
 		ConstructorReport report = new ConstructorReport(spec, constructor, parametersReport);
 
 		VISIBILITY_ANALYSIS.analyze(constructor, spec).ifPresent(report::addProblem);

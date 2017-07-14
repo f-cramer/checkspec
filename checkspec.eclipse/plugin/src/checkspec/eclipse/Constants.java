@@ -27,5 +27,4 @@ public interface Constants {
 	public static final String FULL_LIBRARY_PATH = "/lib/checkspec.bundle.jar";
 
 	public static final IPath ICON_PATH = new Path("/img");
-
 }

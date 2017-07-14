@@ -124,7 +124,6 @@ public final class CheckSpec {
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
 				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
-				.peek(analysis -> System.out.println(analysis.getClass().getSimpleName()))
 				.toArray(length -> new AnalysisForClass<?>[length]);
 	}
 

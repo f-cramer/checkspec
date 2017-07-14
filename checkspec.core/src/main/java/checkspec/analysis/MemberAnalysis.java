@@ -1,7 +1,5 @@
 package checkspec.analysis;
 
-import static checkspec.util.ClassUtils.*;
-
 import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,8 +7,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,8 +19,6 @@ import com.google.common.collect.Lists;
 
 import checkspec.report.ClassReport;
 import checkspec.report.Report;
-import checkspec.report.ReportProblem;
-import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.Specification;
 import checkspec.spring.ResolvableType;
@@ -42,7 +36,9 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	public Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec, Map<ClassSpecification, ClassReport> oldReports) {
 		Class<?> clazz = type.getRawClass();
 		SpecificationType[] specifications = getMemberSpecifications(spec);
-		ClassReport oldReport = oldReports.get(spec);
+		Map<ResolvableType, ClassReport> oldReport = oldReports.entrySet().parallelStream()
+				.map(entry -> Pair.of(entry.getKey().getRawElement(), entry.getValue()))
+				.collect(Collectors.toMap(pair -> pair.getKey(), pair -> pair.getValue()));
 
 		List<ReportType> reports = Arrays.stream(specifications).parallel()
 				.flatMap(getMapperFunction(clazz))
@@ -80,7 +76,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 
 	protected abstract MemberType[] getMembers(Class<?> clazz);
 
-	protected abstract ReportType checkMember(MemberType member, SpecificationType specification, ClassReport oldSpecificationReport);
+	protected abstract ReportType checkMember(MemberType member, SpecificationType specification, Map<ResolvableType, ClassReport> oldSpecificationReports);
 
 	protected abstract ReportType createEmptyReport(SpecificationType specification);
 
@@ -91,39 +87,5 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	protected final int calculateDistance(String left, String right) {
 		Integer distance = NAME_DISTANCE.apply(left, right);
 		return distance == null ? Integer.MAX_VALUE : Math.abs(distance);
-	}
-
-	protected final Optional<ReportProblem> compareTypes(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport, BiPredicate<ResolvableType, ResolvableType> compatibilityChecker, String compatible, String incompatible) {
-		if (isTypeMatching(specification, actual, currentSpecificationReport)) {
-			return Optional.empty();
-		}
-
-		if (isCompatible(specification, actual, currentSpecificationReport, compatibilityChecker)) {
-			return Optional.of(new ReportProblem(5, compatible, ReportProblemType.WARNING));
-		} else {
-			return Optional.of(new ReportProblem(10, incompatible, ReportProblemType.ERROR));
-		}
-	}
-
-	protected final boolean isTypeMatching(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport) {
-		if (equal(specification, actual)) {
-			return true;
-		}
-
-		if (currentSpecificationReport == null) {
-			return false;
-		}
-		return equal(specification, currentSpecificationReport.getSpec().getRawElement()) && equal(actual, currentSpecificationReport.getImplementation());
-	}
-
-	private boolean isCompatible(ResolvableType specification, ResolvableType actual, ClassReport currentSpecificationReport, BiPredicate<ResolvableType, ResolvableType> compatibilityChecker) {
-		if (compatibilityChecker.test(specification, actual)) {
-			return true;
-		}
-
-		if (currentSpecificationReport == null) {
-			return false;
-		}
-		return equal(specification, currentSpecificationReport.getSpec().getRawElement()) && compatibilityChecker.test(currentSpecificationReport.getImplementation(), actual);
 	}
 }

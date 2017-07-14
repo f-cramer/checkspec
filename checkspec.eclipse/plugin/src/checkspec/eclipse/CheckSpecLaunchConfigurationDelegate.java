@@ -40,6 +40,8 @@ import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import checkspec.util.ClassUtils;
+import checkspec.util.ReflectionsUtils;
+import checkspec.util.TypeDiscovery;
 
 /**
  * Launch configuration delegate for a CheckSpec specification check as a Java
@@ -67,6 +69,8 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 			if (extensionsClasspath.length > 0) {
 				baseLoader = new ReverseURLClassLoader(baseLoader, extensionsClasspath);
 			}
+
+			TypeDiscovery.setReflections(ReflectionsUtils.createDefaultReflections());
 			ClassUtils.setBaseClassLoader(baseLoader);
 			SpecReport[] reports = cli.run(specificationClassNames, specificationClasspath, implementationClasspath, basePackage, Outputter.NULL_OUTPUTTER);
 			ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());

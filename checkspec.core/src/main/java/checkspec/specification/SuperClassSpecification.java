@@ -28,7 +28,7 @@ public class SuperClassSpecification extends AbstractExtendable<SuperClassSpecif
 	private final ResolvableType rawElement;
 
 	public SuperClassSpecification(Class<?> superClass) {
-		this.name = ClassUtils.getName(superClass);
+		this.name = superClass == null ? ClassUtils.getName(Object.class) : ClassUtils.getName(superClass);
 		rawElement = ResolvableType.forClass(superClass);
 
 		performExtensions(EXTENSIONS, this, rawElement);
