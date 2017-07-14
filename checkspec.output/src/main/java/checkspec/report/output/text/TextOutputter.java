@@ -2,11 +2,9 @@ package checkspec.report.output.text;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.SpecReport;
@@ -33,22 +31,11 @@ public class TextOutputter implements Outputter {
 	}
 
 	private static String toString(Report<?, ?> report) {
-		return report.getProblems().parallelStream()
-				.map(ReportProblem::toString)
-				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
-				.trim()
-				.replace("\n", "\n\t");
-	}
-
-	private static String toString(ClassReport report) {
-		Stream<String> problems = report.getProblems().parallelStream().map(Object::toString);
-
-		Stream<List<? extends Report<?, ?>>> lists = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports());
-		Stream<String> reports = lists.parallel()
-				.flatMap(List::stream)
+		Stream<String> problems = report.getProblems().parallelStream()
+				.map(ReportProblem::toString);
+		Stream<String> subReports = report.getSubReports().parallelStream()
 				.map(TextOutputter::toString);
-
-		return Stream.concat(problems, reports)
+		return Stream.concat(problems, subReports)
 				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
 				.trim()
 				.replace("\n", "\n\t");
