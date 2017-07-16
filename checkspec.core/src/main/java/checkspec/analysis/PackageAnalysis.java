@@ -1,7 +1,8 @@
 package checkspec.analysis;
 
-import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
@@ -10,12 +11,12 @@ import checkspec.specification.ClassSpecification;
 import checkspec.specification.PackageSpecification;
 import checkspec.type.ResolvableType;
 
-public class PackageAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
+public class PackageAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final String FORMAT = "should live in package \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		PackageSpecification packageSpecification = specification.getPackage();
 		String packageName = packageSpecification.getName();
 

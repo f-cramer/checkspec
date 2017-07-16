@@ -250,30 +250,6 @@ public class ClassUtilsTest {
 		getVisibility(null);
 	}
 
-	@Test
-	public void isAssignableTest() {
-		ResolvableType intType = ResolvableType.forClass(Integer.TYPE);
-		boolean result = isAssignable(null, intType);
-		assertThat(result, is(false));
-
-		ResolvableType integerType = ResolvableType.forClass(Integer.class);
-		result = isAssignable(null, integerType);
-		assertThat(result, is(true));
-
-		result = isAssignable(intType, integerType);
-		assertThat(result, is(true));
-
-		ResolvableType charType = ResolvableType.forClass(Character.TYPE);
-		result = isAssignable(charType, integerType);
-		assertThat(result, is(false));
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void isAssignableNullTest() {
-		isAssignable(TYPE, null);
-	}
-
-	@Test
 	public void isSuperClassTest() {
 		boolean result = isSuperType(String.class, Object.class);
 		assertThat(result, is(true));
@@ -298,29 +274,6 @@ public class ClassUtilsTest {
 	public void getSystemClassLoaderTest() {
 		ClassLoader result = getBaseClassLoader();
 		assertThat(result, is(SYSTEM_CLASS_LOADER));
-	}
-
-	@Test
-	public void equalResolvableTypeTest() {
-		ResolvableType firstType = ResolvableType.forClass(Integer.TYPE);
-		ResolvableType secondType = ResolvableType.forClass(Integer.class);
-
-		boolean result = equal(firstType, firstType);
-		assertThat(result, is(true));
-
-		result = equal(firstType, secondType);
-		assertThat(result, is(false));
-	}
-
-	public void equalResolvableTypeNullTest() {
-		boolean result = equal(null, ResolvableType.forClass(Integer.TYPE));
-		assertThat(result, is(false));
-		
-		result = equal(ResolvableType.forClass(Integer.TYPE), null);
-		assertThat(result, is(false));
-
-		equal((ResolvableType) null, null);
-		assertThat(result, is(false));
 	}
 
 	@Test

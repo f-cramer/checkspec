@@ -12,7 +12,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportType;
@@ -69,23 +68,13 @@ public class HtmlOutputter implements Outputter {
 	}
 
 	private static Stream<Row> getRows(Report<?, ?> report) {
-		return Stream.concat(Stream.of(new Row(0, getMark(report), report.toString())), report.getProblems().parallelStream()
-				.map(e -> new Row(1, getMark(e), e.toString())));
-	}
-
-	private static Stream<Row> getRows(ClassReport report) {
-		Stream<Row> head = Stream.of(new Row(0, getMark(report), report.toString()));
-
+		Stream<Row> header = Stream.of(new Row(0, getMark(report), report.toString()));
 		Stream<Row> problems = report.getProblems().parallelStream()
 				.map(e -> new Row(1, getMark(e), e.toString()));
-
-		Stream<List<? extends Report<?, ?>>> lists = Stream.of(report.getFieldReports(), report.getConstructorReports(), report.getMethodReports());
-		Stream<Row> reports = lists.parallel()
-				.flatMap(List::stream)
+		Stream<Row> reports = report.getSubReports().parallelStream()
 				.flatMap(HtmlOutputter::getRows)
-				.map(Row::withIncreasedIndent);
-
-		return Stream.concat(Stream.concat(head, Stream.concat(problems, reports)), Stream.of(Row.EMPTY));
+				.map(row -> row.withIncreasedIndent());
+		return Stream.concat(header, Stream.concat(problems, reports));
 	}
 
 	private static List<Row> getRows(SpecReport report) {

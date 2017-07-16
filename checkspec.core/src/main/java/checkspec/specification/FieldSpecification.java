@@ -9,15 +9,12 @@ import checkspec.extension.AbstractExtendable;
 import checkspec.type.ResolvableType;
 import checkspec.util.FieldUtils;
 import checkspec.util.TypeDiscovery;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@ToString
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class FieldSpecification extends AbstractExtendable<FieldSpecification, Field> implements MemberSpecification<Field>, Comparable<FieldSpecification> {
 
 	private static final FieldSpecificationExtension[] EXTENSIONS;

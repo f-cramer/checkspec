@@ -11,12 +11,13 @@ import checkspec.extension.AbstractExtendable;
 import checkspec.type.ResolvableType;
 import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@ToString
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class ClassSpecification extends AbstractExtendable<ClassSpecification, ResolvableType> implements Specification<ResolvableType> {
 
 	private static final ClassSpecificationExtension[] EXTENSIONS;

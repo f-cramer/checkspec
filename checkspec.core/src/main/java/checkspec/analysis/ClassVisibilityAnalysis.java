@@ -1,17 +1,18 @@
 package checkspec.analysis;
 
-import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.ResolvableType;
 
-public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
+public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		return analyseVisibility(actual.getRawClass().getModifiers(), specification.getVisibility());
 	}
 

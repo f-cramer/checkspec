@@ -28,4 +28,6 @@
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<description>Project that contains classes that are used for rapid testing
+Of no use for outer users</description>
 </project>

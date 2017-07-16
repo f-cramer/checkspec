@@ -1,46 +1,49 @@
 package checkspec.specification;
 
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import checkspec.type.ResolvableType;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Value;
 
-@Getter
-public class ParametersSpecification implements Specification<Parameter[]> {
+@Value
+@EqualsAndHashCode
+public class ParametersSpecification implements Specification<List<Parameter>> {
 
 	@Getter(AccessLevel.PACKAGE)
-	private final ParameterSpecification[] parameterSpecifications;
+	private final List<ParameterSpecification> parameterSpecifications;
 
 	public ParametersSpecification(Parameter[] parameters, IntFunction<ResolvableType> typeGenerator) {
 		parameterSpecifications = IntStream.range(0, parameters.length)
 				.mapToObj(i -> new ParameterSpecification(parameters[i], typeGenerator.apply(i)))
-				.toArray(ParameterSpecification[]::new);
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public String getName() {
-		return Arrays.stream(parameterSpecifications).parallel()
+		return parameterSpecifications.parallelStream()
 				.map(ParameterSpecification::getName)
 				.collect(Collectors.joining("(", ", ", ")"));
 	}
 
 	@Override
-	public Parameter[] getRawElement() {
-		return Arrays.stream(parameterSpecifications).parallel()
+	public List<Parameter> getRawElement() {
+		return parameterSpecifications.parallelStream()
 				.map(ParameterSpecification::getRawElement)
-				.toArray(Parameter[]::new);
+				.collect(Collectors.toList());
 	}
 
 	public int getCount() {
-		return parameterSpecifications.length;
+		return parameterSpecifications.size();
 	}
 
 	public ParameterSpecification get(int index) {
-		return parameterSpecifications[index];
+		return parameterSpecifications.get(index);
 	}
 }

@@ -3,7 +3,8 @@ package checkspec.analysis;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Map;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.MethodReport;
@@ -35,7 +36,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 	}
 
 	@Override
-	protected MethodReport checkMember(Method method, MethodSpecification spec, Map<ResolvableType, ClassReport> oldReports) {
+	protected MethodReport checkMember(Method method, MethodSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		ParametersReport parametersReport = PARAMETERS_ANALYSIS.analyze(method.getParameters(), spec.getParameters(), oldReports);
 		MethodReport report = new MethodReport(spec, method, parametersReport);
 

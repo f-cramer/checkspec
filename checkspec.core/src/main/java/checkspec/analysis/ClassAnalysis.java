@@ -1,12 +1,12 @@
 package checkspec.analysis;
 
-import java.util.Map;
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.ResolvableType;
 
-public interface AnalysisForClass<ReturnType> extends Analysis<ResolvableType, ClassSpecification, ReturnType, Map<ClassSpecification, ClassReport>> {
+public interface ClassAnalysis<ReturnType> extends Analysis<ResolvableType, ClassSpecification, ReturnType, MultiValuedMap<Class<?>, Class<?>>> {
 
 	void add(ClassReport report, ReturnType returnType);
 

@@ -6,10 +6,10 @@ import java.util.List;
 import checkspec.extension.AbstractExtendable;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
 
-@Getter
+@Value
 @EqualsAndHashCode(callSuper = true)
 public class PackageSpecification extends AbstractExtendable<PackageSpecification, Package> implements Specification<Package> {
 

@@ -4,7 +4,8 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.IntStream;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.swing.UIManager;
 
@@ -20,16 +21,13 @@ import checkspec.specification.ClassSpecification;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		IntStream.iterate(0, i -> i +
-				1).parallel().filter(Character::isMirrored).mapToObj(i -> (char) i).findFirst().ifPresent(System.out::println);
-
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		CheckSpec checkSpec = CheckSpec.getInstanceForClassPathWithoutJars();
 		Class<?> clazz = Calculator.class;
 
-		SpecReport report = checkSpec.checkSpec(new ClassSpecification(clazz), Main.class);
-		// SpecReport report = checkSpec.checkSpec(ClassSpec.from(clazz));
+		Set<ClassSpecification> specifications = Collections.singleton(new ClassSpecification(clazz));
+		SpecReport report = checkSpec.checkSpec(specifications, clazz).get(0);
 
 		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out));
 		outputter.output(report);

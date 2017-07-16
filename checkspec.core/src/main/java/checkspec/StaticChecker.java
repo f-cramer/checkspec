@@ -31,7 +31,8 @@ final class StaticChecker {
 		} else {
 			ProxyFactory factory = new ProxyFactory();
 			factory.setSuperclass(clazz);
-			factory.setFilter(e -> !MethodUtils.isAbstract(e));
+//			factory.setFilter(e -> !MethodUtils.isAbstract(e));
+			factory.setFilter(e -> true);
 			Class<?> proxyClass = factory.createClass();
 			T proxy = (T) OBJENESIS.newInstance(proxyClass);
 			((javassist.util.proxy.Proxy) proxy).setHandler(handler);
@@ -58,16 +59,19 @@ final class StaticChecker {
 			Map<Method, MethodReport> methodReports = classReport.getMethodReports().parallelStream()
 					.collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
 
-			return (proxy, method, args) -> {
-				MethodReport actualMethod = methodReports.get(method);
-
-				if (actualMethod == null || actualMethod.getImplementation() == null) {
-					String methodName = method.getName();
-					String parameterList = MethodUtils.getParameterList(method);
-					String format = "no implementation of %s#%s(%s) could be found in %s";
-					throw new UnsupportedOperationException(String.format(format, specName, methodName, parameterList, implementationName));
-				} else {
-					return actualMethod.getImplementation().invoke(implementation, args);
+			return new MethodInvocationHandler() {
+				@Override
+				public Object invokeImpl(Object proxy, Method method, Object[] args) throws Throwable {
+					MethodReport actualMethod = methodReports.get(method);
+					
+					if (actualMethod == null || actualMethod.getImplementation() == null) {
+						String methodName = method.getName();
+						String parameterList = MethodUtils.getParameterList(method);
+						String format = "no implementation of %s#%s(%s) could be found in %s";
+						throw new UnsupportedOperationException(String.format(format, specName, methodName, parameterList, implementationName));
+					} else {
+						return actualMethod.getImplementation().invoke(implementation, args);
+					}
 				}
 			};
 		} catch (InstantiationException | IllegalAccessException e1) {

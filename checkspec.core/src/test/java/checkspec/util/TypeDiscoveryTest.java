@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import checkspec.analysis.AnalysisForClass;
+import checkspec.analysis.ClassAnalysis;
 import checkspec.report.Report;
 
 public class TypeDiscoveryTest {
@@ -30,14 +30,14 @@ public class TypeDiscoveryTest {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getNewInstancesOfTest() {
-		List<AnalysisForClass> result = getNewInstancesOf(AnalysisForClass.class);
+		List<ClassAnalysis> result = getNewInstancesOf(ClassAnalysis.class);
 		assertThat(result, is(not(empty())));
 	}
 
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getNewInstancesOfWithErrorFormatTest() {
-		List<AnalysisForClass> result = getNewInstancesOf(AnalysisForClass.class, "");
+		List<ClassAnalysis> result = getNewInstancesOf(ClassAnalysis.class, "");
 		assertThat(result, is(not(empty())));
 	}
 
@@ -46,14 +46,14 @@ public class TypeDiscoveryTest {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getUniqueInstancesOfTest() {
-		List<AnalysisForClass> result = getUniqueInstancesOf(AnalysisForClass.class);
+		List<ClassAnalysis> result = getUniqueInstancesOf(ClassAnalysis.class);
 		assertThat(result, is(not(empty())));
 	}
 
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getUniqueInstancesOfTest2() {
-		List<AnalysisForClass> result = getUniqueInstancesOf(AnalysisForClass.class);
+		List<ClassAnalysis> result = getUniqueInstancesOf(ClassAnalysis.class);
 		assertThat(result, is(not(empty())));
 	}
 
@@ -62,14 +62,14 @@ public class TypeDiscoveryTest {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getUniqueInstancesOfWithErrorFormatTest() {
-		List<AnalysisForClass> result = getUniqueInstancesOf(AnalysisForClass.class, "");
+		List<ClassAnalysis> result = getUniqueInstancesOf(ClassAnalysis.class, "");
 		assertThat(result, is(not(empty())));
 	}
 
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void getUniqueInstancesOfWithErrorFormatTest2() {
-		List<AnalysisForClass> result = getUniqueInstancesOf(AnalysisForClass.class, "");
+		List<ClassAnalysis> result = getUniqueInstancesOf(ClassAnalysis.class, "");
 		assertThat(result, is(not(empty())));
 	}
 }

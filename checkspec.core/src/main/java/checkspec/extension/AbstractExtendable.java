@@ -4,8 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
+@Getter
+@ToString
+@EqualsAndHashCode
 public class AbstractExtendable<ExtensionPoint extends Extendable, Payload> implements Extendable {
 
 	private final Map<Class<?>, Object> extensions = new HashMap<>();

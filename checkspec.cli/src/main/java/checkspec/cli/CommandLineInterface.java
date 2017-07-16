@@ -140,8 +140,7 @@ public class CommandLineInterface {
 		Consumer<SpecReport> wrappedOutputter = wrapOutputter(outputter);
 		CheckSpec checkSpec = implementationClasspath.length == 0 ? CheckSpec.getDefaultInstance() : CheckSpec.getInstanceForClassPath(implementationClasspath);
 
-		return Arrays.stream(specifications)
-				.map(e -> checkSpec.checkSpec(e, basePackage))
+		return checkSpec.checkSpec(Arrays.asList(specifications), basePackage).stream()
 				.peek(wrappedOutputter::accept)
 				.toArray(SpecReport[]::new);
 

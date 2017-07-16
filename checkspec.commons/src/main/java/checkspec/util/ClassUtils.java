@@ -333,37 +333,6 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if instances the resolvable type {@code clazz} are assignable to
-	 * to a variable of the static type that is represented by {@code toClass}.
-	 * This method handles primitive types correctly by taking in account that
-	 * {@code null} values are not assignable to variables or fields of
-	 * primitive types. It also checks for primitive type widenings as occuring
-	 * e.g. when assigning a {@code short} value to a field of type {@code int}.
-	 *
-	 * @param clazz
-	 *            type that should be assigned to a field
-	 * @param toClass
-	 *            type of said field, {@code null not permitted}
-	 * @throws NullPointerException
-	 *             if {@code toClass} is {@code null}
-	 * @return whether or not instances of type {@code clazz} are assignable to
-	 *         variables or fields of type {@code toClass}
-	 */
-	public static boolean isAssignable(ResolvableType clazz, @NonNull final ResolvableType toClass) {
-		// have to check for null, as isAssignableFrom doesn't
-		Class<?> toRaw = toClass.getRawClass();
-		if (clazz == null) {
-			return !toRaw.isPrimitive();
-		}
-
-		if (toClass.isAssignableFrom(clazz)) {
-			return true;
-		}
-
-		return org.apache.commons.lang3.ClassUtils.isAssignable(clazz.getRawClass(), toRaw);
-	}
-
-	/**
 	 * Checks if a type {@code superType} is a super type of {@code type}. This
 	 * is {@code true} any of the following checks are {@code true}
 	 * <ul>
@@ -415,10 +384,6 @@ public final class ClassUtils {
 		return org.apache.commons.lang3.ClassUtils.isAssignable(type, superType);
 	}
 
-	public static boolean isCompatible(@NonNull final ResolvableType type1, @NonNull final ResolvableType type2) {
-		return type1.isAssignableFrom(type2) && type2.isAssignableFrom(type1);
-	}
-
 	public static ClassLoader getBaseClassLoader() {
 		if (BASE_CLASS_LOADER == null) {
 			return getSystemClassLoader();
@@ -442,31 +407,6 @@ public final class ClassUtils {
 		}
 
 		return SYSTEM_CLASS_LOADER;
-	}
-
-	/**
-	 * Checks whether the given types refer to the same class or the same
-	 * interface
-	 *
-	 * @param t1
-	 *            the first type
-	 * @param t2
-	 *            the second type
-	 * @throws NullPointerException
-	 *             if {@code t1} or {@code t2} are {@code null}
-	 * @return whether or not the given types refer to the same class or the
-	 *         same interface
-	 */
-	public static boolean equal(ResolvableType t1, ResolvableType t2) {
-		if (t1 == null || t2 == null) {
-			return t1 == t2;
-		}
-
-		if (t1.equals(t2)) {
-			return true;
-		}
-
-		return t1.isAssignableFrom(t2) && t2.isAssignableFrom(t1);
 	}
 
 	/**

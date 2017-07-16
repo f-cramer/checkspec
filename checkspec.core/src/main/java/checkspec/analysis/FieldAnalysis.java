@@ -3,7 +3,8 @@ package checkspec.analysis;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Map;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.FieldReport;
@@ -35,7 +36,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 	}
 
 	@Override
-	protected FieldReport checkMember(Field field, FieldSpecification spec, Map<ResolvableType, ClassReport> oldReports) {
+	protected FieldReport checkMember(Field field, FieldSpecification spec, MultiValuedMap<Class<?>, Class<?>> matches) {
 		FieldReport report = new FieldReport(spec, field);
 
 		String fieldName = field.getName();
@@ -51,7 +52,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		ResolvableType fieldType = FieldUtils.getType(field);
 		ResolvableType specType = spec.getType();
 
-		AnalysisUtils.compareTypes(specType, fieldType, oldReports, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
+		AnalysisUtils.compareTypes(specType, fieldType, matches, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
 				.ifPresent(report::addProblem);
 //		if (!ClassUtils.equal(fieldType, specType)) {
 //			String fieldTypeName = getName(fieldType);

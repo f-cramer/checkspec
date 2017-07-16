@@ -6,12 +6,12 @@ import java.util.Arrays;
 import checkspec.api.Spec;
 import checkspec.api.Visibility;
 import checkspec.util.MemberUtils;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@Getter
-@RequiredArgsConstructor
+@Value
+@EqualsAndHashCode
 public class VisibilitySpecification implements Specification<Integer> {
 
 	@NonNull

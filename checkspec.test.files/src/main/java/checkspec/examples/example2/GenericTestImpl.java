@@ -1,7 +1,7 @@
 package checkspec.examples.example2;
 
-public class GenericTestImpl {
+public class GenericTestImpl<F> {
 
-	public void print(String t) {
+	public void print(F t) {
 	}
 }

@@ -1,11 +1,9 @@
 package checkspec.report;
 
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@Getter
-@RequiredArgsConstructor
+@Value
 public class ReportProblem {
 
 	private static final String FORMAT = "%s [%d]";

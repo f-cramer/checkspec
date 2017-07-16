@@ -8,12 +8,12 @@ import checkspec.extension.AbstractExtendable;
 import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.TypeDiscovery;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@ToString
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecification, ResolvableType> implements Specification<ResolvableType>, Comparable<InterfaceSpecification> {
 
 	private static final InterfaceSpecificationExtension[] EXTENSIONS;

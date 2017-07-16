@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
-import checkspec.report.ClassReport;
+import org.apache.commons.collections4.MultiValuedMap;
+
 import checkspec.report.ParametersReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
@@ -21,7 +21,7 @@ import checkspec.specification.ParametersSpecification;
 import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
-public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, Map<ResolvableType, ClassReport>> {
+public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, MultiValuedMap<Class<?>, Class<?>> > {
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
 	private static final String DELETED = "removed parameter of type \"%s\" from index %d";
@@ -29,7 +29,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 	private static final String SUBSTITUTE_INCOMPATIBLE = "parameter at index %d has incompatible type \"%s\"";
 
 	@Override
-	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, Map<ResolvableType, ClassReport> oldReports) {
+	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		ParametersReport report = new ParametersReport(specification, actual);
 
 		int specParameterCount = specification.getCount();
@@ -64,7 +64,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 		return IntStream.range(0, executable.getParameterCount()).filter(index -> executable.getParameters()[index] == parameter).findFirst();
 	}
 
-	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right, Map<ResolvableType, ClassReport> oldReports) {
+	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		if (left.length == 0) {
 			return Collections.emptyList();
 		} else if (right.length == 0) {
@@ -94,7 +94,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			costs[0] = j;
 
 			for (int i = 1; i <= left.length; i++) {
-				cost = ClassUtils.equal(left[i - 1], rightJ) ? 0 : ClassUtils.isCompatible(left[i - 1], rightJ) ? 1 : 2;
+				cost = left[i - 1].matches(rightJ, oldReports).evaluate(0, 1, 2);
 				costs[i] = Math.min(Math.min(costs[i - 1] + 1, previousCosts[i] + 1), previousCosts[i - 1] + cost);
 				matrix[j][i] = costs[i];
 			}
@@ -106,7 +106,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 		return findDetailedResults(left, right, matrix, oldReports);
 	}
 
-	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix, Map<ResolvableType, ClassReport> oldReports) {
+	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int rowIndex = right.length;
@@ -143,7 +143,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 
 			ResolvableType curLeft = columnIndex > 0 ? left[columnIndex - 1] : null;
 			ResolvableType curRight = rowIndex > 0 ? right[rowIndex - 1] : null;
-			if (columnIndex > 0 && rowIndex > 0 && ClassUtils.equal(curLeft, curRight)) {
+			if (columnIndex > 0 && rowIndex > 0 && curLeft.equals(curRight)) {
 				columnIndex--;
 				rowIndex--;
 				continue;

@@ -1,10 +1,10 @@
 package checkspec.util;
 
+import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import com.google.common.base.Objects;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -13,11 +13,15 @@ import lombok.experimental.UtilityClass;
 public final class StreamUtils {
 
 	public static <T> Predicate<T> equalsPredicate(@NonNull T t) {
-		return o -> Objects.equal(t, o);
+		return o -> Objects.equals(t, o);
 	}
 
 	public static <T, U> Predicate<U> equalsPredicate(@NonNull T t, @NonNull Function<U, T> converter) {
-		return o -> Objects.equal(t, converter.apply(o));
+		return o -> Objects.equals(t, converter.apply(o));
+	}
+
+	public static <T, U> Predicate<U> inPredicate(@NonNull Collection<T> t, @NonNull Function<U, T> converter) {
+		return o -> t.contains(converter.apply(o));
 	}
 
 	public static <T, U> Predicate<T> isNotNullPredicate(@NonNull Function<T, U> converter) {

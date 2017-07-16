@@ -6,17 +6,12 @@ import java.util.List;
 import checkspec.extension.AbstractExtendable;
 import checkspec.type.ResolvableType;
 import checkspec.util.TypeDiscovery;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
+@Value
 @EqualsAndHashCode(callSuper = true)
-@ToString
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConstructorSpecification extends AbstractExtendable<ConstructorSpecification, Constructor<?>> implements ExecutableSpecification<Constructor<?>>, Comparable<ConstructorSpecification> {
 
 	private static final ConstructorSpecificationExtension[] EXTENSIONS;
@@ -54,18 +49,18 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 
 	@Override
 	public int compareTo(ConstructorSpecification other) {
-		ParameterSpecification[] parameterSpecifications = parameters.getParameterSpecifications();
-		ParameterSpecification[] otherParameterSpecifications = other.parameters.getParameterSpecifications();
-		int length = Math.min(parameterSpecifications.length, otherParameterSpecifications.length);
+		List<ParameterSpecification> parameterSpecifications = parameters.getParameterSpecifications();
+		List<ParameterSpecification> otherParameterSpecifications = other.parameters.getParameterSpecifications();
+		int length = Math.min(parameterSpecifications.size(), otherParameterSpecifications.size());
 		for (int i = 0; i < length; i++) {
-			Class<?> thisClass = parameterSpecifications[i].getType().getRawClass();
-			Class<?> otherClass = otherParameterSpecifications[i].getType().getRawClass();
+			Class<?> thisClass = parameterSpecifications.get(i).getType().getRawClass();
+			Class<?> otherClass = otherParameterSpecifications.get(i).getType().getRawClass();
 
 			if (thisClass != otherClass) {
 				return thisClass.getName().compareTo(otherClass.getName());
 			}
 		}
 
-		return Integer.compare(parameterSpecifications.length, otherParameterSpecifications.length);
+		return Integer.compare(parameterSpecifications.size(), otherParameterSpecifications.size());
 	}
 }

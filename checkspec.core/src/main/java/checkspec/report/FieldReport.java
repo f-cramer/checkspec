@@ -6,7 +6,11 @@ import java.lang.reflect.Field;
 
 import checkspec.specification.FieldSpecification;
 import checkspec.util.FieldUtils;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class FieldReport extends Report<Field, FieldSpecification> {
 
 	public FieldReport(FieldSpecification specField) {

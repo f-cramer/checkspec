@@ -6,7 +6,11 @@ import static checkspec.util.MessageUtils.*;
 import java.lang.reflect.Constructor;
 
 import checkspec.specification.ConstructorSpecification;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class ConstructorReport extends ExecutableReport<Constructor<?>, ConstructorSpecification> {
 
 	public ConstructorReport(ConstructorSpecification specification) {
@@ -15,15 +19,6 @@ public class ConstructorReport extends ExecutableReport<Constructor<?>, Construc
 
 	public ConstructorReport(ConstructorSpecification specification, Constructor<?> constructor, ParametersReport parametersReport) {
 		super(specification, constructor, parametersReport);
-	}
-
-	@Override
-	public int getScore() {
-		if (getImplementation() == null) {
-			return 10;
-		} else {
-			return super.getScore();
-		}
 	}
 
 	@Override

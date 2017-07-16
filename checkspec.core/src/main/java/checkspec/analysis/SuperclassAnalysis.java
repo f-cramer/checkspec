@@ -2,17 +2,18 @@ package checkspec.analysis;
 
 import static checkspec.util.ClassUtils.*;
 
-import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.ResolvableType;
-import checkspec.util.ClassUtils;
+import checkspec.util.MatchingState;
 
-public class SuperclassAnalysis implements AnalysisForClass<Optional<ReportProblem>> {
+public class SuperclassAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final Class<?> OBJECT_CLASS = Object.class;
 	private static final String HAS_BUT_SHOULD_NOT = "should not declare any super class";
@@ -21,11 +22,12 @@ public class SuperclassAnalysis implements AnalysisForClass<Optional<ReportProbl
 	private static final String SHOULD_DECLARE_DIFFERENT = "should declare \"%s\" as its super class";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, Map<ClassSpecification, ClassReport> oldReports) {
+	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		ResolvableType specificationSuperType = specification.getSuperclassSpecification().getRawElement();
 		ResolvableType actualSuperType = actual.getSuperType();
 
-		if (ClassUtils.equal(specificationSuperType, actualSuperType)) {
+		MatchingState state = specificationSuperType.matches(actualSuperType, oldReports);
+		if (state == MatchingState.FULL_MATCH) {
 			return Optional.empty();
 		}
 
@@ -33,7 +35,7 @@ public class SuperclassAnalysis implements AnalysisForClass<Optional<ReportProbl
 			return Optional.of(new ReportProblem(1, HAS_BUT_SHOULD_NOT, ReportProblemType.WARNING));
 		}
 
-		if (ClassUtils.isAssignable(actualSuperType, specificationSuperType)) {
+		if (state == MatchingState.PARTIAL_MATCH) {
 			String message = String.format(DECLARES_COMPATIBLE, getName(specificationSuperType));
 			return Optional.of(new ReportProblem(1, message, ReportProblemType.ERROR));
 		}

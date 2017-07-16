@@ -3,15 +3,12 @@ package checkspec.specification;
 import java.lang.reflect.Parameter;
 
 import checkspec.type.ResolvableType;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@ToString
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
+@EqualsAndHashCode()
 public class ParameterSpecification implements Specification<Parameter> {
 
 	@NonNull

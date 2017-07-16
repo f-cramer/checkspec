@@ -8,17 +8,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
 import com.google.common.base.Objects;
 
-import checkspec.analysis.AnalysisForClass;
+import checkspec.analysis.ClassAnalysis;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.specification.ClassSpecification;
@@ -94,10 +94,10 @@ public final class CheckSpec {
 	}
 
 	private static final String ERROR_FORMAT = "Analysis \"%s\" does not provide a default constructor and thus will not be used%n";
-	private static final AnalysisForClass<?>[] ANALYSES;
+	private static final ClassAnalysis<?>[] ANALYSES;
 
 	static {
-		List<Class<?>> analyses = TypeDiscovery.getSubTypesOf(AnalysisForClass.class).stream()
+		List<Class<?>> analyses = TypeDiscovery.getSubTypesOf(ClassAnalysis.class).stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.collect(Collectors.toList());
 
@@ -122,9 +122,9 @@ public final class CheckSpec {
 
 		ANALYSES = mostConcreteAnalyses.stream()
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-				.map(clazz -> (Class<AnalysisForClass<?>>) clazz)
+				.map(clazz -> (Class<ClassAnalysis<?>>) clazz)
 				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
-				.toArray(length -> new AnalysisForClass<?>[length]);
+				.toArray(length -> new ClassAnalysis<?>[length]);
 	}
 
 	private final Reflections reflections;
@@ -144,64 +144,66 @@ public final class CheckSpec {
 	 * <p>
 	 * Behaves the same as a call to {@code checkSpec(spec, "")}.
 	 *
-	 * @param spec
+	 * @param specs
 	 *            the non-null specification the return {@code SpecReport}
 	 *            should be based on
 	 * @return a {@code SpecReport} that is populated with a {@code ClassReport}
 	 *         for any class that in any way matches {@code spec}
 	 */
-	public SpecReport checkSpec(@NonNull ClassSpecification spec) {
-		return checkSpec(spec, "");
+	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs) {
+		return checkSpec(specs, "");
 	}
 
-	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull Class<?> basePackage) {
-		return checkSpec(spec, ClassUtils.getPackage(basePackage));
+	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs, @NonNull Class<?> basePackage) {
+		return checkSpec(specs, ClassUtils.getPackage(basePackage));
 	}
 
-	public SpecReport checkSpec(@NonNull ClassSpecification spec, @NonNull String basePackageName) {
-		URL specLocation = getLocation(spec.getRawElement().getRawClass());
-		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
-		List<Class<?>> possibleClasses = classNames.parallelStream()
-				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
-				.flatMap(ClassUtils.classStreamSupplier(classLoader))
-				.filter(StreamUtils.equalsPredicate(specLocation, CheckSpec::getLocation).negate())
-				.filter(this::loadedFromValidLocation)
-				.collect(Collectors.toList());
+	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs, @NonNull String basePackageName) {
+		List<Class<?>> possibleClasses = getPossibleClasses(specs, basePackageName);
 
-		List<ClassReport> reports = Collections.emptyList();
+		List<SpecReport> reports = Collections.emptyList();
 
 		int maxIterations = 10;
 		for (int iteration = 0; iteration <= maxIterations; iteration++) {
-			List<ClassReport> oldReports = reports;
-			reports = possibleClasses.parallelStream()
-					.map(e -> checkImplements(e, spec, filterForBest(oldReports)))
-					.collect(Collectors.toList());
+			List<SpecReport> oldReports = reports;
+			MultiValuedMap<Class<?>, Class<?>> bestMatches = convert(oldReports);
+			reports = performSpecs(specs, possibleClasses, bestMatches);
 
 			if (Objects.equal(oldReports, reports)) {
 				break;
 			}
 		}
 
-		List<ClassReport> classReports = reports.parallelStream()
-				.filter(ClassReport::isAnyImplemenationMatching)
-				.sorted()
+		return reports.parallelStream()
+				.map(CheckSpec::filterImproperClassReports)
 				.collect(Collectors.toList());
-
-		return new SpecReport(spec, classReports);
 	}
 
-	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, Map<ClassSpecification, ClassReport> reports) {
+	private static List<SpecReport> performSpecs(Collection<ClassSpecification> specs, List<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
+		return specs.parallelStream()
+				.map(spec -> performSingleCheck(spec, possibleClasses, bestMatches))
+				.collect(Collectors.toList());
+	}
+
+	private static SpecReport performSingleCheck(ClassSpecification spec, List<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
+		List<ClassReport> reports = possibleClasses.parallelStream()
+				.map(e -> checkImplements(e, spec, bestMatches))
+				.collect(Collectors.toList());
+		return new SpecReport(spec, reports);
+	}
+
+	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldMappings) {
 		ClassReport report = new ClassReport(spec, clazz);
 		ResolvableType type = ResolvableType.forClass(clazz);
 
-		for (final AnalysisForClass<?> analysis : ANALYSES) {
-			performAnalysis(analysis, type, spec, reports, report);
+		for (final ClassAnalysis<?> analysis : ANALYSES) {
+			performAnalysis(analysis, type, spec, oldMappings, report);
 		}
 
 		return report;
 	}
 
-	private static <ReturnType> void performAnalysis(AnalysisForClass<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, Map<ClassSpecification, ClassReport> reports, ClassReport report) {
+	private static <ReturnType> void performAnalysis(ClassAnalysis<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> reports, ClassReport report) {
 		ReturnType returnValue = analysis.analyze(clazz, spec, reports);
 		analysis.add(report, returnValue);
 	}
@@ -246,16 +248,38 @@ public final class CheckSpec {
 		return BOOT_CLASS_LOADER.getResource(canonicalName);
 	}
 
-	private static Map<ClassSpecification, ClassReport> filterForBest(List<ClassReport> reports) {
-		return reports.parallelStream()
-				.collect(Collectors.toMap(ClassReport::getSpec, Function.identity(), CheckSpec::merge));
+	private static MultiValuedMap<Class<?>, Class<?>> convert(List<SpecReport> reports) {
+
+		HashSetValuedHashMap<Class<?>, Class<?>> multimap = new HashSetValuedHashMap<>();
+		reports.forEach(report -> multimap.putAll(report.getSpec().getRawElement().getRawClass(), getImplementationClasses(report)));
+		return multimap;
 	}
 
-	private static ClassReport merge(ClassReport l1, ClassReport l2) {
-		if (l1.getScore() <= l2.getScore()) {
-			return l1;
-		} else {
-			return l2;
-		}
+	private static List<Class<?>> getImplementationClasses(SpecReport report) {
+		return report.getClassReports().parallelStream()
+				.map(ClassReport::getImplementation)
+				.map(ResolvableType::getRawClass)
+				.collect(Collectors.toList());
+	}
+
+	private List<Class<?>> getPossibleClasses(Collection<ClassSpecification> specs, String basePackageName) {
+		List<URL> specLocations = specs.parallelStream()
+				.map(spec -> getLocation(spec.getRawElement().getRawClass()))
+				.collect(Collectors.toList());
+		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
+		return classNames.parallelStream()
+				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
+				.flatMap(ClassUtils.classStreamSupplier(classLoader))
+				.filter(StreamUtils.inPredicate(specLocations, CheckSpec::getLocation).negate())
+				.filter(this::loadedFromValidLocation)
+				.collect(Collectors.toList());
+	}
+
+	private static SpecReport filterImproperClassReports(SpecReport report) {
+		List<ClassReport> classReports = report.getClassReports().parallelStream()
+				.filter(ClassReport::isAnyImplemenationMatching)
+				.sorted()
+				.collect(Collectors.toList());
+		return new SpecReport(report.getSpec(), classReports);
 	}
 }

@@ -3,9 +3,10 @@ package checkspec.analysis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
@@ -15,13 +16,13 @@ import checkspec.specification.InterfaceSpecification;
 import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
-public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> {
+public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 
 	private static final String SHOULD = "should implement interface \"%s\"";
 	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, Map<ClassSpecification, ClassReport> oldReports) {
+	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		List<ResolvableType> notFoundInterfaces = Arrays.stream(actual.getRawClass().getInterfaces())
@@ -33,7 +34,7 @@ public class InterfaceAnalysis implements AnalysisForClass<List<ReportProblem>> 
 
 		for (InterfaceSpecification specification : specifications) {
 			Optional<ResolvableType> interf = notFoundInterfaces.parallelStream()
-					.filter(i -> ClassUtils.equal(specification.getRawElement(), i))
+					.filter(i -> specification.getRawElement().matches(i, oldReports).evaluate(true, true, false))
 					.findAny();
 
 			if (interf.isPresent()) {

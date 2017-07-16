@@ -88,37 +88,37 @@ public class MethodUtilsTest {
 		ResolvableType[] yetAnotherOneParameterList = { ResolvableType.forClass(String.class) };
 		ResolvableType[] twoParameterList = { ResolvableType.forClass(Integer.class), ResolvableType.forClass(String.class) };
 
-		int result = calculateParameterDistance(emptyParameterList, oneParameterList);
+		int result = calculateParameterDistance(emptyParameterList, oneParameterList, null);
 		assertThat(result, is(20));
 
-		result = calculateParameterDistance(oneParameterList, emptyParameterList);
+		result = calculateParameterDistance(oneParameterList, emptyParameterList, null);
 		assertThat(result, is(20));
 
-		result = calculateParameterDistance(oneParameterList, oneParameterList);
+		result = calculateParameterDistance(oneParameterList, oneParameterList, null);
 		assertThat(result, is(0));
 
-		result = calculateParameterDistance(oneParameterList, anotherOneParameterList);
+		result = calculateParameterDistance(oneParameterList, anotherOneParameterList, null);
 		assertThat(result, is(5));
 
-		result = calculateParameterDistance(oneParameterList, yetAnotherOneParameterList);
+		result = calculateParameterDistance(oneParameterList, yetAnotherOneParameterList, null);
 		assertThat(result, is(10));
 
-		result = calculateParameterDistance(oneParameterList, twoParameterList);
+		result = calculateParameterDistance(oneParameterList, twoParameterList, null);
 		assertThat(result, is(25));
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void calculateParameterDistanceNullTest() {
-		calculateParameterDistance(null, new ResolvableType[0]);
+		calculateParameterDistance(null, new ResolvableType[0], null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void calculateParameterDistanceNullTest2() {
-		calculateParameterDistance(new ResolvableType[0], null);
+		calculateParameterDistance(new ResolvableType[0], null, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void calculateParameterDistanceNullTest3() {
-		calculateParameterDistance(null, null);
+		calculateParameterDistance(null, null, null);
 	}
 }

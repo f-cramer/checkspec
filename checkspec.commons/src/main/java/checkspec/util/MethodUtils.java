@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.collections4.MultiValuedMap;
+
 import checkspec.api.Visibility;
 import checkspec.type.ResolvableType;
 import lombok.NonNull;
@@ -42,7 +44,7 @@ public final class MethodUtils {
 		return Modifier.isAbstract(method.getModifiers());
 	}
 
-	public static int calculateParameterDistance(@NonNull ResolvableType[] left, @NonNull ResolvableType[] right) {
+	public static int calculateParameterDistance(@NonNull ResolvableType[] left, @NonNull ResolvableType[] right, MultiValuedMap<Class<?>, Class<?>> matches) {
 		/*
 		 * This implementation use two variable to record the previous cost counts, So
 		 * this implementation use less memory than previous impl.
@@ -80,7 +82,7 @@ public final class MethodUtils {
 			for (leftIterator = 1; leftIterator <= leftLength; leftIterator++) {
 				upper = costs[leftIterator];
 				ResolvableType leftJ = left[leftIterator - 1];
-				cost = leftJ.getRawClass() == rightJ.getRawClass() ? 0 : ClassUtils.isAssignable(leftJ, rightJ) ? 5 : 10;
+				cost = leftJ.matches(rightJ, matches).evaluate(0, 5, 10);
 				// minimum of cell to the left+1, to the top+1, diagonally left
 				// and up +cost
 				costs[leftIterator] = Math.min(Math.min(costs[leftIterator - 1] + 20, costs[leftIterator] + 20), upperLeft + cost);
