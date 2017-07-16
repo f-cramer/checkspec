@@ -258,7 +258,7 @@ class CheckSpecFrame extends JFrame {
 
 		private Optional<Throwable> exportText(Path path) {
 			try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
-				Outputter outputter = new TextOutputter(writer);
+				Outputter outputter = new TextOutputter(writer, false);
 				outputter.output(report);
 			} catch (Exception e) {
 				return Optional.of(e);

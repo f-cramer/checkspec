@@ -8,6 +8,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.lang3.ClassUtils;
 
 import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
@@ -37,8 +38,13 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 		}
 
 		if (type instanceof ClassResolvableType) {
-			if (matches.containsMapping(rawType, type.getRawClass())) {
+			Class<?> oRawType = ((ClassResolvableType) type).getRawType();
+			if (matches != null && matches.containsMapping(rawType, oRawType)) {
 				return MatchingState.FULL_MATCH;
+			}
+
+			if (ClassUtils.isAssignable(rawType, oRawType) && ClassUtils.isAssignable(oRawType, rawType)) {
+				return MatchingState.PARTIAL_MATCH;
 			}
 
 			ClassResolvableType oType = (ClassResolvableType) type;

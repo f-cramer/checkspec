@@ -83,6 +83,6 @@ class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>>
 		return IntStream.range(0, parameters.length)
 				.filter(index -> parameters[index] == variable)
 				.findFirst()
-				.getAsInt();
+				.orElseThrow(() -> new IllegalArgumentException(variable.toString()));
 	}
 }

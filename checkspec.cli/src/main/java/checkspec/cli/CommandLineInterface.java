@@ -59,6 +59,9 @@ public class CommandLineInterface {
 			.desc("Sets the output path for formats \"text\" and \"html\". For format \"text\" the default is to output to the standard output stream, for format \"html\""
 					+ " it is to output to the directory \"./output/\" which is created if it does not already exist.")
 			.build();
+	private static final Option COLORED_OPTION = Option.builder("c").longOpt("colored").hasArg(false)
+			.desc("If set, text output will be colored using ansi coloring").build();
+	private static final SwitchCommandLineOption COLORED = SwitchCommandLineOption.of(COLORED_OPTION);
 	private static final ArgumentCommandLineOption<String> OUTPUT_PATH = TextCommandLineOption.of(OUTPUT_PATH_OPTION, String.class, Parser.IDENTITY);
 	private static final Option SPECS_OPTION = Option.builder("s").longOpt("spec").hasArgs().argName("spec-classes")
 			.desc("Sets the classes specifications are build from. If not set a specification will be build for any class that is annotated @Spec.").build();
@@ -78,7 +81,7 @@ public class CommandLineInterface {
 
 	private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 	private static final String SYNTAX = "java -jar checkspec-1.0.0-standalone.jar";
-	private static final Options OPTIONS = createOptions(FORMAT, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
+	private static final Options OPTIONS = createOptions(FORMAT, COLORED, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
 
 	private static final CommandLineParser PARSER = new DefaultParser();
 
@@ -164,7 +167,8 @@ public class CommandLineInterface {
 
 		switch (format) {
 		case TEXT:
-			outputter = createTextOutputter(commandLine);
+			boolean colored = COLORED.isSet(commandLine);
+			outputter = createTextOutputter(commandLine, colored);
 			break;
 		case HTML:
 			outputter = createHtmlOutputter(commandLine);
@@ -177,7 +181,7 @@ public class CommandLineInterface {
 		return outputter;
 	}
 
-	private Outputter createTextOutputter(CommandLine commandLine) throws CommandLineException {
+	private Outputter createTextOutputter(CommandLine commandLine, boolean colored) throws CommandLineException {
 		String path = OUTPUT_PATH.parse(commandLine);
 		Writer writer;
 		if (path == null) {
@@ -190,7 +194,7 @@ public class CommandLineInterface {
 			}
 		}
 
-		return new TextOutputter(writer);
+		return new TextOutputter(writer, colored);
 	}
 
 	private Outputter createHtmlOutputter(CommandLine commandLine) throws CommandLineException {

@@ -29,7 +29,7 @@ public class Main {
 		Set<ClassSpecification> specifications = Collections.singleton(new ClassSpecification(clazz));
 		SpecReport report = checkSpec.checkSpec(specifications, clazz).get(0);
 
-		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out));
+		Outputter outputter = new TextOutputter(new OutputStreamWriter(System.out), false);
 		outputter.output(report);
 
 		if (args.length > 0) {
