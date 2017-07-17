@@ -44,7 +44,6 @@ class ParameterizedTypeResolvableType extends AbstractResolvableType<Parameteriz
 			}
 			ResolvableType[] oActualTypeArguments = ((ParameterizedTypeResolvableType) type).getActualTypeArguments();
 			state = state.merge(IntStream.range(0, Math.min(actualTypeArguments.length, oActualTypeArguments.length))
-//					.allMatch(i -> actualTypeArguments[i].matches(oActualTypeArguments[i], matches));
 					.mapToObj(i -> actualTypeArguments[i].matches(oActualTypeArguments[i], matches))
 					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
 			if (state == MatchingState.NO_MATCH) {

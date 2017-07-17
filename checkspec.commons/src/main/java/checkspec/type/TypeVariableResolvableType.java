@@ -67,15 +67,16 @@ class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>>
 		return rawType.getName();
 	}
 
-	private static Class<?> getClass(GenericDeclaration genericDeclaration) {
-		if (genericDeclaration instanceof Class<?>) {
-			return (Class<?>) genericDeclaration;
-		} else if (genericDeclaration instanceof Method) {
-			return ((Method) genericDeclaration).getDeclaringClass();
-		} else if (genericDeclaration instanceof Executable) {
-			return ((Executable) genericDeclaration).getDeclaringClass();
+	private static Class<?> getClass(GenericDeclaration declaration) {
+		if (declaration instanceof Class<?>) {
+			return (Class<?>) declaration;
+		} else if (declaration instanceof Method) {
+			return ((Method) declaration).getDeclaringClass();
+		} else if (declaration instanceof Executable) {
+			return ((Executable) declaration).getDeclaringClass();
 		}
-		throw new IllegalArgumentException("genericDeclaration");
+		String typeName = declaration == null ? "null" : declaration.getClass().getName();
+		throw new IllegalArgumentException("declaration is of unknown type " + typeName);
 	}
 
 	private static int getIndex(TypeVariable<?> variable) {

@@ -4,6 +4,7 @@ import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,6 +41,7 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 
 		MatchingState state = MatchingState.FULL_MATCH;
 		if (type instanceof WildcardTypeResolvableType) {
+			// match wildcard to wildcard, i.e. "?" to "?"
 			ResolvableType[] oUpperBounds = ((WildcardTypeResolvableType) type).getUpperBounds();
 			ResolvableType[] oLowerBounds = ((WildcardTypeResolvableType) type).getLowerBounds();
 			if (upperBounds.length != oUpperBounds.length || lowerBounds.length != oLowerBounds.length) {
@@ -59,9 +61,20 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 			if (state == MatchingState.NO_MATCH) {
 				return MatchingState.NO_MATCH;
 			}
+		} else if (type instanceof ClassResolvableType) {
+			// to match wildcard to class, i.e. "? extends String" to "String"
+			state = state.merge(MatchingState.PARTIAL_MATCH);
+			state = state.merge(matches(upperBounds, type, matches));
+			state = state.merge(matches(lowerBounds, type, matches));
 		}
 
 		return state;
+	}
+
+	private static Optional<MatchingState> matches(ResolvableType[] bounds, ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		return Arrays.stream(bounds)
+				.map(bound -> bound.matches(type, matches))
+				.max(Comparator.naturalOrder());
 	}
 
 	@Override

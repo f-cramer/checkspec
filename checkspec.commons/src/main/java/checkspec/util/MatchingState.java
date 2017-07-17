@@ -1,5 +1,7 @@
 package checkspec.util;
 
+import java.util.Optional;
+
 public enum MatchingState {
 
 	FULL_MATCH, PARTIAL_MATCH, NO_MATCH;
@@ -18,5 +20,9 @@ public enum MatchingState {
 
 	public MatchingState merge(MatchingState state) {
 		return ordinal() <= state.ordinal() ? state : this;
+	}
+
+	public MatchingState merge(Optional<MatchingState> optionalState) {
+		return optionalState.map(this::merge).orElse(this);
 	}
 }

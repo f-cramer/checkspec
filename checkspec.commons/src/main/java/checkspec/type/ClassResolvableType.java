@@ -3,7 +3,9 @@ package checkspec.type;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -38,24 +40,42 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 		}
 
 		if (type instanceof ClassResolvableType) {
+			// match class to class, i.e. "String" to "String"
+
 			Class<?> oRawType = ((ClassResolvableType) type).getRawType();
-			if (matches != null && matches.containsMapping(rawType, oRawType)) {
-				return MatchingState.FULL_MATCH;
+			if (matches != null) {
+				// direct match was found
+				if (matches.containsMapping(rawType, oRawType)) {
+					return MatchingState.FULL_MATCH;
+				}
 			}
 
+			if (rawType.isArray() && oRawType.isArray()) {
+				Class<?> compType = rawType.getComponentType();
+				Class<?> oCompType = oRawType.getComponentType();
+				return ResolvableType.forClass(compType).matches(ResolvableType.forClass(oCompType), matches);
+			}
+
+			// primitive and its wrapper
 			if (ClassUtils.isAssignable(rawType, oRawType) && ClassUtils.isAssignable(oRawType, rawType)) {
 				return MatchingState.PARTIAL_MATCH;
 			}
-
-			ClassResolvableType oType = (ClassResolvableType) type;
-			if (rawType.isArray() && oType.getRawType().isArray()) {
-				Class<?> compType = rawType.getComponentType();
-				Class<?> oCompType = oType.getRawType().getComponentType();
-				return ResolvableType.forClass(compType).matches(ResolvableType.forClass(oCompType), matches);
-			}
+		} else if (type instanceof WildcardTypeResolvableType) {
+			// match class to wildcard, i.e. "String" to "? extends String"
+			WildcardTypeResolvableType oType = (WildcardTypeResolvableType) type;
+			MatchingState state = MatchingState.PARTIAL_MATCH;
+			state.merge(matches(oType.getUpperBounds(), matches));
+			state.merge(matches(oType.getLowerBounds(), matches));
+			return state;
 		}
 
 		return MatchingState.NO_MATCH;
+	}
+
+	private Optional<MatchingState> matches(ResolvableType[] bounds, MultiValuedMap<Class<?>, Class<?>> matches) {
+		return Arrays.stream(bounds)
+				.map(bound -> this.matches(bound, matches))
+				.max(Comparator.naturalOrder());
 	}
 
 	@Override
