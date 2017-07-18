@@ -64,11 +64,23 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 		} else if (type instanceof ClassResolvableType) {
 			// to match wildcard to class, i.e. "? extends String" to "String"
 			state = state.merge(MatchingState.PARTIAL_MATCH);
-			state = state.merge(matches(upperBounds, type, matches));
+			state = state.merge(matchesUpperBounds(type, matches));
 			state = state.merge(matches(lowerBounds, type, matches));
+		} else {
+			return MatchingState.NO_MATCH;
 		}
 
 		return state;
+	}
+
+	private Optional<MatchingState> matchesUpperBounds(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		if (upperBounds.length == 1) {
+			Class<?> rawClass = upperBounds[0].getRawClass();
+			if (rawClass == Object.class) {
+				return Optional.of(MatchingState.FULL_MATCH);
+			}
+		}
+		return matches(upperBounds, type, matches);
 	}
 
 	private static Optional<MatchingState> matches(ResolvableType[] bounds, ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {

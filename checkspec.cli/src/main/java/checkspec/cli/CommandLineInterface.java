@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -83,8 +82,6 @@ public class CommandLineInterface {
 	private static final String SYNTAX = "java -jar checkspec-1.0.0-standalone.jar";
 	private static final Options OPTIONS = createOptions(FORMAT, COLORED, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
 
-	private static final CommandLineParser PARSER = new DefaultParser();
-
 	public static void main(String[] args) {
 		try {
 			new CommandLineInterface().parse(args);
@@ -99,7 +96,7 @@ public class CommandLineInterface {
 	protected final SpecReport[] parse(String[] args) throws CommandLineException {
 		CommandLine commandLine;
 		try {
-			commandLine = PARSER.parse(OPTIONS, args);
+			commandLine = new DefaultParser().parse(OPTIONS, args);
 		} catch (ParseException e) {
 			throw wrapException(e);
 		}

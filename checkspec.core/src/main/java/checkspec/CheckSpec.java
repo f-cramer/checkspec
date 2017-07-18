@@ -40,17 +40,6 @@ public final class CheckSpec {
 	private static volatile CheckSpec LIBRARY_LESS_INSTANCE;
 	private static final Object LIBRARY_LESS_SYNC = new Object();
 
-	private static final ClassLoader BOOT_CLASS_LOADER;
-
-	static {
-		ClassLoader loader = ClassUtils.getBaseClassLoader();
-		while (loader.getParent() != null) {
-			loader = loader.getParent();
-		}
-
-		BOOT_CLASS_LOADER = loader;
-	}
-
 	public static CheckSpec getDefaultInstance() {
 		if (DEFAULT_INSTANCE == null) {
 			synchronized (DEFAULT_SYNC) {
@@ -210,7 +199,7 @@ public final class CheckSpec {
 
 	private boolean loadedFromValidLocation(@NonNull Class<?> clazz) {
 		Set<URL> urls = reflections.getConfiguration().getUrls();
-		URL location = getLocation(clazz);
+		URL location = ClassUtils.getLocation(clazz);
 
 		return urls.parallelStream().anyMatch(url -> isParent(location, url));
 	}
@@ -219,40 +208,10 @@ public final class CheckSpec {
 		return child.getPath().startsWith(parent.getPath());
 	}
 
-	private static URL getLocation(@NonNull Class<?> clazz) {
-		String canonicalName;
-		Class<?> c1 = clazz;
-
-		while (c1 != null && c1.getEnclosingClass() != null && c1.getCanonicalName() == null) {
-			c1 = c1.getEnclosingClass();
-		}
-
-		if (c1 == null) {
-			return null;
-		}
-
-		canonicalName = c1.getName().replace('.', '/') + ".class";
-
-		ClassLoader loader = clazz.getClassLoader();
-		if (loader == null) {
-			loader = c1.getClassLoader();
-		}
-
-		if (loader != null) {
-			URL resource = loader.getResource(canonicalName);
-			if (resource != null) {
-				return resource;
-			}
-		}
-
-		return BOOT_CLASS_LOADER.getResource(canonicalName);
-	}
-
 	private static MultiValuedMap<Class<?>, Class<?>> convert(List<SpecReport> reports) {
-
-		HashSetValuedHashMap<Class<?>, Class<?>> multimap = new HashSetValuedHashMap<>();
-		reports.forEach(report -> multimap.putAll(report.getSpec().getRawElement().getRawClass(), getImplementationClasses(report)));
-		return multimap;
+		HashSetValuedHashMap<Class<?>, Class<?>> map = new HashSetValuedHashMap<>();
+		reports.forEach(report -> map.putAll(report.getSpec().getRawElement().getRawClass(), getImplementationClasses(report)));
+		return map;
 	}
 
 	private static List<Class<?>> getImplementationClasses(SpecReport report) {
@@ -264,13 +223,13 @@ public final class CheckSpec {
 
 	private List<Class<?>> getPossibleClasses(Collection<ClassSpecification> specs, String basePackageName) {
 		List<URL> specLocations = specs.parallelStream()
-				.map(spec -> getLocation(spec.getRawElement().getRawClass()))
+				.map(spec -> ClassUtils.getLocation(spec.getRawElement().getRawClass()))
 				.collect(Collectors.toList());
 		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
 		return classNames.parallelStream()
 				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
-				.filter(StreamUtils.inPredicate(specLocations, CheckSpec::getLocation).negate())
+				.filter(StreamUtils.inPredicate(specLocations, ClassUtils::getLocation).negate())
 				.filter(this::loadedFromValidLocation)
 				.collect(Collectors.toList());
 	}

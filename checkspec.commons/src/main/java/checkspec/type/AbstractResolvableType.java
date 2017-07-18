@@ -14,7 +14,7 @@ abstract class AbstractResolvableType<RawType extends Type> implements Resolvabl
 
 	protected AbstractResolvableType(@NonNull final RawType rawType) {
 		this.rawType = rawType;
-		ResolvableTypeUtils.put(rawType, this);
+		ResolvableTypeCache.put(rawType, this);
 	}
 
 	@Override

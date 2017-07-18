@@ -45,12 +45,12 @@ public interface ResolvableType {
 	};
 
 	static ResolvableType forClass(@NonNull Class<?> clazz) {
-		return ResolvableTypeUtils.get(clazz)
+		return ResolvableTypeCache.get(clazz)
 				.orElseGet(() -> new ClassResolvableType(clazz));
 	}
 
 	static ResolvableType forType(@NonNull Type type) {
-		return ResolvableTypeUtils.get(type)
+		return ResolvableTypeCache.get(type)
 				.orElseGet(() -> {
 					if (type instanceof Class) {
 						return forClass((Class<?>) type);

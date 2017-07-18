@@ -16,7 +16,7 @@ public class ResolvableTypeTest {
 
 	private static final Class<?> stringClass = String.class;
 	private static final Class<?> listClass = List.class;
-	
+
 	private ResolvableType stringType;
 	private ResolvableType listType;
 	private MultiValuedMap<Class<?>, Class<?>> matches;
@@ -38,28 +38,56 @@ public class ResolvableTypeTest {
 	@Test
 	public void listStringShouldPartiallyMatchListExtendsString() throws NoSuchMethodException, SecurityException {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType listStringType = ResolvableType.forMethodReturnType(getStringList);
+		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
 		Method getExtendsStringList = ListSupplier.class.getDeclaredMethod("getExtendsStringList");
-		ResolvableType listExtendsStringType = ResolvableType.forMethodReturnType(getExtendsStringList);
+		ResolvableType extendsStringListType = ResolvableType.forMethodReturnType(getExtendsStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, listStringType.matches(listExtendsStringType, matches));
+		assertEquals(MatchingState.PARTIAL_MATCH, stringListType.matches(extendsStringListType, matches));
 	}
 
 	@Test
 	public void listStringShouldPartiallyMatchListSuperString() throws NoSuchMethodException, SecurityException {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType listStringType = ResolvableType.forMethodReturnType(getStringList);
+		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
 		Method getSuperStringList = ListSupplier.class.getDeclaredMethod("getSuperStringList");
-		ResolvableType listSuperStringType = ResolvableType.forMethodReturnType(getSuperStringList);
+		ResolvableType superStringListType = ResolvableType.forMethodReturnType(getSuperStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, listStringType.matches(listSuperStringType, matches));
+		assertEquals(MatchingState.PARTIAL_MATCH, stringListType.matches(superStringListType, matches));
+	}
+
+	@Test
+	public void listExtendsStringShouldPartiallyMatchListString() throws NoSuchMethodException, SecurityException {
+		Method getExtendsStringList = ListSupplier.class.getDeclaredMethod("getExtendsStringList");
+		ResolvableType extendsStringListType = ResolvableType.forMethodReturnType(getExtendsStringList);
+		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
+		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+
+		assertEquals(MatchingState.PARTIAL_MATCH, extendsStringListType.matches(stringListType, matches));
+	}
+
+	@Test
+	public void listSuperStringShouldPartiallyMatchListString() throws NoSuchMethodException, SecurityException {
+		Method getSuperStringList = ListSupplier.class.getDeclaredMethod("getSuperStringList");
+		ResolvableType superStringListType = ResolvableType.forMethodReturnType(getSuperStringList);
+		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
+		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+
+		assertEquals(MatchingState.PARTIAL_MATCH, superStringListType.matches(stringListType, matches));
+	}
+
+	@Test
+	public void listStringShouldMatchItself() throws NoSuchMethodException, SecurityException {
+		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
+		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+
+		assertEquals(MatchingState.FULL_MATCH, stringListType.matches(stringListType, matches));
 	}
 
 	@Test
 	public void stringShouldMatchItself() {
 		assertEquals(MatchingState.FULL_MATCH, stringType.matches(stringType, matches));
 	}
-	
+
 	@Test
 	public void stringShouldNotMatchList() {
 		assertEquals(MatchingState.NO_MATCH, stringType.matches(listType, matches));
@@ -211,12 +239,22 @@ public class ResolvableTypeTest {
 	public void typeVariableEArrayShouldBeMatchingTypeVariableGArrayIfDMatchesF() throws NoSuchMethodException, SecurityException {
 		Method eArray = D.class.getDeclaredMethod("array");
 		Method gArray = F.class.getDeclaredMethod("array");
-		
+
 		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
 		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
-		
+
 		matches.put(D.class, F.class);
 		assertEquals(MatchingState.FULL_MATCH, eArrayType.matches(gArrayType, matches));
+	}
+
+	@Test
+	public void typeVariableEArrayShouldNotMatchString() throws NoSuchMethodException, SecurityException {
+		Method eArray = D.class.getDeclaredMethod("array");
+
+		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
+
+		matches.put(D.class, F.class);
+		assertEquals(MatchingState.NO_MATCH, eArrayType.matches(stringType, matches));
 	}
 
 	@Test
@@ -234,10 +272,10 @@ public class ResolvableTypeTest {
 	public void listOfTypeVariableEArrayShouldBeMatchingListOfTypeVariableGArrayIfDMatchesF() throws NoSuchMethodException, SecurityException {
 		Method eList = D.class.getDeclaredMethod("listOfArray");
 		Method gList = F.class.getDeclaredMethod("listOfArray");
-		
+
 		ResolvableType eListType = ResolvableType.forMethodReturnType(eList);
 		ResolvableType gListType = ResolvableType.forMethodReturnType(gList);
-		
+
 		matches.put(D.class, F.class);
 		assertEquals(MatchingState.FULL_MATCH, eListType.matches(gListType, matches));
 	}
@@ -257,10 +295,10 @@ public class ResolvableTypeTest {
 	public void listOfAArrayShouldBeMatchingListOfBArrayIfDMatchesF() throws NoSuchMethodException, SecurityException {
 		Method aList = A.class.getDeclaredMethod("listOfArray");
 		Method bList = B.class.getDeclaredMethod("listOfArray");
-		
+
 		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
 		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
-		
+
 		matches.put(A.class, B.class);
 		assertEquals(MatchingState.FULL_MATCH, aListType.matches(bListType, matches));
 	}

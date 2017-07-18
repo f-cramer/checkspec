@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-abstract class ResolvableTypeUtils {
+abstract class ResolvableTypeCache {
 
 	private static final Map<Type, ResolvableType> CACHE = new HashMap<>();
 
@@ -16,6 +16,4 @@ abstract class ResolvableTypeUtils {
 	public static final Optional<ResolvableType> get(Type type) {
 		return Optional.ofNullable(CACHE.get(type));
 	}
-
-	
 }

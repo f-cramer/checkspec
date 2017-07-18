@@ -1,6 +1,7 @@
 package checkspec.util;
 
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.function.Function;
@@ -27,6 +28,17 @@ public final class ClassUtils {
 	private static ClassLoader BASE_CLASS_LOADER;
 	private static volatile ClassLoader SYSTEM_CLASS_LOADER;
 	private static final Object SYSTEM_CLASS_LOAD_SYNC = new Object();
+
+	private static final ClassLoader BOOT_CLASS_LOADER;
+
+	static {
+		ClassLoader loader = ClassUtils.getBaseClassLoader();
+		while (loader.getParent() != null) {
+			loader = loader.getParent();
+		}
+
+		BOOT_CLASS_LOADER = loader;
+	}
 
 	/**
 	 * Returns a string representation of the given {@link ResolvableType}. This
@@ -436,5 +448,34 @@ public final class ClassUtils {
 		}
 
 		return false;
+	}
+
+	public static URL getLocation(@NonNull Class<?> clazz) {
+		String canonicalName;
+		Class<?> c1 = clazz;
+
+		while (c1 != null && c1.getEnclosingClass() != null && c1.getCanonicalName() == null) {
+			c1 = c1.getEnclosingClass();
+		}
+
+		if (c1 == null) {
+			return null;
+		}
+
+		canonicalName = c1.getName().replace('.', '/') + ".class";
+
+		ClassLoader loader = clazz.getClassLoader();
+		if (loader == null) {
+			loader = c1.getClassLoader();
+		}
+
+		if (loader != null) {
+			URL resource = loader.getResource(canonicalName);
+			if (resource != null) {
+				return resource;
+			}
+		}
+
+		return BOOT_CLASS_LOADER.getResource(canonicalName);
 	}
 }
