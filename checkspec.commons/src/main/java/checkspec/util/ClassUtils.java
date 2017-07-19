@@ -9,6 +9,8 @@ import checkspec.type.ResolvableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+import static checkspec.util.SecurityUtils.*;
+
 /**
  * Miscellaneous methods that are working on instances of {@link Class} and / or
  * {@link ResolvableType}. Mainly for internal use within the framework itself.
@@ -39,15 +41,14 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a string representation of the given {@link ResolvableType}. This
-	 * looks exactly like the type header you would write to define the given
-	 * type
+	 * looks exactly like the type header you would write to define the given type
 	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
 	 * "public final class String" for an instance of {@link ResolvableType} that
 	 * was created from {@code java.lang.String}.
 	 * <p>
 	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link Modifier#toString(int)}, the class name is given in the form that is
-	 * given by {@link Class#getName()}.
+	 * {@link java.lang.reflect.Modifier#toString(int)}, the class name is given in
+	 * the form that is given by {@link Class#getName()}.
 	 *
 	 * @param type
 	 *            the non-null type
@@ -69,8 +70,8 @@ public final class ClassUtils {
 	 * "public final class String" for {@code java.lang.String}.
 	 * <p>
 	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link Modifier#toString(int)}, the class name is given in the form that is
-	 * given by {@link Class#getName()}.
+	 * {@link java.lang.reflect.Modifier#toString(int)}, the class name is given in
+	 * the form that is given by {@link Class#getName()}.
 	 *
 	 * @param type
 	 *            the non-null type
@@ -392,6 +393,17 @@ public final class ClassUtils {
 		return org.apache.commons.lang3.ClassUtils.isAssignable(type, superType);
 	}
 
+	/**
+	 * Returns the base class loader for this framework. By default this is the
+	 * system class loader that is loaded via
+	 * {@link ClassLoader#getSystemClassLoader()}.
+	 * 
+	 * The base class loader can be changed using the
+	 * {@link #setBaseClassLoader(ClassLoader)} method.
+	 * 
+	 * @return the base class loader
+	 * @see #setBaseClassLoader(ClassLoader)
+	 */
 	public static ClassLoader getBaseClassLoader() {
 		if (BASE_CLASS_LOADER == null) {
 			return getSystemClassLoader();
@@ -400,15 +412,29 @@ public final class ClassUtils {
 		}
 	}
 
+	/**
+	 * Sets the base class loader for this framework. If {@code classLoader} is
+	 * {@code null} the base class loader is reset to the system class loader.
+	 * 
+	 * @param classLoader
+	 *            the base class loader
+	 * @see #getBaseClassLoader()
+	 */
 	public static void setBaseClassLoader(ClassLoader classLoader) {
 		BASE_CLASS_LOADER = classLoader;
 	}
 
+	/**
+	 * Utility method for lazy initialization of the {@link #SYSTEM_CLASS_LOADER}
+	 * constant.
+	 * 
+	 * @return the system class loader
+	 */
 	private static ClassLoader getSystemClassLoader() {
 		if (SYSTEM_CLASS_LOADER == null) {
 			synchronized (SYSTEM_CLASS_LOAD_SYNC) {
 				if (SYSTEM_CLASS_LOADER == null) {
-					SYSTEM_CLASS_LOADER = SecurityUtils.doPrivileged(() -> ClassLoader.getSystemClassLoader());
+					SYSTEM_CLASS_LOADER = doPrivileged(() -> ClassLoader.getSystemClassLoader());
 				}
 			}
 		}
@@ -425,14 +451,14 @@ public final class ClassUtils {
 	 *            the second type
 	 * @return whether or not the given types refer to the same class or the same
 	 * @throws NullPointerException
-	 *             if {@code t1} or {@code t2} are {@code null}
-	 *         interface
+	 *             if {@code t1} or {@code t2} are {@code null} interface
 	 */
 	public static boolean equal(Class<?> t1, Class<?> t2) {
 		if (t1 == null || t2 == null) {
 			return t1 == t2;
 		}
 
+		// should be false if same class is loaded by two different class loaders
 		if (t1 == t2) {
 			return true;
 		}
@@ -444,32 +470,30 @@ public final class ClassUtils {
 		return false;
 	}
 
+	/**
+	 * Returns the location of the class file the given class was loaded from.
+	 * 
+	 * @param clazz
+	 *            the class
+	 * @return the location of the class file
+	 * @throws NullPointerException
+	 *             if {@code clazz} is {@code null}
+	 */
 	public static URL getLocation(@NonNull Class<?> clazz) {
-		String canonicalName;
-		Class<?> c1 = clazz;
-
-		while (c1 != null && c1.getEnclosingClass() != null && c1.getCanonicalName() == null) {
-			c1 = c1.getEnclosingClass();
-		}
-
-		if (c1 == null) {
-			return null;
-		}
-
-		canonicalName = c1.getName().replace('.', '/') + ".class";
+		String name = clazz.getName().replace('.', '/') + ".class";
 
 		ClassLoader loader = clazz.getClassLoader();
 		if (loader == null) {
-			loader = c1.getClassLoader();
+			loader = clazz.getClassLoader();
 		}
 
 		if (loader != null) {
-			URL resource = loader.getResource(canonicalName);
+			URL resource = loader.getResource(name);
 			if (resource != null) {
 				return resource;
 			}
 		}
 
-		return BOOT_CLASS_LOADER.getResource(canonicalName);
+		return BOOT_CLASS_LOADER.getResource(name);
 	}
 }

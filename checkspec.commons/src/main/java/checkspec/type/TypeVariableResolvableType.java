@@ -58,7 +58,7 @@ class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>>
 		List<Class<?>> rawClasses = Arrays.stream(bounds)
 				.map(ResolvableType::getRawClass)
 				.collect(Collectors.toList());
-		return TypeUtils.lowestCommonSuperclass(rawClasses);
+		return TypeUtils.getLowestCommonSuperType(rawClasses);
 	}
 
 	@Override

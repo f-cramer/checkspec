@@ -93,7 +93,7 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 		List<Class<?>> rawClasses = Arrays.stream(upperBounds)
 				.map(ResolvableType::getRawClass)
 				.collect(Collectors.toList());
-		return TypeUtils.lowestCommonSuperclass(rawClasses);
+		return TypeUtils.getLowestCommonSuperType(rawClasses);
 	}
 
 	@Override

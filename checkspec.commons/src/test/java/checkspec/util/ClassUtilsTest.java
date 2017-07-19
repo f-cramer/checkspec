@@ -7,6 +7,8 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -248,29 +250,41 @@ public class ClassUtilsTest {
 		getVisibility(null);
 	}
 
-	public void isSuperClassTest() {
+	@Test
+	public void isSuperTypeTest() {
 		boolean result = isSuperType(String.class, Object.class);
 		assertThat(result, is(true));
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void isSuperClassNullTest() {
+	public void isSuperTypeNullTest() {
 		isSuperType(null, Object.class);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void isSuperClassNullTest2() {
+	public void isSuperTypeNullTest2() {
 		isSuperType(String.class, null);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void isSuperClassNullTest3() {
+	public void isSuperTypeNullTest3() {
 		isSuperType(null, null);
 	}
 
 	@Test
-	public void getSystemClassLoaderTest() {
+	public void getBaseClassLoaderTest() {
 		ClassLoader result = getBaseClassLoader();
+		assertThat(result, is(SYSTEM_CLASS_LOADER));
+
+		URLClassLoader cl = SecurityUtils.doPrivileged(() -> new URLClassLoader(new URL[0]));
+		setBaseClassLoader(cl);
+
+		result = getBaseClassLoader();
+		assertThat(result, is(cl));
+
+		setBaseClassLoader(null);
+
+		result = getBaseClassLoader();
 		assertThat(result, is(SYSTEM_CLASS_LOADER));
 	}
 
@@ -286,6 +300,7 @@ public class ClassUtilsTest {
 		assertThat(result, is(false));
 	}
 
+	@Test
 	public void equalClassNullTest() {
 		boolean result = equal(null, Integer.TYPE);
 		assertThat(result, is(false));
@@ -295,6 +310,24 @@ public class ClassUtilsTest {
 
 		result = equal((Class<?>) null, null);
 		assertThat(result, is(true));
+	}
+
+	@Test
+	public void getLocationTest() {
+		Class<?> clazz = CLASS;
+		URL result = getLocation(clazz);
+		String name = clazz.getName().replace('.', '/') + ".class";
+		assertThat(result, is(clazz.getClassLoader().getResource(name)));
+
+		clazz = TestClassWithoutDefaultConstructor.class;
+		name = clazz.getName().replace('.', '/') + ".class";
+		result = getLocation(TestClassWithoutDefaultConstructor.class);
+		assertThat(result, is(clazz.getClassLoader().getResource(name)));
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void getLocationNullTest() {
+		getLocation(null);
 	}
 
 	@Value

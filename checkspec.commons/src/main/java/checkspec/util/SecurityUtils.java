@@ -6,7 +6,9 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class SecurityUtils {
 
 	public static <T> T doPrivileged(@NonNull PrivilegedAction<T> action) {

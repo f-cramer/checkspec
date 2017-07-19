@@ -4,6 +4,7 @@ import static checkspec.util.StreamUtils.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -67,6 +68,32 @@ public class StreamUtilsTest {
 	@Test(expected = NullPointerException.class)
 	public void equalsPredicateWitConverterNullTest3() {
 		equalsPredicate(null, null);
+	}
+
+	@Test
+	public void inPredicateTest() {
+		List<Integer> collection = Arrays.asList(1, 2, 3);
+		Predicate<Integer> result = inPredicate(collection, Function.identity());
+		boolean appliedResult = result.test(1);
+		assertThat(appliedResult, is(true));
+
+		appliedResult = result.test(4);
+		assertThat(appliedResult, is(false));
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void inPredicateNullTest() {
+		inPredicate(null, Function.identity());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void inPredicateNullTest2() {
+		inPredicate(Arrays.asList(1), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void inPredicateNullTest3() {
+		inPredicate(null, null);
 	}
 
 	@Test

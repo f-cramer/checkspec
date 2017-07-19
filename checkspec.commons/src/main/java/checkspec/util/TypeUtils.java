@@ -12,41 +12,44 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class TypeUtils {
 
-	public static Class<?> lowestCommonSuperclass(Iterable<Class<?>> classes) {
-		List<Class<?>> lowestSupers = lowestCommonSuperclasses(classes);
+	public static Class<?> getLowestCommonSuperType(@NonNull Iterable<Class<?>> classes) {
+		List<Class<?>> lowestSupers = getLowestCommonSuperTypes(classes);
 		return lowestSupers.isEmpty() ? null : lowestSupers.get(0);
 	}
 
-	public static List<Class<?>> lowestCommonSuperclasses(Iterable<Class<?>> classes) {
-		Collection<Class<?>> commonSupers = commonSuperclasses(classes);
-		return lowestClasses(commonSupers);
+	public static List<Class<?>> getLowestCommonSuperTypes(@NonNull Iterable<Class<?>> classes) {
+		Collection<Class<?>> commonSupers = getCommonSuperTypes(classes);
+		return getLowestTypes(commonSupers);
 	}
 
-	private static List<Class<?>> lowestClasses(Collection<Class<?>> classes) {
-		final LinkedList<Class<?>> source = new LinkedList<>(classes);
-		final ArrayList<Class<?>> result = new ArrayList<>(classes.size());
-		while (!source.isEmpty()) {
-			Iterator<Class<?>> srcIt = source.iterator();
-			Class<?> current = srcIt.next();
-			srcIt.remove();
-			while (srcIt.hasNext()) {
-				Class<?> next = srcIt.next();
-				if (next.isAssignableFrom(current)) {
-					srcIt.remove();
-				} else if (current.isAssignableFrom(next)) {
-					current = next;
-					srcIt.remove();
+	private static Set<Class<?>> getCommonSuperTypes(Iterable<Class<?>> classes) {
+		Iterator<Class<?>> iterator = classes.iterator();
+		if (!iterator.hasNext()) {
+			return Collections.emptySet();
+		}
+		// begin with set from first hierarchy
+		Set<Class<?>> result = getSuperTypes(iterator.next());
+		// remove non-superclasses of remaining
+		while (iterator.hasNext()) {
+			Class<?> current = iterator.next();
+			Iterator<Class<?>> resultIt = result.iterator();
+			while (resultIt.hasNext()) {
+				Class<?> sup = resultIt.next();
+				if (!sup.isAssignableFrom(current)) {
+					resultIt.remove();
 				}
 			}
-			result.add(current);
 		}
-		result.trimToSize();
 		return result;
 	}
 
-	private static Set<Class<?>> getSuperclasses(Class<?> clazz) {
+	private static Set<Class<?>> getSuperTypes(Class<?> clazz) {
 		final Set<Class<?>> result = new LinkedHashSet<>();
 		final Queue<Class<?>> queue = new ArrayDeque<>();
 		queue.add(clazz);
@@ -66,24 +69,25 @@ public class TypeUtils {
 		return result;
 	}
 
-	private static Set<Class<?>> commonSuperclasses(Iterable<Class<?>> classes) {
-		Iterator<Class<?>> iterator = classes.iterator();
-		if (!iterator.hasNext()) {
-			return Collections.emptySet();
-		}
-		// begin with set from first hierarchy
-		Set<Class<?>> result = getSuperclasses(iterator.next());
-		// remove non-superclasses of remaining
-		while (iterator.hasNext()) {
-			Class<?> current = iterator.next();
-			Iterator<Class<?>> resultIt = result.iterator();
-			while (resultIt.hasNext()) {
-				Class<?> sup = resultIt.next();
-				if (!sup.isAssignableFrom(current)) {
-					resultIt.remove();
+	private static List<Class<?>> getLowestTypes(Collection<Class<?>> classes) {
+		final LinkedList<Class<?>> source = new LinkedList<>(classes);
+		final ArrayList<Class<?>> result = new ArrayList<>(classes.size());
+		while (!source.isEmpty()) {
+			Iterator<Class<?>> srcIt = source.iterator();
+			Class<?> current = srcIt.next();
+			srcIt.remove();
+			while (srcIt.hasNext()) {
+				Class<?> next = srcIt.next();
+				if (next.isAssignableFrom(current)) {
+					srcIt.remove();
+				} else if (current.isAssignableFrom(next)) {
+					current = next;
+					srcIt.remove();
 				}
 			}
+			result.add(current);
 		}
+		result.trimToSize();
 		return result;
 	}
 }
