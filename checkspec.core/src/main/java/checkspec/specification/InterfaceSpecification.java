@@ -32,7 +32,7 @@ public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecific
 	public InterfaceSpecification(ResolvableType interf) {
 		this.name = ClassUtils.getName(interf);
 		rawElement = interf;
-		
+
 		performExtensions(EXTENSIONS, this, rawElement);
 	}
 

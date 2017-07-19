@@ -62,7 +62,7 @@ final class StaticChecker {
 				@Override
 				public Object invokeImpl(Object proxy, Method method, Object[] args) throws Throwable {
 					MethodReport actualMethod = methodReports.get(method);
-					
+
 					if (actualMethod == null || actualMethod.getImplementation() == null) {
 						String methodName = method.getName();
 						String parameterList = MethodUtils.getParameterList(method);

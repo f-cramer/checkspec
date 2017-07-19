@@ -70,7 +70,7 @@ class ParameterizedTypeResolvableType extends AbstractResolvableType<Parameteriz
 				.collect(Collectors.joining(", "));
 
 		if (arguments.isEmpty()) {
-			return name; 
+			return name;
 		} else {
 			return String.format("%s<%s>", name, arguments);
 		}

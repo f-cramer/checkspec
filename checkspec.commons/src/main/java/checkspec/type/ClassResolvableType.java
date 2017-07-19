@@ -85,7 +85,7 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 	@Override
 	public String toString() {
 		String name = rawType.getTypeName();
-		
+
 		if (typeParameters == null || typeParameters.length == 0) {
 			return name;
 		} else {

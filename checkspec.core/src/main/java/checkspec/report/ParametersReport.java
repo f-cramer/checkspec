@@ -10,7 +10,7 @@ import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-@Getter 
+@Getter
 @EqualsAndHashCode(callSuper = true)
 public class ParametersReport extends Report<List<Parameter>, ParametersSpecification> {
 

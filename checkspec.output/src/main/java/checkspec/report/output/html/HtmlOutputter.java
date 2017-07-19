@@ -50,7 +50,7 @@ public class HtmlOutputter implements Outputter {
 			try (Writer writer = Files.newBufferedWriter(index, StandardOpenOption.CREATE)) {
 				createHtmlFile(title, rows, writer);
 				copyElements(directory);
-			}			
+			}
 		} catch (IOException e) {
 			throw new OutputException(e);
 		}

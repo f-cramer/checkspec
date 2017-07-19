@@ -6,7 +6,6 @@ import checkspec.type.ResolvableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
-
 @UtilityClass
 public class ModifierUtils {
 

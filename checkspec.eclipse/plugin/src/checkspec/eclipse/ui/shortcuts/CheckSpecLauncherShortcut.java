@@ -156,7 +156,7 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		ILaunchConfigurationType type = temporary.getType();
 		ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(type);
 		String[] attributeToCompare = getAttributeNamesToCompare();
-	
+
 		List<ILaunchConfiguration> candidateConfigs = new ArrayList<>(configs.length);
 		for (ILaunchConfiguration config : configs) {
 			if (hasSameAttributes(config, temporary, attributeToCompare)) {

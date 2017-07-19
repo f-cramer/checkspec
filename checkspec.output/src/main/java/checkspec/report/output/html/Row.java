@@ -37,7 +37,7 @@ final class Row {
 
 	public String toString() {
 		StringJoiner spans = new StringJoiner("");
-		
+
 		String indentation = getIndentation();
 		if (mark != null && !indentation.isEmpty()) {
 			spans.add(String.format(SPAN, indentation));

@@ -130,17 +130,17 @@ public final class CheckSpec {
 	}
 
 	/**
-	 * Creates a {@link SpecReport} for the given specification {@code spec}
-	 * that is populated with a {@link ClassReport} for any class that in any
-	 * way matches {@code spec}.
+	 * Creates a {@link SpecReport} for the given specification {@code spec} that is
+	 * populated with a {@link ClassReport} for any class that in any way matches
+	 * {@code spec}.
 	 * <p>
 	 * Behaves the same as a call to {@code checkSpec(spec, "")}.
 	 *
 	 * @param specs
-	 *            the non-null specification the return {@code SpecReport}
-	 *            should be based on
-	 * @return a {@code SpecReport} that is populated with a {@code ClassReport}
-	 *         for any class that in any way matches {@code spec}
+	 *            the non-null specification the return {@code SpecReport} should be
+	 *            based on
+	 * @return a {@code SpecReport} that is populated with a {@code ClassReport} for
+	 *         any class that in any way matches {@code spec}
 	 */
 	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs) {
 		return checkSpec(specs, "");
@@ -195,7 +195,8 @@ public final class CheckSpec {
 		return report;
 	}
 
-	private static <ReturnType> void performAnalysis(ClassAnalysis<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> reports, ClassReport report) {
+	private static <ReturnType> void performAnalysis(ClassAnalysis<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> reports,
+			ClassReport report) {
 		ReturnType returnValue = analysis.analyze(clazz, spec, reports);
 		analysis.add(report, returnValue);
 	}

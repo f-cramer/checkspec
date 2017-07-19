@@ -68,7 +68,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 				.map(member -> Pair.of(member, spec));
 	}
 
-	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec); 
+	protected abstract SpecificationType[] getMemberSpecifications(ClassSpecification spec);
 
 	protected abstract MemberType[] getMembers(Class<?> clazz);
 
