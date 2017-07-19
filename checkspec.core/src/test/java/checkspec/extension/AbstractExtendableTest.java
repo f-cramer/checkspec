@@ -1,7 +1,6 @@
 package checkspec.extension;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,11 +27,10 @@ public class AbstractExtendableTest {
 	@Test
 	public void addExtensionTest() {
 		Optional<String> result = extendable.addExtension(extension);
-		assertThat(result.isPresent(), is(false));
+		assertThat(result.isPresent()).isFalse();
 
 		result = extendable.addExtension("newExtension");
-		assertThat(result.isPresent(), is(true));
-		assertThat(result.get(), is(sameInstance(extension)));
+		assertThat(result).isPresent().hasValueSatisfying(s -> assertThat(s).isSameAs(extension));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -44,8 +42,7 @@ public class AbstractExtendableTest {
 	public void getExtensionTest() {
 		extendable.addExtension(extension);
 		Optional<String> result = extendable.getExtension(String.class);
-		assertThat(result.isPresent(), is(true));
-		assertThat(result.get(), is(sameInstance(extension)));
+		assertThat(result).isPresent().hasValueSatisfying(s -> assertThat(s).isSameAs(extension));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -62,6 +59,6 @@ public class AbstractExtendableTest {
 		ClassSpecificationExtension[] extensions = { extension, extension, anotherExtension };
 		extendable.performExtensions(extensions, null, null);
 
-		assertThat(counter.get(), is(2));
+		assertThat(counter.get()).isEqualTo(2);
 	}
 }

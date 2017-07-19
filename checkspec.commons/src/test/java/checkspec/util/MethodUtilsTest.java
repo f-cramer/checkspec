@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.MethodUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
 
@@ -26,7 +25,7 @@ public class MethodUtilsTest {
 	@Test
 	public void toStringTest() {
 		String result = MethodUtils.toString(METHOD);
-		assertThat(result, is("public static java.lang.String toString(java.lang.reflect.Method)"));
+		assertThat(result).isEqualTo("public static java.lang.String toString(java.lang.reflect.Method)");
 
 	}
 
@@ -38,7 +37,7 @@ public class MethodUtilsTest {
 	@Test
 	public void getVisibilityTest() {
 		Visibility result = getVisibility(METHOD);
-		assertThat(result, is(Visibility.PUBLIC));
+		assertThat(result).isSameAs(Visibility.PUBLIC);
 
 	}
 
@@ -50,7 +49,7 @@ public class MethodUtilsTest {
 	@Test
 	public void getReturnTypeNameTest() {
 		String result = getReturnTypeName(METHOD);
-		assertThat(result, is("java.lang.String"));
+		assertThat(result).isEqualTo("java.lang.String");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -61,7 +60,7 @@ public class MethodUtilsTest {
 	@Test
 	public void getParameterListTest() {
 		String result = getParameterList(METHOD);
-		assertThat(result, is("java.lang.reflect.Method"));
+		assertThat(result).isEqualTo("java.lang.reflect.Method");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -72,7 +71,7 @@ public class MethodUtilsTest {
 	@Test
 	public void isAbstractTest() {
 		boolean result = isAbstract(METHOD);
-		assertThat(result, is(false));
+		assertThat(result).isFalse();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -89,22 +88,22 @@ public class MethodUtilsTest {
 		ResolvableType[] twoParameterList = { ResolvableType.forClass(Integer.class), ResolvableType.forClass(String.class) };
 
 		int result = calculateParameterDistance(emptyParameterList, oneParameterList, null);
-		assertThat(result, is(20));
+		assertThat(result).isEqualTo(20);
 
 		result = calculateParameterDistance(oneParameterList, emptyParameterList, null);
-		assertThat(result, is(20));
+		assertThat(result).isEqualTo(20);
 
 		result = calculateParameterDistance(oneParameterList, oneParameterList, null);
-		assertThat(result, is(0));
+		assertThat(result).isEqualTo(0);
 
 		result = calculateParameterDistance(oneParameterList, anotherOneParameterList, null);
-		assertThat(result, is(5));
+		assertThat(result).isEqualTo(5);
 
 		result = calculateParameterDistance(oneParameterList, yetAnotherOneParameterList, null);
-		assertThat(result, is(10));
+		assertThat(result).isEqualTo(10);
 
 		result = calculateParameterDistance(oneParameterList, twoParameterList, null);
-		assertThat(result, is(25));
+		assertThat(result).isEqualTo(25);
 	}
 
 	@Test(expected = NullPointerException.class)

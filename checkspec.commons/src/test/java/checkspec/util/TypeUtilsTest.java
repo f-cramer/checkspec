@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.TypeUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -17,27 +16,27 @@ public class TypeUtilsTest {
 	public void getLowestCommonSuperTypeTest() {
 		List<Class<?>> classes = Arrays.asList(String.class, Integer.class);
 		Class<?> result = getLowestCommonSuperType(classes);
-		assertThat(result, is((Object) Serializable.class));
+		assertThat(result).isSameAs(Serializable.class);
 
 		classes = Arrays.asList(Serializable.class, String.class);
 		result = getLowestCommonSuperType(classes);
-		assertThat(result, is((Object) Serializable.class));
+		assertThat(result).isSameAs(Serializable.class);
 
 		classes = Arrays.asList(String.class, String.class);
 		result = getLowestCommonSuperType(classes);
-		assertThat(result, is((Object) String.class));
+		assertThat(result).isSameAs(String.class);
 
 		classes = Arrays.asList(Integer.class, Long.class);
 		result = getLowestCommonSuperType(classes);
-		assertThat(result, is((Object) Number.class));
+		assertThat(result).isSameAs(Number.class);
 
 		classes = Arrays.asList(int.class, Integer.class);
 		result = getLowestCommonSuperType(classes);
-		assertThat(result, is(nullValue()));
+		assertThat(result).isNull();
 
 		classes = Collections.emptyList();
 		result = getLowestCommonSuperType(classes);
-		assertThat(result, is(nullValue()));
+		assertThat(result).isNull();
 	}
 
 	@Test(expected = NullPointerException.class)

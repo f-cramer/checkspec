@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.SecurityUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.net.MalformedURLException;
 
@@ -13,7 +12,7 @@ public class SecurityUtilsTest {
 	@Test
 	public void doPrivilegedTest() {
 		String result = doPrivileged(() -> "");
-		assertThat(result, isEmptyString());
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -24,7 +23,7 @@ public class SecurityUtilsTest {
 	@Test
 	public void doPrivilegedWithExceptionTest() throws Exception {
 		String result = doPrivilegedWithException(() -> "");
-		assertThat(result, isEmptyString());
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = MalformedURLException.class)

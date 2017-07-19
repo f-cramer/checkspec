@@ -1,7 +1,6 @@
 package checkspec.report;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,20 +53,19 @@ public class ReportTest {
 	@Test
 	public void getSpecTest() {
 		ClassSpecification result = report.getSpec();
-		assertThat(result, is(specification));
+		assertThat(result).isEqualTo(specification);
 	}
 
 	@Test
 	public void getImplementationTest() {
 		ResolvableType result = report.getImplementation();
-		assertThat(result, is(type));
+		assertThat(result).isEqualTo(type);
 	}
 
 	@Test
 	public void getProblemsTest() {
 		List<ReportProblem> result = report.getProblems();
-		assertThat(result, hasSize(2));
-		assertThat(result, hasItems(warning, error));
+		assertThat(result).hasSize(2).containsExactly(warning, error);
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
@@ -79,7 +77,7 @@ public class ReportTest {
 	@Test
 	public void getSubReportsTest() {
 		List<Report<?, ?>> result = report.getSubReports();
-		assertThat(result, is(empty()));
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
@@ -96,10 +94,10 @@ public class ReportTest {
 	@Test
 	public void addProblemsTest() {
 		report.addProblems(Arrays.asList(warning, error));
-		assertThat(report.getProblems(), hasSize(4));
+		assertThat(report.getProblems()).hasSize(4);
 
 		report.addProblems(Arrays.asList(warning, null));
-		assertThat(report.getProblems(), hasSize(5));
+		assertThat(report.getProblems()).hasSize(5);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -110,62 +108,62 @@ public class ReportTest {
 	@Test
 	public void getTypeTest() {
 		ReportType result = report.getType();
-		assertThat(result, is(ReportType.ERROR));
+		assertThat(result).isEqualTo(ReportType.ERROR);
 
 		result = reportWithoutProblems.getType();
-		assertThat(result, is(ReportType.SUCCESS));
+		assertThat(result).isEqualTo(ReportType.SUCCESS);
 
 		reportWithoutProblems.addProblem(warning);
 		result = reportWithoutProblems.getType();
-		assertThat(result, is(ReportType.WARNING));
+		assertThat(result).isEqualTo(ReportType.WARNING);
 
 		result = reportWithoutImplementation.getType();
-		assertThat(result, is(ReportType.ERROR));
+		assertThat(result).isEqualTo(ReportType.ERROR);
 	}
 
 	@Test
 	public void isNameFittingTest() {
 		boolean result = report.isNameFitting();
-		assertThat(result, is(true));
+		assertThat(result).isEqualTo(true);
 
 		result = reportWithoutImplementation.isNameFitting();
-		assertThat(result, is(false));
+		assertThat(result).isEqualTo(false);
 	}
 
 	@Test
 	public void getScoreTest() {
 		int result = report.getScore();
-		assertThat(result, is(11));
+		assertThat(result).isEqualTo(11);
 
 		result = reportWithoutImplementation.getScore();
-		assertThat(result, is(100));
+		assertThat(result).isEqualTo(100);
 
 		result = reportWithoutProblems.getScore();
-		assertThat(result, is(0));
+		assertThat(result).isEqualTo(0);
 	}
 
 	@Test
 	public void toStringTest() {
 		String result = report.toString();
-		assertThat(result, is("Report [11]"));
+		assertThat(result).isEqualTo("Report [11]");
 
 		result = reportWithoutImplementation.toString();
-		assertThat(result, is("null [100]"));
+		assertThat(result).isEqualTo("null [100]");
 
 		result = reportWithoutProblems.toString();
-		assertThat(result, is("null"));
+		assertThat(result).isEqualTo("null");
 	}
 
 	@Test
 	public void compareToTest() {
 		int result = report.compareTo(null);
-		assertThat(result, is(1));
+		assertThat(result).isEqualTo(1);
 
 		result = report.compareTo(reportWithoutProblems);
-		assertThat(result, is(1));
+		assertThat(result).isEqualTo(1);
 
 		result = report.compareTo(report);
-		assertThat(result, is(0));
+		assertThat(result).isEqualTo(0);
 	}
 
 	private static class TestReport extends Report<ResolvableType, ClassSpecification> {

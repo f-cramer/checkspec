@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.MemberUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
@@ -18,15 +17,15 @@ public class MemberUtilsTest {
 	@Test
 	public void getVisibilityTest() {
 		Visibility result = getVisibility(PUBLIC);
-		assertThat(result, is(Visibility.PUBLIC));
+		assertThat(result).isSameAs(Visibility.PUBLIC);
 
 		result = getVisibility(PRIVATE);
-		assertThat(result, is(Visibility.PRIVATE));
+		assertThat(result).isSameAs(Visibility.PRIVATE);
 
 		result = getVisibility(PROTECTED);
-		assertThat(result, is(Visibility.PROTECTED));
+		assertThat(result).isSameAs(Visibility.PROTECTED);
 
 		result = getVisibility(PACKAGE);
-		assertThat(result, is(Visibility.PACKAGE));
+		assertThat(result).isSameAs(Visibility.PACKAGE);
 	}
 }

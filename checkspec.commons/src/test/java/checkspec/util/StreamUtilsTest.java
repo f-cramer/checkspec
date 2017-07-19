@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.StreamUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,10 +18,10 @@ public class StreamUtilsTest {
 	public void equalsPredicateTest() {
 		Predicate<String> result = equalsPredicate("");
 		boolean appliedResult = result.test("nonEmptyString");
-		assertThat(appliedResult, is(false));
+		assertThat(appliedResult).isFalse();
 
 		appliedResult = result.test("");
-		assertThat(appliedResult, is(true));
+		assertThat(appliedResult).isTrue();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -34,10 +33,10 @@ public class StreamUtilsTest {
 	public void equalsPredicateWithConverterTest() {
 		Predicate<String> result = equalsPredicate("", Function.identity());
 		boolean appliedResult = result.test("nonEmptyString");
-		assertThat(appliedResult, is(false));
+		assertThat(appliedResult).isFalse();
 
 		appliedResult = result.test("");
-		assertThat(appliedResult, is(true));
+		assertThat(appliedResult).isTrue();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -75,10 +74,10 @@ public class StreamUtilsTest {
 		List<Integer> collection = Arrays.asList(1, 2, 3);
 		Predicate<Integer> result = inPredicate(collection, Function.identity());
 		boolean appliedResult = result.test(1);
-		assertThat(appliedResult, is(true));
+		assertThat(appliedResult).isTrue();
 
 		appliedResult = result.test(4);
-		assertThat(appliedResult, is(false));
+		assertThat(appliedResult).isFalse();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -100,10 +99,10 @@ public class StreamUtilsTest {
 	public void isNullPredicateTest() {
 		Predicate<String> result = isNotNullPredicate(Function.identity());
 		boolean appliedResult = result.test("nonEmptyString");
-		assertThat(appliedResult, is(true));
+		assertThat(appliedResult).isTrue();
 
 		appliedResult = result.test(null);
-		assertThat(appliedResult, is(false));
+		assertThat(appliedResult).isFalse();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -115,11 +114,10 @@ public class StreamUtilsTest {
 	public void filterClassTest() {
 		Function<Object, Stream<String>> result = filterClass(String.class);
 		List<String> appliedResult = result.apply("").collect(Collectors.toList());
-		assertThat(appliedResult, hasSize(1));
-		assertThat(appliedResult, hasItem(""));
+		assertThat(appliedResult).hasSize(1).hasOnlyOneElementSatisfying(s -> assertThat(s).isEmpty());
 
 		appliedResult = result.apply(new Object()).collect(Collectors.toList());
-		assertThat(appliedResult, is(empty()));
+		assertThat(appliedResult).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)

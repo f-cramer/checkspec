@@ -1,7 +1,6 @@
 package checkspec.util;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
@@ -12,19 +11,19 @@ public class ModifierUtilsTest {
 	@Test
 	public void toStringResolvableTypeTest() {
 		String result = ModifierUtils.toString(ResolvableType.forClass(ModifierUtilsTest.class));
-		assertThat(result, is("public"));
+		assertThat(result).isEqualTo("public");
 
 		result = ModifierUtils.toString(ResolvableType.forClass(PublicStaticFinalClass.class));
-		assertThat(result, is("private static final"));
+		assertThat(result).isEqualTo("private static final");
 
 		result = ModifierUtils.toString(ResolvableType.forClass(ProtectedStaticClass.class));
-		assertThat(result, is("protected abstract static"));
+		assertThat(result).isEqualTo("protected abstract static");
 
 		result = ModifierUtils.toString(ResolvableType.forClass(Interface.class));
-		assertThat(result, is(""));
+		assertThat(result).isEmpty();
 
 		result = ModifierUtils.toString(ResolvableType.forClass(Enum.class));
-		assertThat(result, is(""));
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)

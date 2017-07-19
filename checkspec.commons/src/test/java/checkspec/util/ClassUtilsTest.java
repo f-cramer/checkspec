@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.ClassUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -52,16 +51,16 @@ public class ClassUtilsTest {
 	@Test
 	public void toStringResolvableTypeTest() {
 		String result = ClassUtils.toString(TYPE);
-		assertThat(result, is("public class checkspec.util.ClassUtilsTest"));
+		assertThat(result).isEqualTo("public class checkspec.util.ClassUtilsTest");
 
 		result = ClassUtils.toString(ResolvableType.forClass(Serializable.class));
-		assertThat(result, is("public interface java.io.Serializable"));
+		assertThat(result).isEqualTo("public interface java.io.Serializable");
 
 		result = ClassUtils.toString(ResolvableType.forClass(Override.class));
-		assertThat(result, is("public @interface java.lang.Override"));
+		assertThat(result).isEqualTo("public @interface java.lang.Override");
 
 		result = ClassUtils.toString(ResolvableType.forClass(TimeUnit.class));
-		assertThat(result, is("public enum java.util.concurrent.TimeUnit"));
+		assertThat(result).isEqualTo("public enum java.util.concurrent.TimeUnit");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -72,7 +71,7 @@ public class ClassUtilsTest {
 	@Test
 	public void toStringClassTest() {
 		String result = ClassUtils.toString(CLASS);
-		assertThat(result, is("public class checkspec.util.ClassUtilsTest"));
+		assertThat(result).isEqualTo("public class checkspec.util.ClassUtilsTest");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -83,10 +82,10 @@ public class ClassUtilsTest {
 	@Test
 	public void getNameResolvableTypeTest() {
 		String result = getName(TYPE);
-		assertThat(result, is("checkspec.util.ClassUtilsTest"));
+		assertThat(result).isEqualTo("checkspec.util.ClassUtilsTest");
 
 		result = getName(ResolvableType.forClass(Integer[].class));
-		assertThat(result, is("java.lang.Integer[]"));
+		assertThat(result).isEqualTo("java.lang.Integer[]");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -97,7 +96,7 @@ public class ClassUtilsTest {
 	@Test
 	public void getNameClassTest() {
 		String result = getName(CLASS);
-		assertThat(result, is("checkspec.util.ClassUtilsTest"));
+		assertThat(result).isEqualTo("checkspec.util.ClassUtilsTest");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -108,10 +107,10 @@ public class ClassUtilsTest {
 	@Test
 	public void getClassTest() {
 		Class<?> result = ClassUtils.getClass(CLASS.getName());
-		assertThat(result, is((Object) CLASS));
+		assertThat(result).isEqualTo((Object) CLASS);
 
 		result = ClassUtils.getClass(UNDETECTABLE_CLASS_NAME);
-		assertThat(result, is(nullValue(Class.class)));
+		assertThat(result).isNull();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -123,12 +122,12 @@ public class ClassUtilsTest {
 	public void getClassAsStreamTest() {
 		Stream<Class<?>> result = getClassAsStream(CLASS.getName());
 		List<Class<?>> resultList = result.collect(Collectors.toList());
-		assertThat(resultList, hasSize(1));
-		assertThat(resultList, hasItem(CLASS));
+		assertThat(resultList).hasSize(1);
+		assertThat(resultList).containsExactly(CLASS);
 
 		result = getClassAsStream(UNDETECTABLE_CLASS_NAME);
 		resultList = result.collect(Collectors.toList());
-		assertThat(resultList, is(empty()));
+		assertThat(resultList).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -139,7 +138,7 @@ public class ClassUtilsTest {
 	@Test
 	public void getPackageResolvableTypeTest() {
 		String result = getPackage(TYPE);
-		assertThat(result, is("checkspec.util"));
+		assertThat(result).isEqualTo("checkspec.util");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -150,7 +149,7 @@ public class ClassUtilsTest {
 	@Test
 	public void getPackageClassTest() {
 		String result = getPackage(CLASS);
-		assertThat(result, is("checkspec.util"));
+		assertThat(result).isEqualTo("checkspec.util");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -161,7 +160,7 @@ public class ClassUtilsTest {
 	@Test
 	public void getPackageStringTest() {
 		String result = getPackage(CLASS.getName());
-		assertThat(result, is("checkspec.util"));
+		assertThat(result).isEqualTo("checkspec.util");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -173,10 +172,10 @@ public class ClassUtilsTest {
 	public void classSupplierTest() {
 		Function<String, Class<?>> supplier = classSupplier(SYSTEM_CLASS_LOADER);
 		Class<?> result = supplier.apply(CLASS.getName());
-		assertThat(result, is((Object) CLASS));
+		assertThat(result).isEqualTo((Object) CLASS);
 
 		result = supplier.apply(UNDETECTABLE_CLASS_NAME);
-		assertThat(result, is(nullValue(Class.class)));
+		assertThat(result).isNull();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -188,11 +187,11 @@ public class ClassUtilsTest {
 	public void classStreamSupplierTest() {
 		Function<String, Stream<Class<?>>> supplier = classStreamSupplier(SYSTEM_CLASS_LOADER);
 		List<Class<?>> result = supplier.apply(CLASS.getName()).collect(Collectors.toList());
-		assertThat(result, hasSize(1));
-		assertThat(result, hasItem(CLASS));
+		assertThat(result).hasSize(1);
+		assertThat(result).containsExactly(CLASS);
 
 		result = supplier.apply(UNDETECTABLE_CLASS_NAME).collect(Collectors.toList());
-		assertThat(result, is(empty()));
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -204,45 +203,45 @@ public class ClassUtilsTest {
 	public void systemClassStreamSupplierTest() {
 		Function<String, Stream<Class<?>>> supplier = systemClassStreamSupplier();
 		List<Class<?>> result = supplier.apply(CLASS.getName()).collect(Collectors.toList());
-		assertThat(result, hasSize(1));
-		assertThat(result, hasItem(CLASS));
+		assertThat(result).hasSize(1);
+		assertThat(result).containsExactly(CLASS);
 
 		result = supplier.apply(UNDETECTABLE_CLASS_NAME).collect(Collectors.toList());
-		assertThat(result, is(empty()));
+		assertThat(result).isEmpty();
 	}
 
 	@Test
 	public void instantiateTest() {
 		Function<Class<?>, Stream<?>> supplier = instantiate();
 		List<?> result = supplier.apply(CLASS).collect(Collectors.toList());
-		assertThat(result, hasSize(1));
-		assertThat(result.get(0), is(instanceOf(CLASS)));
+		assertThat(result).hasSize(1);
+		assertThat(result).hasOnlyElementsOfType(CLASS);
 
 		result = supplier.apply(TestClassWithoutDefaultConstructor.class).collect(Collectors.toList());
-		assertThat(result, is(empty()));
+		assertThat(result).isEmpty();
 	}
 
 	@Test
 	public void instantiateStringTest() {
 		Function<Class<?>, Stream<?>> supplier = instantiate(ERROR_FORMAT);
 		List<?> result = supplier.apply(CLASS).collect(Collectors.toList());
-		assertThat(result, hasSize(1));
-		assertThat(result.get(0), is(instanceOf(CLASS)));
+		assertThat(result).hasSize(1);
+		assertThat(result).hasOnlyElementsOfType(CLASS);
 
 		String errorOut = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-		assertThat(errorOut, isEmptyString());
+		assertThat(errorOut).isEmpty();
 
 		result = supplier.apply(TestClassWithoutDefaultConstructor.class).collect(Collectors.toList());
-		assertThat(result, is(empty()));
+		assertThat(result).isEmpty();
 
 		errorOut = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-		assertThat(errorOut, not(isEmptyString()));
+		assertThat(errorOut).isNotEmpty();
 	}
 
 	@Test
 	public void getVisibilityTest() {
 		Visibility result = getVisibility(ResolvableType.forClass(ClassUtilsTest.class));
-		assertThat(result, is(Visibility.PUBLIC));
+		assertThat(result).isEqualTo(Visibility.PUBLIC);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -253,7 +252,7 @@ public class ClassUtilsTest {
 	@Test
 	public void isSuperTypeTest() {
 		boolean result = isSuperType(String.class, Object.class);
-		assertThat(result, is(true));
+		assertThat(result).isEqualTo(true);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -274,18 +273,18 @@ public class ClassUtilsTest {
 	@Test
 	public void getBaseClassLoaderTest() {
 		ClassLoader result = getBaseClassLoader();
-		assertThat(result, is(SYSTEM_CLASS_LOADER));
+		assertThat(result).isEqualTo(SYSTEM_CLASS_LOADER);
 
 		URLClassLoader cl = SecurityUtils.doPrivileged(() -> new URLClassLoader(new URL[0]));
 		setBaseClassLoader(cl);
 
 		result = getBaseClassLoader();
-		assertThat(result, is(cl));
+		assertThat(result).isEqualTo(cl);
 
 		setBaseClassLoader(null);
 
 		result = getBaseClassLoader();
-		assertThat(result, is(SYSTEM_CLASS_LOADER));
+		assertThat(result).isEqualTo(SYSTEM_CLASS_LOADER);
 	}
 
 	@Test
@@ -294,22 +293,22 @@ public class ClassUtilsTest {
 		Class<Integer> secondType = Integer.class;
 
 		boolean result = equal(firstType, firstType);
-		assertThat(result, is(true));
+		assertThat(result).isEqualTo(true);
 
 		result = equal(firstType, secondType);
-		assertThat(result, is(false));
+		assertThat(result).isEqualTo(false);
 	}
 
 	@Test
 	public void equalClassNullTest() {
 		boolean result = equal(null, Integer.TYPE);
-		assertThat(result, is(false));
+		assertThat(result).isEqualTo(false);
 
 		result = equal(Integer.TYPE, null);
-		assertThat(result, is(false));
+		assertThat(result).isEqualTo(false);
 
 		result = equal((Class<?>) null, null);
-		assertThat(result, is(true));
+		assertThat(result).isEqualTo(true);
 	}
 
 	@Test
@@ -317,12 +316,12 @@ public class ClassUtilsTest {
 		Class<?> clazz = CLASS;
 		URL result = getLocation(clazz);
 		String name = clazz.getName().replace('.', '/') + ".class";
-		assertThat(result, is(clazz.getClassLoader().getResource(name)));
+		assertThat(result).isEqualTo(clazz.getClassLoader().getResource(name));
 
 		clazz = TestClassWithoutDefaultConstructor.class;
 		name = clazz.getName().replace('.', '/') + ".class";
 		result = getLocation(TestClassWithoutDefaultConstructor.class);
-		assertThat(result, is(clazz.getClassLoader().getResource(name)));
+		assertThat(result).isEqualTo(clazz.getClassLoader().getResource(name));
 	}
 
 	@Test(expected = NullPointerException.class)

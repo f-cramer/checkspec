@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.FieldUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Field;
 
@@ -26,7 +25,7 @@ public class FieldUtilsTest {
 	@Test
 	public void createStringTest() {
 		String result = FieldUtils.toString(FIELD);
-		assertThat(result, is("private static final java.lang.reflect.Field FIELD"));
+		assertThat(result).isEqualTo("private static final java.lang.reflect.Field FIELD");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -37,7 +36,7 @@ public class FieldUtilsTest {
 	@Test
 	public void getTypeTest() {
 		ResolvableType result = getType(FIELD);
-		assertThat(result, is(ResolvableType.forField(FIELD)));
+		assertThat(result).isEqualTo(ResolvableType.forField(FIELD));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -48,7 +47,7 @@ public class FieldUtilsTest {
 	@Test
 	public void getTypeNameTest() {
 		String result = getTypeName(FIELD);
-		assertThat(result, is("java.lang.reflect.Field"));
+		assertThat(result).isEqualTo("java.lang.reflect.Field");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -59,7 +58,7 @@ public class FieldUtilsTest {
 	@Test
 	public void getVisibilityTest() {
 		Visibility result = getVisibility(FIELD);
-		assertThat(result, is(Visibility.PRIVATE));
+		assertThat(result).isSameAs(Visibility.PRIVATE);
 	}
 
 	@Test(expected = NullPointerException.class)

@@ -1,6 +1,6 @@
 package checkspec.type;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -32,7 +32,7 @@ public class ResolvableTypeTest {
 	public void intShouldPartiallyMatchInteger() {
 		ResolvableType intType = ResolvableType.forClass(int.class);
 		ResolvableType integerType = ResolvableType.forClass(Integer.class);
-		assertEquals(MatchingState.PARTIAL_MATCH, intType.matches(integerType, matches));
+		assertThat(intType.matches(integerType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class ResolvableTypeTest {
 		Method getExtendsStringList = ListSupplier.class.getDeclaredMethod("getExtendsStringList");
 		ResolvableType extendsStringListType = ResolvableType.forMethodReturnType(getExtendsStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, stringListType.matches(extendsStringListType, matches));
+		assertThat(stringListType.matches(extendsStringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class ResolvableTypeTest {
 		Method getSuperStringList = ListSupplier.class.getDeclaredMethod("getSuperStringList");
 		ResolvableType superStringListType = ResolvableType.forMethodReturnType(getSuperStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, stringListType.matches(superStringListType, matches));
+		assertThat(stringListType.matches(superStringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class ResolvableTypeTest {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
 		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, extendsStringListType.matches(stringListType, matches));
+		assertThat(extendsStringListType.matches(stringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class ResolvableTypeTest {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
 		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
 
-		assertEquals(MatchingState.PARTIAL_MATCH, superStringListType.matches(stringListType, matches));
+		assertThat(superStringListType.matches(stringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
@@ -80,39 +80,39 @@ public class ResolvableTypeTest {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
 		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
 
-		assertEquals(MatchingState.FULL_MATCH, stringListType.matches(stringListType, matches));
+		assertThat(stringListType.matches(stringListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
 	public void stringShouldMatchItself() {
-		assertEquals(MatchingState.FULL_MATCH, stringType.matches(stringType, matches));
+		assertThat(stringType.matches(stringType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
 	public void stringShouldNotMatchList() {
-		assertEquals(MatchingState.NO_MATCH, stringType.matches(listType, matches));
+		assertThat(stringType.matches(listType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
 	public void stringShouldMatchListIfStringListPairInMatches() {
 		matches.put(stringClass, listClass);
-		assertEquals(MatchingState.FULL_MATCH, stringType.matches(listType, matches));
+		assertThat(stringType.matches(listType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
 	public void listShouldMatchItself() {
-		assertEquals(MatchingState.FULL_MATCH, listType.matches(listType, matches));
+		assertThat(listType.matches(listType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
 	public void listShouldNotMatchString() {
-		assertEquals(MatchingState.NO_MATCH, listType.matches(stringType, matches));
+		assertThat(listType.matches(stringType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
 	public void listShouldMatchStringIfListStringPairInMatches() {
 		matches.put(listClass, stringClass);
-		assertEquals(MatchingState.FULL_MATCH, listType.matches(stringType, matches));
+		assertThat(listType.matches(stringType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class ResolvableTypeTest {
 		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.FULL_MATCH, aListType.matches(bListType, matches));
+		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class ResolvableTypeTest {
 		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
 		ResolvableType aType = ResolvableType.forClass(A.class);
 
-		assertEquals(MatchingState.NO_MATCH, aListType.matches(aType, matches));
+		assertThat(aListType.matches(aType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class ResolvableTypeTest {
 		ResolvableType bType = ResolvableType.forClass(B.class);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.NO_MATCH, aListType.matches(bType, matches));
+		assertThat(aListType.matches(bType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class ResolvableTypeTest {
 		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
 		ResolvableType bType = ResolvableType.forClass(A.class);
 
-		assertEquals(MatchingState.NO_MATCH, bType.matches(aListType, matches));
+		assertThat(bType.matches(aListType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -167,7 +167,7 @@ public class ResolvableTypeTest {
 		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.FULL_MATCH, aListType.matches(bListType, matches));
+		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class ResolvableTypeTest {
 		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.FULL_MATCH, aListType.matches(bListType, matches));
+		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class ResolvableTypeTest {
 		ResolvableType bArrayType = ResolvableType.forMethodReturnType(bArray);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.FULL_MATCH, aArrayType.matches(bArrayType, matches));
+		assertThat(aArrayType.matches(bArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class ResolvableTypeTest {
 
 		ResolvableType eType = ResolvableType.forMethodReturnType(dElement);
 
-		assertEquals(MatchingState.FULL_MATCH, eType.matches(eType, matches));
+		assertThat(eType.matches(eType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -212,7 +212,7 @@ public class ResolvableTypeTest {
 		ResolvableType fListType = ResolvableType.forMethodReturnType(fList);
 
 		matches.put(D.class, F.class);
-		assertEquals(MatchingState.FULL_MATCH, dListType.matches(fListType, matches));
+		assertThat(dListType.matches(fListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class ResolvableTypeTest {
 		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
 		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
 
-		assertEquals(MatchingState.NO_MATCH, eArrayType.matches(gArrayType, matches));
+		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -232,7 +232,7 @@ public class ResolvableTypeTest {
 
 		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
 
-		assertEquals(MatchingState.FULL_MATCH, eArrayType.matches(eArrayType, matches));
+		assertThat(eArrayType.matches(eArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -244,7 +244,7 @@ public class ResolvableTypeTest {
 		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
 
 		matches.put(D.class, F.class);
-		assertEquals(MatchingState.FULL_MATCH, eArrayType.matches(gArrayType, matches));
+		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -254,7 +254,7 @@ public class ResolvableTypeTest {
 		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
 
 		matches.put(D.class, F.class);
-		assertEquals(MatchingState.NO_MATCH, eArrayType.matches(stringType, matches));
+		assertThat(eArrayType.matches(stringType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -265,7 +265,7 @@ public class ResolvableTypeTest {
 		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
 		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
 
-		assertEquals(MatchingState.NO_MATCH, eArrayType.matches(gArrayType, matches));
+		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -277,7 +277,7 @@ public class ResolvableTypeTest {
 		ResolvableType gListType = ResolvableType.forMethodReturnType(gList);
 
 		matches.put(D.class, F.class);
-		assertEquals(MatchingState.FULL_MATCH, eListType.matches(gListType, matches));
+		assertThat(eListType.matches(gListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	@Test
@@ -288,7 +288,7 @@ public class ResolvableTypeTest {
 		ResolvableType aArrayType = ResolvableType.forMethodReturnType(aArray);
 		ResolvableType bArrayType = ResolvableType.forMethodReturnType(bArray);
 
-		assertEquals(MatchingState.NO_MATCH, aArrayType.matches(bArrayType, matches));
+		assertThat(aArrayType.matches(bArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
 
 	@Test
@@ -300,7 +300,7 @@ public class ResolvableTypeTest {
 		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
-		assertEquals(MatchingState.FULL_MATCH, aListType.matches(bListType, matches));
+		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
 
 	public static abstract class A {

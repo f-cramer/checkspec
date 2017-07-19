@@ -1,8 +1,7 @@
 package checkspec.util;
 
 import static checkspec.util.ConstructorUtils.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Constructor;
 
@@ -28,7 +27,7 @@ public class ConstructorUtilsTest {
 	@Test
 	public void createStringTest() {
 		String result = createString(CONSTRUCTOR);
-		assertThat(result, is("public <init>()"));
+		assertThat(result).isEqualTo("public <init>()");
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -39,7 +38,7 @@ public class ConstructorUtilsTest {
 	@Test
 	public void getVisibilityTest() {
 		Visibility result = getVisibility(CONSTRUCTOR);
-		assertThat(result, is(Visibility.PUBLIC));
+		assertThat(result).isSameAs(Visibility.PUBLIC);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -50,7 +49,7 @@ public class ConstructorUtilsTest {
 	@Test
 	public void getParametersAsResolvableTypeTest() {
 		ResolvableType[] result = getParametersAsResolvableType(CONSTRUCTOR);
-		assertThat(result, is(emptyArray()));
+		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -61,7 +60,7 @@ public class ConstructorUtilsTest {
 	@Test
 	public void getParametersAsStringTest() {
 		String result = getParametersAsString(STRING_CONSTRUCTOR);
-		assertThat(result, is("java.lang.String"));
+		assertThat(result).isEqualTo("java.lang.String");
 	}
 
 	@Test(expected = NullPointerException.class)
