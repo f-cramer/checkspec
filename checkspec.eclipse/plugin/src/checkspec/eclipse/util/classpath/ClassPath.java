@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.IJavaProject;
 
-public class ClassPath {
+public final class ClassPath {
 
 	private static final String ENTRY_SEPARATOR = "\n";
 

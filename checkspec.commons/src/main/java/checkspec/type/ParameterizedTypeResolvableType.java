@@ -12,7 +12,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -21,7 +20,7 @@ class ParameterizedTypeResolvableType extends AbstractResolvableType<Parameteriz
 	private final ResolvableType typeWithoutGenerics;
 	private final ResolvableType[] actualTypeArguments;
 
-	public ParameterizedTypeResolvableType(@NonNull final ParameterizedType rawType) {
+	public ParameterizedTypeResolvableType(final ParameterizedType rawType) {
 		super(rawType);
 		this.typeWithoutGenerics = ResolvableType.forType(rawType.getRawType());
 		this.actualTypeArguments = Arrays.stream(rawType.getActualTypeArguments())

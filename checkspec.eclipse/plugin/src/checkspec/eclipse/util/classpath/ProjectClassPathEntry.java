@@ -60,7 +60,7 @@ public class ProjectClassPathEntry implements ClassPathEntry {
 						break;
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException expected) {
 			}
 		}
 		return urls;

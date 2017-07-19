@@ -8,7 +8,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -16,7 +15,7 @@ class GenericArrayTypeResolvabelType extends AbstractResolvableType<GenericArray
 
 	private final ResolvableType componentType;
 
-	public GenericArrayTypeResolvabelType(@NonNull final GenericArrayType rawType) {
+	public GenericArrayTypeResolvabelType(final GenericArrayType rawType) {
 		super(rawType);
 		this.componentType = ResolvableType.forType(rawType.getGenericComponentType());
 	}

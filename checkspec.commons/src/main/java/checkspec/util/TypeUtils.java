@@ -29,18 +29,18 @@ public class TypeUtils {
 		final ArrayList<Class<?>> result = new ArrayList<>(classes.size());
 		while (!source.isEmpty()) {
 			Iterator<Class<?>> srcIt = source.iterator();
-			Class<?> c = srcIt.next();
+			Class<?> current = srcIt.next();
 			srcIt.remove();
 			while (srcIt.hasNext()) {
-				Class<?> c2 = srcIt.next();
-				if (c2.isAssignableFrom(c)) {
+				Class<?> next = srcIt.next();
+				if (next.isAssignableFrom(current)) {
 					srcIt.remove();
-				} else if (c.isAssignableFrom(c2)) {
-					c = c2;
+				} else if (current.isAssignableFrom(next)) {
+					current = next;
 					srcIt.remove();
 				}
 			}
-			result.add(c);
+			result.add(current);
 		}
 		result.trimToSize();
 		return result;
@@ -54,31 +54,32 @@ public class TypeUtils {
 			queue.add(Object.class); // optional
 		}
 		while (!queue.isEmpty()) {
-			Class<?> c = queue.remove();
-			if (result.add(c)) {
-				Class<?> sup = c.getSuperclass();
-				if (sup != null)
-					queue.add(sup);
-				queue.addAll(Arrays.asList(c.getInterfaces()));
+			Class<?> current = queue.remove();
+			if (result.add(current)) {
+				Class<?> superclass = current.getSuperclass();
+				if (superclass != null) {
+					queue.add(superclass);
+				}
+				queue.addAll(Arrays.asList(current.getInterfaces()));
 			}
 		}
 		return result;
 	}
 
 	private static Set<Class<?>> commonSuperclasses(Iterable<Class<?>> classes) {
-		Iterator<Class<?>> it = classes.iterator();
-		if (!it.hasNext()) {
+		Iterator<Class<?>> iterator = classes.iterator();
+		if (!iterator.hasNext()) {
 			return Collections.emptySet();
 		}
 		// begin with set from first hierarchy
-		Set<Class<?>> result = getSuperclasses(it.next());
+		Set<Class<?>> result = getSuperclasses(iterator.next());
 		// remove non-superclasses of remaining
-		while (it.hasNext()) {
-			Class<?> c = it.next();
+		while (iterator.hasNext()) {
+			Class<?> current = iterator.next();
 			Iterator<Class<?>> resultIt = result.iterator();
 			while (resultIt.hasNext()) {
 				Class<?> sup = resultIt.next();
-				if (!sup.isAssignableFrom(c)) {
+				if (!sup.isAssignableFrom(current)) {
 					resultIt.remove();
 				}
 			}

@@ -80,7 +80,7 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 			}
 
 			if (elementToLaunch == null) {
-
+				return;
 			}
 			performLaunch(elementToLaunch, mode);
 		} catch (InterruptedException e) {
@@ -146,10 +146,24 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 				ILaunchConfigurationWorkingCopy wc = createLaunchConfiguration(elementToLaunch);
 				List<ILaunchConfiguration> list = findExistingLaunchConfigurations(wc);
 				return list.toArray(new ILaunchConfiguration[list.size()]);
-			} catch (CoreException e) {
+			} catch (CoreException expected) {
 			}
 		}
 		return null;
+	}
+
+	private List<ILaunchConfiguration> findExistingLaunchConfigurations(ILaunchConfigurationWorkingCopy temporary) throws CoreException {
+		ILaunchConfigurationType type = temporary.getType();
+		ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(type);
+		String[] attributeToCompare = getAttributeNamesToCompare();
+	
+		List<ILaunchConfiguration> candidateConfigs = new ArrayList<>(configs.length);
+		for (ILaunchConfiguration config : configs) {
+			if (hasSameAttributes(config, temporary, attributeToCompare)) {
+				candidateConfigs.add(config);
+			}
+		}
+		return candidateConfigs;
 	}
 
 	private ILaunchConfiguration findExistingLaunchConfiguration(ILaunchConfigurationWorkingCopy temporary, String mode) throws CoreException, InterruptedException {
@@ -182,20 +196,6 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		throw new InterruptedException(); // cancelled by user
 	}
 
-	private List<ILaunchConfiguration> findExistingLaunchConfigurations(ILaunchConfigurationWorkingCopy temporary) throws CoreException {
-		ILaunchConfigurationType type = temporary.getType();
-		ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(type);
-		String[] attributeToCompare = getAttributeNamesToCompare();
-
-		List<ILaunchConfiguration> candidateConfigs = new ArrayList<>(configs.length);
-		for (ILaunchConfiguration config : configs) {
-			if (hasSameAttributes(config, temporary, attributeToCompare)) {
-				candidateConfigs.add(config);
-			}
-		}
-		return candidateConfigs;
-	}
-
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
@@ -220,8 +220,7 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		if (element != null) {
 			try {
 				return element.getCorrespondingResource();
-			} catch (JavaModelException e) {
-
+			} catch (JavaModelException expected) {
 			}
 		}
 		return null;
@@ -293,7 +292,7 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 					break;
 				}
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException expected) {
 		}
 		return classPath;
 	}

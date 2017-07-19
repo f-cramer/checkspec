@@ -11,9 +11,7 @@ public class CheckSpecTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = {
-				new CheckSpecTab(),
-		};
+		ILaunchConfigurationTab[] tabs = { new CheckSpecTab(), };
 		setTabs(tabs);
 	}
 }

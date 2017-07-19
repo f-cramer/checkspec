@@ -7,12 +7,12 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Objects;
 
-public class ReverseURLClassLoader extends ClassLoader {
+public class ReverseUrlClassLoader extends ClassLoader {
 
 	private final ClassLoader primary;
 	private final ClassLoader secondary;
 
-	public ReverseURLClassLoader(ClassLoader primaryClassLoader, URL[] secondaryUrls) {
+	public ReverseUrlClassLoader(ClassLoader primaryClassLoader, URL[] secondaryUrls) {
 		this.primary = Objects.requireNonNull(primaryClassLoader, "primaryClassLoader");
 		this.secondary = new URLClassLoader(secondaryUrls);
 	}

@@ -1,9 +1,21 @@
 <FindBugsFilter>
 	<Match>
-		<Package name="~checkspec\.spring.*" />
+		<Package name="~checkspec\.examples.*" />
+	</Match>
+	<Match>
+		<Package name="~checkspec\.test.*" />
 	</Match>
 
 	<Match>
-		<Package name="~checkspec\.test.*" />
+		<Class name="checkspec.report.output.gui.HtmlExportMenuItem" />
+		<Bug code="NP_OPTIONAL_RETURN_NULL, VA_FORMAT_STRING_MISSING_ARGUMENT" />
+	</Match>
+	<Match>
+		<Class name="checkspec.report.output.gui.TextExportMenuItem" />
+		<Bug code="NP_OPTIONAL_RETURN_NULL, VA_FORMAT_STRING_MISSING_ARGUMENT" />
+	</Match>
+	<Match>
+		<Class name="checkspec.report.output.gui.FrameHolder" />
+		<Bug code="DM_EXIT" />
 	</Match>
 </FindBugsFilter>

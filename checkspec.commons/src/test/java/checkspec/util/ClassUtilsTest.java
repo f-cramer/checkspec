@@ -8,8 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -26,7 +24,7 @@ import lombok.Value;
 
 public class ClassUtilsTest {
 
-	private static final ClassLoader SYSTEM_CLASS_LOADER = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) (() -> ClassLoader.getSystemClassLoader()));
+	private static final ClassLoader SYSTEM_CLASS_LOADER = SecurityUtils.doPrivileged(() -> ClassLoader.getSystemClassLoader());
 
 	private static final Class<?> CLASS = ClassUtilsTest.class;
 	private static final ResolvableType TYPE = ResolvableType.forClass(CLASS);

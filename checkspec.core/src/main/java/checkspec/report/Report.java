@@ -23,11 +23,11 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 
 	private final List<ReportProblem> problems = new ArrayList<>();
 
-	protected Report(@NonNull SpecificationType spec) {
+	protected Report(SpecificationType spec) {
 		this(spec, null, null);
 	}
 
-	protected Report(@NonNull SpecificationType spec, RawType implementation) {
+	protected Report(SpecificationType spec, RawType implementation) {
 		this(spec, implementation, null);
 	}
 

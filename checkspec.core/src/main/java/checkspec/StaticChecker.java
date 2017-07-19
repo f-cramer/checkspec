@@ -31,7 +31,6 @@ final class StaticChecker {
 		} else {
 			ProxyFactory factory = new ProxyFactory();
 			factory.setSuperclass(clazz);
-//			factory.setFilter(e -> !MethodUtils.isAbstract(e));
 			factory.setFilter(e -> true);
 			Class<?> proxyClass = factory.createClass();
 			T proxy = (T) OBJENESIS.newInstance(proxyClass);

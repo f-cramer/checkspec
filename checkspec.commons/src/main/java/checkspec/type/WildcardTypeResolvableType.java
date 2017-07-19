@@ -14,7 +14,6 @@ import checkspec.util.MatchingState;
 import checkspec.util.TypeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -23,7 +22,7 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 	private final ResolvableType[] upperBounds;
 	private final ResolvableType[] lowerBounds;
 
-	public WildcardTypeResolvableType(@NonNull final WildcardType rawType) {
+	public WildcardTypeResolvableType(final WildcardType rawType) {
 		super(rawType);
 		this.upperBounds = Arrays.stream(rawType.getUpperBounds())
 				.map(ResolvableType::forType)
@@ -73,6 +72,12 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 		return state;
 	}
 
+	private static Optional<MatchingState> matches(ResolvableType[] bounds, ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		return Arrays.stream(bounds)
+				.map(bound -> bound.matches(type, matches))
+				.max(Comparator.naturalOrder());
+	}
+
 	private Optional<MatchingState> matchesUpperBounds(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (upperBounds.length == 1) {
 			Class<?> rawClass = upperBounds[0].getRawClass();
@@ -81,12 +86,6 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 			}
 		}
 		return matches(upperBounds, type, matches);
-	}
-
-	private static Optional<MatchingState> matches(ResolvableType[] bounds, ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		return Arrays.stream(bounds)
-				.map(bound -> bound.matches(type, matches))
-				.max(Comparator.naturalOrder());
 	}
 
 	@Override

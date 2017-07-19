@@ -35,7 +35,7 @@ import checkspec.cli.CommandLineException;
 import checkspec.cli.CommandLineInterface;
 import checkspec.eclipse.ui.view.ResultView;
 import checkspec.eclipse.util.DisplayUtils;
-import checkspec.eclipse.util.ReverseURLClassLoader;
+import checkspec.eclipse.util.ReverseUrlClassLoader;
 import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
@@ -58,20 +58,21 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
+			URL[] extensionsClasspath = findExtensionClasspath(configuration);
+
+			ClassLoader baseLoader = getClass().getClassLoader();
+			if (extensionsClasspath.length > 0) {
+				baseLoader = new ReverseUrlClassLoader(baseLoader, extensionsClasspath);
+			}
+			ClassUtils.setBaseClassLoader(baseLoader);
+			TypeDiscovery.setReflections(ReflectionsUtils.createDefaultReflections());
+
 			CommandLineInterface cli = new CommandLineInterface();
 			String[] specificationClassNames = findSpecificationClassNames(configuration);
 			URL[] specificationClasspath = findSpecificationClasspath(configuration);
 			URL[] implementationClasspath = findImplementationClasspath(configuration);
 			String basePackage = findBasePackage(configuration);
-			URL[] extensionsClasspath = findExtensionClasspath(configuration);
 
-			ClassLoader baseLoader = getClass().getClassLoader();
-			if (extensionsClasspath.length > 0) {
-				baseLoader = new ReverseURLClassLoader(baseLoader, extensionsClasspath);
-			}
-
-			TypeDiscovery.setReflections(ReflectionsUtils.createDefaultReflections());
-			ClassUtils.setBaseClassLoader(baseLoader);
 			SpecReport[] reports = cli.run(specificationClassNames, specificationClasspath, implementationClasspath, basePackage, Outputter.NULL_OUTPUTTER);
 			ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
 			DisplayUtils.asyncExec(() -> resultView.setReports(reports));
@@ -115,8 +116,6 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		String superArgs = super.getProgramArguments(configuration);
-
 		IJavaProject project = getJavaProject(configuration);
 
 		StringJoiner arguments = new StringJoiner(" ");
@@ -131,6 +130,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 			arguments.add("\"" + implPath.resolve(project) + "\"");
 		}
 
+		String superArgs = super.getProgramArguments(configuration);
 		arguments.add(superArgs);
 
 		return arguments.toString();

@@ -1,5 +1,7 @@
 package checkspec;
 
+import static checkspec.util.SecurityUtils.*;
+
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -27,6 +29,7 @@ import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
 import checkspec.util.TypeDiscovery;
+import checkspec.util.UrlUtils;
 import lombok.NonNull;
 
 @SuppressWarnings("unchecked")
@@ -62,7 +65,7 @@ public final class CheckSpec {
 							.toArray(URL[]::new);
 
 					Reflections reflections = ReflectionsUtils.createReflections(urls);
-					ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getBaseClassLoader());
+					ClassLoader classLoader = doPrivileged(() -> new URLClassLoader(urls, ClassUtils.getBaseClassLoader()));
 					LIBRARY_LESS_INSTANCE = new CheckSpec(reflections, classLoader);
 				}
 			}
@@ -72,7 +75,7 @@ public final class CheckSpec {
 
 	public static CheckSpec getInstanceForClassPath(URL[] urls) {
 		Reflections reflections = ReflectionsUtils.createReflections(urls);
-		ClassLoader classLoader = new URLClassLoader(urls, ClassUtils.getBaseClassLoader());
+		ClassLoader classLoader = doPrivileged(() -> new URLClassLoader(urls, ClassUtils.getBaseClassLoader()));
 		return new CheckSpec(reflections, classLoader);
 	}
 
@@ -156,7 +159,7 @@ public final class CheckSpec {
 		for (int iteration = 0; iteration <= maxIterations; iteration++) {
 			List<SpecReport> oldReports = reports;
 			MultiValuedMap<Class<?>, Class<?>> bestMatches = convert(oldReports);
-			reports = performSpecs(specs, possibleClasses, bestMatches);
+			reports = performChecks(specs, possibleClasses, bestMatches);
 
 			if (Objects.equal(oldReports, reports)) {
 				break;
@@ -168,13 +171,13 @@ public final class CheckSpec {
 				.collect(Collectors.toList());
 	}
 
-	private static List<SpecReport> performSpecs(Collection<ClassSpecification> specs, List<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
+	private static List<SpecReport> performChecks(Collection<ClassSpecification> specs, Collection<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
 		return specs.parallelStream()
 				.map(spec -> performSingleCheck(spec, possibleClasses, bestMatches))
 				.collect(Collectors.toList());
 	}
 
-	private static SpecReport performSingleCheck(ClassSpecification spec, List<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
+	private static SpecReport performSingleCheck(ClassSpecification spec, Collection<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
 		List<ClassReport> reports = possibleClasses.parallelStream()
 				.map(e -> checkImplements(e, spec, bestMatches))
 				.collect(Collectors.toList());
@@ -201,11 +204,7 @@ public final class CheckSpec {
 		Set<URL> urls = reflections.getConfiguration().getUrls();
 		URL location = ClassUtils.getLocation(clazz);
 
-		return urls.parallelStream().anyMatch(url -> isParent(location, url));
-	}
-
-	private static boolean isParent(@NonNull URL child, @NonNull URL parent) {
-		return child.getPath().startsWith(parent.getPath());
+		return urls.parallelStream().anyMatch(url -> UrlUtils.isParent(location, url));
 	}
 
 	private static MultiValuedMap<Class<?>, Class<?>> convert(List<SpecReport> reports) {

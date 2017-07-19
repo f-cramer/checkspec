@@ -16,7 +16,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 class AnalysisUtils {
 
-	public static Optional<ReportProblem> compareTypes(ResolvableType specification, ResolvableType actual, MultiValuedMap<Class<?>, Class<?>> oldReports, BinaryOperator<String> compatible, BinaryOperator<String> incompatible) {
+	public static Optional<ReportProblem> compareTypes(ResolvableType specification, ResolvableType actual, MultiValuedMap<Class<?>, Class<?>> oldReports, BinaryOperator<String> compatible,
+			BinaryOperator<String> incompatible) {
 		MatchingState state = specification.matches(actual, oldReports);
 		if (state == MatchingState.FULL_MATCH) {
 			return Optional.empty();

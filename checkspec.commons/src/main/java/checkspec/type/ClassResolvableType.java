@@ -15,7 +15,6 @@ import org.apache.commons.lang3.ClassUtils;
 import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -26,7 +25,7 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 
 	private final TypeVariableResolvableType[] typeParameters;
 
-	public ClassResolvableType(@NonNull final Class<?> rawType) {
+	public ClassResolvableType(final Class<?> rawType) {
 		super(rawType);
 		this.typeParameters = Arrays.stream(rawType.getTypeParameters())
 				.map(TypeVariableResolvableType::new)

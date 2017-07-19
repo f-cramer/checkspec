@@ -3,6 +3,7 @@ package checkspec.analysis;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.function.BinaryOperator;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
@@ -52,17 +53,10 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		ResolvableType fieldType = FieldUtils.getType(field);
 		ResolvableType specType = spec.getType();
 
-		AnalysisUtils.compareTypes(specType, fieldType, matches, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
+		BinaryOperator<String> compatibleString = (s, a) -> String.format(COMPATIBLE_TYPE, s, a);
+		BinaryOperator<String> incompatibleString = (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s);
+		AnalysisUtils.compareTypes(specType, fieldType, matches, compatibleString, incompatibleString)
 				.ifPresent(report::addProblem);
-//		if (!ClassUtils.equal(fieldType, specType)) {
-//			String fieldTypeName = getName(fieldType);
-//			String specTypeName = getName(specType);
-//
-//			boolean compatible = ClassUtils.isAssignable(fieldType, specType);
-//			String format = compatible ? COMPATIBLE_TYPE : INCOMPATIBLE_TYPE;
-//			String message = String.format(format, fieldTypeName, specTypeName);
-//			report.addProblem(new ReportProblem(1, message, compatible ? ReportProblemType.WARNING : ReportProblemType.ERROR));
-//		}
 
 		return report;
 	}

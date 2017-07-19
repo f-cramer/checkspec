@@ -117,7 +117,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 			if (model != null) {
 				try {
 					elements = model.getJavaProjects();
-				} catch (JavaModelException e) {
+				} catch (JavaModelException expected) {
 				}
 			}
 		} else {
@@ -157,7 +157,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 		dialog.setMessage("Select a project to constrain your search.");
 		try {
 			dialog.setElements(JavaCore.create(getWorkspaceRoot()).getJavaProjects());
-		} catch (JavaModelException jme) {
+		} catch (JavaModelException expected) {
 		}
 		IJavaProject javaProject = getJavaProject();
 		if (javaProject != null) {
@@ -208,7 +208,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 		String projectName = "";
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-		} catch (CoreException e) {
+		} catch (CoreException expected) {
 		}
 		projectText.setText(projectName);
 	}
@@ -220,7 +220,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 			if (names.size() > 0) {
 				specificationName = names.get(0);
 			}
-		} catch (CoreException e) {
+		} catch (CoreException expected) {
 		}
 		specificationText.setText(specificationName);
 	}

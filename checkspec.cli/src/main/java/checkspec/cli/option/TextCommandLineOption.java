@@ -40,9 +40,9 @@ public class TextCommandLineOption<E> implements ArgumentCommandLineOption<E> {
 
 	private Wrapper<E, CommandLineException> parse(String value) {
 		try {
-			return Wrapper.<E, CommandLineException> ofValue(parser.parse(value));
+			return Wrapper.<E, CommandLineException>ofValue(parser.parse(value));
 		} catch (CommandLineException e) {
-			return Wrapper.<E, CommandLineException> ofThrowable(e);
+			return Wrapper.<E, CommandLineException>ofThrowable(e);
 		}
 	}
 

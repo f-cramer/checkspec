@@ -15,7 +15,6 @@ import checkspec.util.MatchingState;
 import checkspec.util.TypeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -25,7 +24,7 @@ class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>>
 	private final ResolvableType[] bounds;
 	private final int index;
 
-	public TypeVariableResolvableType(@NonNull final TypeVariable<?> rawType) {
+	public TypeVariableResolvableType(final TypeVariable<?> rawType) {
 		super(rawType);
 		this.genericDeclarationType = ResolvableType.forClass(getClass(rawType.getGenericDeclaration()));
 		this.bounds = Arrays.stream(rawType.getBounds())

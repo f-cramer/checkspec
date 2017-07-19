@@ -4,39 +4,26 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import checkspec.report.ClassReport;
-import checkspec.report.ReportType;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
+import checkspec.report.ReportType;
 import checkspec.report.SpecReport;
-import checkspec.report.output.Outputter;
-import checkspec.report.output.html.HtmlOutputter;
-import checkspec.report.output.text.TextOutputter;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -48,15 +35,16 @@ class CheckSpecFrame extends JFrame {
 	private static final String FILE_EXTENSION = ".%s";
 	private static final String FILE_DESCRIPTION = ".%s Files";
 
-	private static final String SUCCESS = "Export was successful";
-	private static final String ERROR = "An error occurred while exporting:%n%s";
+	static final String SUCCESS = "Export was successful";
+	static final String ERROR = "An error occurred while exporting:%n%s";
 
 	private static final String TEXT = "txt";
-	private static final String TEXT_EXTENSION = String.format(FILE_EXTENSION, TEXT);
-	private static final String TEXT_DESCRIPTION = String.format(FILE_DESCRIPTION, TEXT);
+	static final String TEXT_EXTENSION = String.format(FILE_EXTENSION, TEXT);
+	static final String TEXT_DESCRIPTION = String.format(FILE_DESCRIPTION, TEXT);
 
 	private static final JMenuBar menuBar = new JMenuBar();
 
+	@Getter(AccessLevel.PACKAGE)
 	private final SpecReport report;
 
 	public CheckSpecFrame(SpecReport report) {
@@ -85,8 +73,8 @@ class CheckSpecFrame extends JFrame {
 
 		JMenu exportMenu = new JMenu("Export");
 		exportMenu.setMnemonic('E');
-		exportMenu.add(new TextExportMenuItem());
-		exportMenu.add(new HtmlExportMenuItem());
+		exportMenu.add(new TextExportMenuItem(this));
+		exportMenu.add(new HtmlExportMenuItem(this));
 
 		menuBar.add(exportMenu);
 		setJMenuBar(menuBar);
@@ -199,147 +187,5 @@ class CheckSpecFrame extends JFrame {
 		}
 
 		return null;
-	}
-
-	private abstract class AbstractExportMenuItem extends JMenuItem {
-
-		private static final long serialVersionUID = 8386968626698622266L;
-
-		public AbstractExportMenuItem(String text, char mnemonic, String iconName) {
-			setText(text);
-			setMnemonic(mnemonic);
-			setIcon(CheckSpecFrame.getIcon(iconName));
-			addActionListener(this::export);
-		}
-
-		private void export(ActionEvent event) {
-			Optional<Throwable> export = export();
-			if (export != null) {
-				String message = export.map(e -> String.format(CheckSpecFrame.ERROR, e.getMessage())).orElse(CheckSpecFrame.SUCCESS);
-				JOptionPane.showMessageDialog(CheckSpecFrame.this, message.trim());
-			}
-		}
-
-		/**
-		 * Performs the export and returns any {@link Throwable} that was thrown.
-		 *
-		 * @return
-		 *         <ul>
-		 *         <li>{@code null} - if file selection was aborted</li>
-		 *         <li>Optional with value - if an exception occurred while
-		 *         exporting</li>
-		 *         <li>Optional without value - if export was successful</li>
-		 *         </ul>
-		 */
-		protected abstract Optional<Throwable> export();
-	}
-
-	private class TextExportMenuItem extends AbstractExportMenuItem {
-
-		private static final long serialVersionUID = -3089459732868339613L;
-
-		public TextExportMenuItem() {
-			super("As Text", 'T', "export_text");
-		}
-
-		@Override
-		protected Optional<Throwable> export() {
-			Optional<Path> file = selectTextFile();
-			return file == null ? null : file.map(this::addTextExtensionIfNecessary).flatMap(this::exportText);
-		}
-
-		private Path addTextExtensionIfNecessary(Path path) {
-			if (path.getFileName().toString().contains(".")) {
-				return path;
-			} else {
-				return Paths.get(path.toString() + TEXT_EXTENSION);
-			}
-		}
-
-		private Optional<Throwable> exportText(Path path) {
-			try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
-				Outputter outputter = new TextOutputter(writer, false);
-				outputter.output(report);
-			} catch (Exception e) {
-				return Optional.of(e);
-			}
-
-			return Optional.empty();
-		}
-
-		private Optional<Path> selectTextFile() {
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.addChoosableFileFilter(new FileFilter() {
-				@Override
-				public String getDescription() {
-					return TEXT_DESCRIPTION;
-				}
-
-				@Override
-				public boolean accept(File file) {
-					return file.getName().endsWith(TEXT_EXTENSION) || file.isDirectory();
-				}
-			});
-
-			fileChooser.setAcceptAllFileFilterUsed(false);
-
-			fileChooser.setSelectedFile(new File(fileChooser.getCurrentDirectory(), "out.txt"));
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fileChooser.setMultiSelectionEnabled(false);
-			int option = fileChooser.showSaveDialog(CheckSpecFrame.this);
-
-			switch (option) {
-			case JFileChooser.APPROVE_OPTION:
-				return Optional.ofNullable(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
-			case JFileChooser.ERROR_OPTION:
-				JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR).trim());
-				return Optional.empty();
-			}
-
-			return null;
-		}
-	}
-
-	public class HtmlExportMenuItem extends AbstractExportMenuItem {
-
-		private static final long serialVersionUID = -3089459732868339613L;
-
-		public HtmlExportMenuItem() {
-			super("As HTML", 'H', "export_html");
-		}
-
-		@Override
-		protected Optional<Throwable> export() {
-			Optional<Path> directory = selectHtmlDirectory();
-			return directory == null ? null : directory.flatMap(this::exportHtml);
-		}
-
-		private Optional<Throwable> exportHtml(Path path) {
-			try {
-				Outputter outputter = new HtmlOutputter(path);
-				outputter.output(report);
-				return Optional.empty();
-			} catch (Exception e) {
-				return Optional.of(e);
-			}
-		}
-
-		private Optional<Path> selectHtmlDirectory() {
-			JFileChooser fileChooser = new JFileChooser();
-
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			fileChooser.setMultiSelectionEnabled(false);
-			int option = fileChooser.showSaveDialog(CheckSpecFrame.this);
-
-			switch (option) {
-			case JFileChooser.APPROVE_OPTION:
-				return Optional.ofNullable(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
-			case JFileChooser.ERROR_OPTION:
-				JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR).trim());
-				return Optional.empty();
-			}
-
-			return null;
-		}
 	}
 }

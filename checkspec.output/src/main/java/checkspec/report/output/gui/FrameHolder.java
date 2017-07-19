@@ -22,19 +22,19 @@ public class FrameHolder {
 	private WindowListener listener = new WindowAdapter() {
 
 		public void windowClosed(WindowEvent e) {
-			check();
+			shutdownIfAllWindowsClosed();
 		}
 
 		public void windowOpened(WindowEvent e) {
-			check();
-		}
-
-		private void check() {
-			if (windows.parallelStream().noneMatch(Window::isVisible)) {
-				System.exit(0);
-			}
+			shutdownIfAllWindowsClosed();
 		}
 	};
+
+	private void shutdownIfAllWindowsClosed() {
+		if (windows.parallelStream().noneMatch(Window::isVisible)) {
+			System.exit(0);
+		}
+	}
 
 	public void addWindow(Window window) {
 		windows.add(window);

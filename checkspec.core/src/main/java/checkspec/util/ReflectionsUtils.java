@@ -65,7 +65,7 @@ public final class ReflectionsUtils {
 				}
 			}
 		}
-		return URLS;
+		return Arrays.copyOf(URLS, URLS.length);
 	}
 
 	public static Stream<URL> getAsUrlStream(String path) {
@@ -82,10 +82,11 @@ public final class ReflectionsUtils {
 	}
 
 	public static Class<?>[] findClassAnnotatedWithEnabledSpec(URL[] urls, ClassLoader classLoader) {
+		// checkspec maven plugin does not seem to like this being inlined
 		return createReflections(urls).getAllTypes().parallelStream()
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(ReflectionsUtils::hasSpecAnnotation)
-				.toArray(Class<?>[]::new);
+				.toArray(i -> new Class<?>[i]); // checkstyle does not like this being a method reference
 	}
 
 	private static boolean hasSpecAnnotation(Class<?> clazz) {

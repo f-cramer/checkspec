@@ -1,5 +1,7 @@
 package checkspec.cli;
 
+import static checkspec.util.SecurityUtils.*;
+
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.io.IOException;
@@ -117,8 +119,12 @@ public class CommandLineInterface {
 
 	public final SpecReport[] run(String[] specificationClassNames, URL[] specificationClasspath, URL[] implementationClasspath, String basePackage, Outputter outputter)
 			throws CommandLineException {
-		ClassLoader baseClassLoader = ClassUtils.getBaseClassLoader();
-		ClassLoader specificationClassLoader = specificationClasspath.length == 0 ? baseClassLoader : new URLClassLoader(specificationClasspath, baseClassLoader);
+		ClassLoader specificationClassLoader;
+		if (specificationClasspath.length == 0) {
+			specificationClassLoader = ClassUtils.getBaseClassLoader();
+		} else {
+			specificationClassLoader = doPrivileged(() -> new URLClassLoader(specificationClasspath, ClassUtils.getBaseClassLoader()));
+		}
 
 		Class<?>[] specificationClasses;
 		if (specificationClassNames.length == 0) {
@@ -126,7 +132,7 @@ public class CommandLineInterface {
 		} else {
 			specificationClasses = Arrays.stream(specificationClassNames)
 					.flatMap(ClassUtils.classStreamSupplier(specificationClassLoader))
-					.toArray(Class<?>[]::new);
+					.toArray(i -> new Class<?>[i]);
 		}
 
 		ClassSpecification[] specifications = Arrays.stream(specificationClasses).parallel()

@@ -21,7 +21,7 @@ import checkspec.specification.ParametersSpecification;
 import checkspec.type.ResolvableType;
 import checkspec.util.ClassUtils;
 
-public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, MultiValuedMap<Class<?>, Class<?>> > {
+public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, MultiValuedMap<Class<?>, Class<?>>> {
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
 	private static final String DELETED = "removed parameter of type \"%s\" from index %d";
