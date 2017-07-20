@@ -86,3 +86,4 @@ local.properties
 .svn/
 
 report/
+!**/checkspec/report
