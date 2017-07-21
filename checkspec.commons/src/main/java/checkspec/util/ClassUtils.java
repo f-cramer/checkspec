@@ -1,5 +1,7 @@
 package checkspec.util;
 
+import static checkspec.util.SecurityUtils.*;
+
 import java.net.URL;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -8,8 +10,6 @@ import checkspec.api.Visibility;
 import checkspec.type.ResolvableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-
-import static checkspec.util.SecurityUtils.*;
 
 /**
  * Miscellaneous methods that are working on instances of {@link Class} and / or
