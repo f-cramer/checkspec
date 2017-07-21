@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,8 +18,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-
-import com.google.common.base.Objects;
 
 import checkspec.analysis.ClassAnalysis;
 import checkspec.report.ClassReport;
@@ -161,7 +160,7 @@ public final class CheckSpec {
 			MultiValuedMap<Class<?>, Class<?>> bestMatches = convert(oldReports);
 			reports = performChecks(specs, possibleClasses, bestMatches);
 
-			if (Objects.equal(oldReports, reports)) {
+			if (Objects.equals(oldReports, reports)) {
 				break;
 			}
 		}

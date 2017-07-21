@@ -1,6 +1,7 @@
 package checkspec.analysis;
 
 import java.lang.reflect.Member;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,8 +15,6 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.commons.text.similarity.SimilarityScore;
-
-import com.google.common.collect.Lists;
 
 import checkspec.report.Report;
 import checkspec.specification.ClassSpecification;
@@ -41,8 +40,8 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 				.map(pair -> checkMember(pair.getLeft(), pair.getRight(), matches))
 				.sorted(Comparator.comparingInt(Report::getScore)).collect(Collectors.toList());
 
-		List<MemberType> unusedMembers = Lists.newArrayList(getMembers(clazz));
-		List<SpecificationType> notFoundSpecs = Lists.newArrayList(specifications);
+		List<MemberType> unusedMembers = new ArrayList<>(Arrays.asList(getMembers(clazz)));
+		List<SpecificationType> notFoundSpecs = new ArrayList<>(Arrays.asList(specifications));
 
 		Iterator<ReportType> iterator = reports.iterator();
 		while (iterator.hasNext()) {

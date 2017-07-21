@@ -19,6 +19,12 @@
 			<groupId>de.cramer.checkspec</groupId>
 			<artifactId>checkspec.output</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>de.cramer.checkspec</groupId>
+			<artifactId>checkspec.core</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
 			<artifactId>checkspec.commons</artifactId>
