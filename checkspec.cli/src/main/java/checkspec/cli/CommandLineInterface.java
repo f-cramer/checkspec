@@ -17,8 +17,14 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import org.apache.commons.cli.CommandLine;
@@ -27,6 +33,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
 
 import checkspec.CheckSpec;
 import checkspec.cli.option.ArgumentCommandLineOption;
@@ -84,8 +91,28 @@ public class CommandLineInterface {
 	private static final String SYNTAX = "java -jar checkspec-1.0.0-standalone.jar";
 	private static final Options OPTIONS = createOptions(FORMAT, COLORED, SPECS, OUTPUT_PATH, SPEC_PATH, IMPLEMENTATION_PATH, BASE_PACKAGE, HELP);
 
+	private static final String VERSION;
+	private static final ZonedDateTime TIMESTAMP;
+	private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+	private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
+	private static final String WELCOME = "You are using CheckSpec CLI version %s from %s%n";
+
+	static {
+		try {
+			Class<CommandLineInterface> clazz = CommandLineInterface.class;
+			VERSION = IOUtils.toString(clazz.getResourceAsStream("/checkspec/version"), StandardCharsets.UTF_8);
+
+			String timestamp = IOUtils.toString(clazz.getResourceAsStream("/checkspec/timestamp"), StandardCharsets.UTF_8);
+			LocalDateTime localDateTime = LocalDateTime.parse(timestamp, INPUT_FORMATTER);
+			TIMESTAMP = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
+			printWelcomeMessage();
 			new CommandLineInterface().parse(args);
 		} catch (CommandLineException e) {
 			System.err.println(e.getMessage());
@@ -93,6 +120,10 @@ public class CommandLineInterface {
 				HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
 			}
 		}
+	}
+
+	private static void printWelcomeMessage() {
+		System.out.printf(WELCOME, VERSION, OUTPUT_FORMATTER.format(TIMESTAMP));
 	}
 
 	protected final SpecReport[] parse(String[] args) throws CommandLineException {
