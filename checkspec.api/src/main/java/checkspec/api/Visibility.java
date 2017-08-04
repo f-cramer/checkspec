@@ -4,7 +4,7 @@ import java.util.Locale;
 
 public enum Visibility {
 
-	INSIGNIFICANT, PACKAGE {
+	IRRELEVANT, PACKAGE {
 		@Override
 		public String toString() {
 			return "";

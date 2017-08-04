@@ -2,7 +2,7 @@ package checkspec.api;
 
 public enum State {
 
-	TRUE, FALSE, INSIGNIFICANT,
+	TRUE, FALSE, IRRELEVANT,
 
 	/**
 	 * Default value, should not be used directly.

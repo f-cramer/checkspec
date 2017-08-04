@@ -78,7 +78,7 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 			return State.TRUE;
 		case FALSE:
 			return State.FALSE;
-		case INSIGNIFICANT:
+		case IRRELEVANT:
 			return State.INSIGNFICANT;
 		case NOT_SPECIFIED:
 			return null;

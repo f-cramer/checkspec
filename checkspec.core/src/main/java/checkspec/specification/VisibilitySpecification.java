@@ -36,7 +36,7 @@ public class VisibilitySpecification implements Specification<Integer> {
 	}
 
 	public boolean matches(Visibility visibility) {
-		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.INSIGNIFICANT || e == visibility);
+		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.IRRELEVANT || e == visibility);
 	}
 
 	private Visibility[] fromModifiers(int modifiers) {
