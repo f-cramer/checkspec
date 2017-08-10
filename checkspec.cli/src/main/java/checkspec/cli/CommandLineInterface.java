@@ -24,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import org.apache.commons.cli.CommandLine;
