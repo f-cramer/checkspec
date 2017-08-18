@@ -19,7 +19,7 @@ import org.apache.commons.text.similarity.SimilarityScore;
 import checkspec.report.Report;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.Specification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		implements ClassAnalysis<Collection<? extends ReportType>> {
@@ -31,7 +31,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpec().getName());
 
 	@Override
-	public Collection<? extends ReportType> analyze(ResolvableType type, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public Collection<? extends ReportType> analyze(MatchableType type, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> matches) {
 		Class<?> clazz = type.getRawClass();
 		SpecificationType[] specifications = getMemberSpecifications(spec);
 

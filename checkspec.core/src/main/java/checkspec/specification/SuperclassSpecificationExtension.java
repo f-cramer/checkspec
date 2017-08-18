@@ -1,8 +1,8 @@
 package checkspec.specification;
 
 import checkspec.extension.Extension;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
-public interface SuperclassSpecificationExtension extends Extension<SuperclassSpecification, ResolvableType> {
+public interface SuperclassSpecificationExtension extends Extension<SuperclassSpecification, MatchableType> {
 
 }

@@ -23,7 +23,7 @@ import checkspec.analysis.ClassAnalysis;
 import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
@@ -185,7 +185,7 @@ public final class CheckSpec {
 
 	private static ClassReport checkImplements(Class<?> clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldMappings) {
 		ClassReport report = new ClassReport(spec, clazz);
-		ResolvableType type = ResolvableType.forClass(clazz);
+		MatchableType type = MatchableType.forClass(clazz);
 
 		for (final ClassAnalysis<?> analysis : ANALYSES) {
 			performAnalysis(analysis, type, spec, oldMappings, report);
@@ -194,7 +194,7 @@ public final class CheckSpec {
 		return report;
 	}
 
-	private static <ReturnType> void performAnalysis(ClassAnalysis<ReturnType> analysis, ResolvableType clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> reports,
+	private static <ReturnType> void performAnalysis(ClassAnalysis<ReturnType> analysis, MatchableType clazz, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> reports,
 			ClassReport report) {
 		ReturnType returnValue = analysis.analyze(clazz, spec, reports);
 		analysis.add(report, returnValue);
@@ -216,7 +216,7 @@ public final class CheckSpec {
 	private static List<Class<?>> getImplementationClasses(SpecReport report) {
 		return report.getClassReports().parallelStream()
 				.map(ClassReport::getImplementation)
-				.map(ResolvableType::getRawClass)
+				.map(MatchableType::getRawClass)
 				.collect(Collectors.toList());
 	}
 

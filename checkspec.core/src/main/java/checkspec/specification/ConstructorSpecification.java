@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -42,7 +42,7 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 		visibility = new VisibilitySpecification(constructor.getModifiers(), constructor.getAnnotations());
 		rawElement = constructor;
 
-		parameters = new ParametersSpecification(constructor.getParameters(), index -> ResolvableType.forConstructorParameter(constructor, index));
+		parameters = new ParametersSpecification(constructor.getParameters(), index -> MatchableType.forConstructorParameter(constructor, index));
 
 		performExtensions(EXTENSIONS, this, constructor);
 	}

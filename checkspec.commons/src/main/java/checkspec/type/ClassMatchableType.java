@@ -18,30 +18,30 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class ClassResolvableType extends AbstractResolvableType<Class<?>> {
+class ClassMatchableType extends AbstractMatchableType<Class<?>> {
 
 	private static final String TYPE_FORMAT = "%s%s";
 	private static final String TYPE_VARIABLE_FORMAT = "%s %s";
 
-	private final TypeVariableResolvableType[] typeParameters;
+	private final TypeVariableMatchableType[] typeParameters;
 
-	public ClassResolvableType(final Class<?> rawType) {
+	public ClassMatchableType(final Class<?> rawType) {
 		super(rawType);
 		this.typeParameters = Arrays.stream(rawType.getTypeParameters())
-				.map(TypeVariableResolvableType::new)
-				.toArray(TypeVariableResolvableType[]::new);
+				.map(TypeVariableMatchableType::new)
+				.toArray(TypeVariableMatchableType[]::new);
 	}
 
 	@Override
-	public MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (equals(type)) {
 			return MatchingState.FULL_MATCH;
 		}
 
-		if (type instanceof ClassResolvableType) {
+		if (type instanceof ClassMatchableType) {
 			// match class to class, i.e. "String" to "String"
 
-			Class<?> oRawType = ((ClassResolvableType) type).getRawType();
+			Class<?> oRawType = ((ClassMatchableType) type).getRawType();
 			if (matches != null) {
 				// direct match was found
 				if (matches.containsMapping(rawType, oRawType)) {
@@ -52,16 +52,16 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 			if (rawType.isArray() && oRawType.isArray()) {
 				Class<?> compType = rawType.getComponentType();
 				Class<?> oCompType = oRawType.getComponentType();
-				return ResolvableType.forClass(compType).matches(ResolvableType.forClass(oCompType), matches);
+				return MatchableType.forClass(compType).matches(MatchableType.forClass(oCompType), matches);
 			}
 
 			// primitive and its wrapper
 			if (ClassUtils.isAssignable(rawType, oRawType) && ClassUtils.isAssignable(oRawType, rawType)) {
 				return MatchingState.PARTIAL_MATCH;
 			}
-		} else if (type instanceof WildcardTypeResolvableType) {
+		} else if (type instanceof WildcardTypeMatchableType) {
 			// match class to wildcard, i.e. "String" to "? extends String"
-			WildcardTypeResolvableType oType = (WildcardTypeResolvableType) type;
+			WildcardTypeMatchableType oType = (WildcardTypeMatchableType) type;
 			MatchingState state = MatchingState.PARTIAL_MATCH;
 			state.merge(matches(oType.getUpperBounds(), matches));
 			state.merge(matches(oType.getLowerBounds(), matches));
@@ -71,7 +71,7 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 		return MatchingState.NO_MATCH;
 	}
 
-	private Optional<MatchingState> matches(ResolvableType[] bounds, MultiValuedMap<Class<?>, Class<?>> matches) {
+	private Optional<MatchingState> matches(MatchableType[] bounds, MultiValuedMap<Class<?>, Class<?>> matches) {
 		return Arrays.stream(bounds)
 				.map(bound -> this.matches(bound, matches))
 				.max(Comparator.naturalOrder());
@@ -90,17 +90,17 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 			return name;
 		} else {
 			StringJoiner joiner = new StringJoiner(", ", "<", ">");
-			Arrays.stream(typeParameters).map(ClassResolvableType::typeVariableAsString).forEach(joiner::add);
+			Arrays.stream(typeParameters).map(ClassMatchableType::typeVariableAsString).forEach(joiner::add);
 			return String.format(TYPE_FORMAT, name, joiner);
 		}
 	}
 
-	private static String typeVariableAsString(TypeVariableResolvableType type) {
+	private static String typeVariableAsString(TypeVariableMatchableType type) {
 		TypeVariable<?> variable = type.getRawType();
 		String name = variable.getName();
 		List<String> bounds = Arrays.stream(variable.getBounds())
 				.filter(bound -> bound != Object.class)
-				.map(ClassResolvableType::boundAsString)
+				.map(ClassMatchableType::boundAsString)
 				.collect(Collectors.toList());
 
 		if (bounds.isEmpty()) {
@@ -113,7 +113,7 @@ class ClassResolvableType extends AbstractResolvableType<Class<?>> {
 	}
 
 	private static String boundAsString(Type bound) {
-		ResolvableType type = ResolvableType.forType(bound);
+		MatchableType type = MatchableType.forType(bound);
 		return type == null ? bound.getTypeName() : type.toString();
 	}
 }

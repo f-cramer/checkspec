@@ -3,7 +3,7 @@ package checkspec.specification;
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.TypeDiscovery;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class SuperclassSpecification extends AbstractExtendable<SuperclassSpecification, ResolvableType> {
+public class SuperclassSpecification extends AbstractExtendable<SuperclassSpecification, MatchableType> implements Specification<MatchableType> {
 
 	private static final SuperclassSpecificationExtension[] EXTENSIONS;
 
@@ -25,13 +25,13 @@ public class SuperclassSpecification extends AbstractExtendable<SuperclassSpecif
 	private final String name;
 
 	@NonNull
-	private final ResolvableType rawElement;
+	private final MatchableType rawElement;
 
 	public SuperclassSpecification(Class<?> superClass) {
-		this(ResolvableType.forClass(superClass));
+		this(MatchableType.forClass(superClass));
 	}
 
-	public SuperclassSpecification(ResolvableType superType) {
+	public SuperclassSpecification(MatchableType superType) {
 		rawElement = superType;
 		this.name = rawElement == null ? ClassUtils.getName(Object.class) : ClassUtils.getName(rawElement);
 

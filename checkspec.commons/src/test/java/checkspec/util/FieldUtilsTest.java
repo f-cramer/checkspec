@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import org.junit.Test;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class FieldUtilsTest {
 
@@ -35,8 +35,8 @@ public class FieldUtilsTest {
 
 	@Test
 	public void getTypeTest() {
-		ResolvableType result = getType(FIELD);
-		assertThat(result).isEqualTo(ResolvableType.forField(FIELD));
+		MatchableType result = getType(FIELD);
+		assertThat(result).isEqualTo(MatchableType.forField(FIELD));
 	}
 
 	@Test(expected = NullPointerException.class)

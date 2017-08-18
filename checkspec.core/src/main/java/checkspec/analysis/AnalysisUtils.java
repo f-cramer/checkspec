@@ -9,14 +9,14 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.MatchingState;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 class AnalysisUtils {
 
-	public static Optional<ReportProblem> compareTypes(ResolvableType specification, ResolvableType actual, MultiValuedMap<Class<?>, Class<?>> oldReports, BinaryOperator<String> compatible,
+	public static Optional<ReportProblem> compareTypes(MatchableType specification, MatchableType actual, MultiValuedMap<Class<?>, Class<?>> oldReports, BinaryOperator<String> compatible,
 			BinaryOperator<String> incompatible) {
 		MatchingState state = specification.matches(actual, oldReports);
 		if (state == MatchingState.FULL_MATCH) {

@@ -13,7 +13,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.InterfaceSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 
 public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
@@ -22,18 +22,18 @@ public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 	private static final String SHOULD_NOT = "should not implement interface \"%s\"";
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	public List<ReportProblem> analyze(MatchableType actual, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
-		List<ResolvableType> notFoundInterfaces = Arrays.stream(actual.getRawClass().getInterfaces())
-				.map(ResolvableType::forClass)
+		List<MatchableType> notFoundInterfaces = Arrays.stream(actual.getRawClass().getInterfaces())
+				.map(MatchableType::forClass)
 				// needs to be mutable
 				.collect(Collectors.toCollection(() -> new ArrayList<>()));
 
 		List<InterfaceSpecification> specifications = new ArrayList<>(Arrays.asList(spec.getInterfaceSpecifications()));
 
 		for (InterfaceSpecification specification : specifications) {
-			Optional<ResolvableType> interf = notFoundInterfaces.parallelStream()
+			Optional<MatchableType> interf = notFoundInterfaces.parallelStream()
 					.filter(i -> specification.getRawElement().matches(i, oldReports).evaluate(true, true, false))
 					.findAny();
 
@@ -44,7 +44,7 @@ public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 			}
 		}
 
-		for (ResolvableType notFoundInterface : notFoundInterfaces) {
+		for (MatchableType notFoundInterface : notFoundInterfaces) {
 			problems.add(new ReportProblem(1, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), ReportProblemType.ERROR));
 		}
 

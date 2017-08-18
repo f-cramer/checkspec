@@ -4,25 +4,25 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class ModifierUtilsTest {
 
 	@Test
 	public void toStringResolvableTypeTest() {
-		String result = ModifierUtils.toString(ResolvableType.forClass(ModifierUtilsTest.class));
+		String result = ModifierUtils.toString(MatchableType.forClass(ModifierUtilsTest.class));
 		assertThat(result).isEqualTo("public");
 
-		result = ModifierUtils.toString(ResolvableType.forClass(PublicStaticFinalClass.class));
+		result = ModifierUtils.toString(MatchableType.forClass(PublicStaticFinalClass.class));
 		assertThat(result).isEqualTo("private static final");
 
-		result = ModifierUtils.toString(ResolvableType.forClass(ProtectedStaticClass.class));
+		result = ModifierUtils.toString(MatchableType.forClass(ProtectedStaticClass.class));
 		assertThat(result).isEqualTo("protected abstract static");
 
-		result = ModifierUtils.toString(ResolvableType.forClass(Interface.class));
+		result = ModifierUtils.toString(MatchableType.forClass(Interface.class));
 		assertThat(result).isEmpty();
 
-		result = ModifierUtils.toString(ResolvableType.forClass(Enum.class));
+		result = ModifierUtils.toString(MatchableType.forClass(Enum.class));
 		assertThat(result).isEmpty();
 	}
 

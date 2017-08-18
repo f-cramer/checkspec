@@ -8,13 +8,13 @@ import lombok.NonNull;
 
 @Getter
 @EqualsAndHashCode
-abstract class AbstractResolvableType<RawType extends Type> implements ResolvableType {
+abstract class AbstractMatchableType<RawType extends Type> implements MatchableType {
 
 	protected RawType rawType;
 
-	protected AbstractResolvableType(@NonNull final RawType rawType) {
+	protected AbstractMatchableType(@NonNull final RawType rawType) {
 		this.rawType = rawType;
-		ResolvableTypeCache.put(rawType, this);
+		MatchableTypeCache.put(rawType, this);
 	}
 
 	@Override

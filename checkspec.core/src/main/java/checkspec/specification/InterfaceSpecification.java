@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecification, ResolvableType> implements Specification<ResolvableType>, Comparable<InterfaceSpecification> {
+public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecification, MatchableType> implements Specification<MatchableType>, Comparable<InterfaceSpecification> {
 
 	private static final InterfaceSpecificationExtension[] EXTENSIONS;
 
@@ -27,9 +27,9 @@ public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecific
 	private final String name;
 
 	@NonNull
-	private final ResolvableType rawElement;
+	private final MatchableType rawElement;
 
-	public InterfaceSpecification(ResolvableType interf) {
+	public InterfaceSpecification(MatchableType interf) {
 		this.name = ClassUtils.getName(interf);
 		rawElement = interf;
 

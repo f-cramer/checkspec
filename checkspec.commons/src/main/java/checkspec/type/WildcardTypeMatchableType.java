@@ -17,32 +17,32 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
+class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType> {
 
-	private final ResolvableType[] upperBounds;
-	private final ResolvableType[] lowerBounds;
+	private final MatchableType[] upperBounds;
+	private final MatchableType[] lowerBounds;
 
-	public WildcardTypeResolvableType(final WildcardType rawType) {
+	public WildcardTypeMatchableType(final WildcardType rawType) {
 		super(rawType);
 		this.upperBounds = Arrays.stream(rawType.getUpperBounds())
-				.map(ResolvableType::forType)
-				.toArray(ResolvableType[]::new);
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
 		this.lowerBounds = Arrays.stream(rawType.getLowerBounds())
-				.map(ResolvableType::forType)
-				.toArray(ResolvableType[]::new);
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
 	}
 
 	@Override
-	public MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (equals(type)) {
 			return MatchingState.FULL_MATCH;
 		}
 
 		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof WildcardTypeResolvableType) {
+		if (type instanceof WildcardTypeMatchableType) {
 			// match wildcard to wildcard, i.e. "?" to "?"
-			ResolvableType[] oUpperBounds = ((WildcardTypeResolvableType) type).getUpperBounds();
-			ResolvableType[] oLowerBounds = ((WildcardTypeResolvableType) type).getLowerBounds();
+			MatchableType[] oUpperBounds = ((WildcardTypeMatchableType) type).getUpperBounds();
+			MatchableType[] oLowerBounds = ((WildcardTypeMatchableType) type).getLowerBounds();
 			if (upperBounds.length != oUpperBounds.length || lowerBounds.length != oLowerBounds.length) {
 				return MatchingState.NO_MATCH;
 			}
@@ -60,7 +60,7 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 			if (state == MatchingState.NO_MATCH) {
 				return MatchingState.NO_MATCH;
 			}
-		} else if (type instanceof ClassResolvableType) {
+		} else if (type instanceof ClassMatchableType) {
 			// to match wildcard to class, i.e. "? extends String" to "String"
 			state = state.merge(MatchingState.PARTIAL_MATCH);
 			state = state.merge(matchesUpperBounds(type, matches));
@@ -72,13 +72,13 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 		return state;
 	}
 
-	private static Optional<MatchingState> matches(ResolvableType[] bounds, ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	private static Optional<MatchingState> matches(MatchableType[] bounds, MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		return Arrays.stream(bounds)
 				.map(bound -> bound.matches(type, matches))
 				.max(Comparator.naturalOrder());
 	}
 
-	private Optional<MatchingState> matchesUpperBounds(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	private Optional<MatchingState> matchesUpperBounds(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (upperBounds.length == 1) {
 			Class<?> rawClass = upperBounds[0].getRawClass();
 			if (rawClass == Object.class) {
@@ -91,7 +91,7 @@ class WildcardTypeResolvableType extends AbstractResolvableType<WildcardType> {
 	@Override
 	public Class<?> getRawClass() {
 		List<Class<?>> rawClasses = Arrays.stream(upperBounds)
-				.map(ResolvableType::getRawClass)
+				.map(MatchableType::getRawClass)
 				.collect(Collectors.toList());
 		return TypeUtils.getLowestCommonSuperType(rawClasses);
 	}

@@ -13,7 +13,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.MethodSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.Getter;
 
 @Getter
@@ -51,8 +51,8 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 			report.addProblem(new ReportProblem(score, String.format(NAME, specName), ReportProblemType.ERROR));
 		}
 
-		ResolvableType specReturnType = spec.getReturnType();
-		ResolvableType methodReturnType = ResolvableType.forMethodReturnType(method);
+		MatchableType specReturnType = spec.getReturnType();
+		MatchableType methodReturnType = MatchableType.forMethodReturnType(method);
 		AnalysisUtils.compareTypes(specReturnType, methodReturnType, oldReports, (s, a) -> String.format(COMPATIBLE_TYPE, s, a), (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s))
 				.ifPresent(report::addProblem);
 

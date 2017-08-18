@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
 import org.junit.Test;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class ConstructorUtilsTest {
 
@@ -48,7 +48,7 @@ public class ConstructorUtilsTest {
 
 	@Test
 	public void getParametersAsResolvableTypeTest() {
-		ResolvableType[] result = getParametersAsResolvableType(CONSTRUCTOR);
+		MatchableType[] result = getParametersAsResolvableType(CONSTRUCTOR);
 		assertThat(result).isEmpty();
 	}
 

@@ -2,7 +2,7 @@ package checkspec.specification;
 
 import java.lang.reflect.Parameter;
 
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
@@ -15,7 +15,7 @@ public class ParameterSpecification implements Specification<Parameter> {
 	private final String name;
 
 	@NonNull
-	private final ResolvableType type;
+	private final MatchableType type;
 
 	@NonNull
 	private final ModifiersSpecification modifiers;
@@ -23,7 +23,7 @@ public class ParameterSpecification implements Specification<Parameter> {
 	@NonNull
 	private final Parameter rawElement;
 
-	public ParameterSpecification(Parameter parameter, ResolvableType type) {
+	public ParameterSpecification(Parameter parameter, MatchableType type) {
 		this.type = type;
 		rawElement = parameter;
 		modifiers = new ModifiersSpecification(parameter.getModifiers(), parameter.getAnnotations());

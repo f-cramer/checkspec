@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -19,12 +19,12 @@ public final class FieldUtils {
 		return String.format(TO_STRING_FORMAT, modifiers, typeName, field.getName()).trim();
 	}
 
-	public static ResolvableType getType(@NonNull Field field) {
-		return ResolvableType.forField(field);
+	public static MatchableType getType(@NonNull Field field) {
+		return MatchableType.forField(field);
 	}
 
 	public static String getTypeName(@NonNull Field field) {
-		return ClassUtils.getName(ResolvableType.forField(field));
+		return ClassUtils.getName(MatchableType.forField(field));
 	}
 
 	public static Visibility getVisibility(@NonNull Field field) {

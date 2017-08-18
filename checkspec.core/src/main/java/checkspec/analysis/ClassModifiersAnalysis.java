@@ -8,12 +8,12 @@ import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ModifiersSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class ClassModifiersAnalysis extends AbstractModifiersAnalysis implements ClassAnalysis<List<ReportProblem>> {
 
 	@Override
-	public List<ReportProblem> analyze(ResolvableType actual, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	public List<ReportProblem> analyze(MatchableType actual, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		ModifiersSpecification modifiersSpec = spec.getModifiers();
 		return analyzeModifiers(actual.getRawClass().getModifiers(), modifiersSpec, !modifiersSpec.isInterface() || actual.getRawClass().isInterface());
 	}

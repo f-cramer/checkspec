@@ -18,7 +18,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ParameterSpecification;
 import checkspec.specification.ParametersSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 
 public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, MultiValuedMap<Class<?>, Class<?>>> {
@@ -34,15 +34,15 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 
 		int specParameterCount = specification.getCount();
 
-		ResolvableType[] specClasses = IntStream.range(0, specParameterCount).mapToObj(specification::get).map(ParameterSpecification::getType).toArray(ResolvableType[]::new);
-		ResolvableType[] actualClasses = Arrays.stream(actual).parallel().map(ParametersAnalysis::getType).toArray(ResolvableType[]::new);
+		MatchableType[] specClasses = IntStream.range(0, specParameterCount).mapToObj(specification::get).map(ParameterSpecification::getType).toArray(MatchableType[]::new);
+		MatchableType[] actualClasses = Arrays.stream(actual).parallel().map(ParametersAnalysis::getType).toArray(MatchableType[]::new);
 
 		report.addProblems(calculateDistance(specClasses, actualClasses, oldReports));
 
 		return report;
 	}
 
-	private static ResolvableType getType(Parameter parameter) {
+	private static MatchableType getType(Parameter parameter) {
 		Executable executable = parameter.getDeclaringExecutable();
 		OptionalInt optionalIndex = findIndex(parameter);
 
@@ -50,13 +50,13 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			int index = optionalIndex.getAsInt();
 
 			if (executable instanceof Constructor<?>) {
-				return ResolvableType.forConstructorParameter((Constructor<?>) executable, index);
+				return MatchableType.forConstructorParameter((Constructor<?>) executable, index);
 			} else if (executable instanceof Method) {
-				return ResolvableType.forMethodParameter((Method) executable, index);
+				return MatchableType.forMethodParameter((Method) executable, index);
 			}
 		}
 
-		return ResolvableType.forType(parameter.getParameterizedType());
+		return MatchableType.forType(parameter.getParameterizedType());
 	}
 
 	private static OptionalInt findIndex(Parameter parameter) {
@@ -64,7 +64,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 		return IntStream.range(0, executable.getParameterCount()).filter(index -> executable.getParameters()[index] == parameter).findFirst();
 	}
 
-	private static List<ReportProblem> calculateDistance(ResolvableType[] left, ResolvableType[] right, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	private static List<ReportProblem> calculateDistance(MatchableType[] left, MatchableType[] right, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		if (left.length == 0) {
 			return Collections.emptyList();
 		} else if (right.length == 0) {
@@ -82,7 +82,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			matrix[index][0] = index;
 		}
 
-		ResolvableType rightJ;
+		MatchableType rightJ;
 
 		int cost;
 		for (int i = 0; i <= left.length; i++) {
@@ -106,7 +106,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 		return findDetailedResults(left, right, matrix, oldReports);
 	}
 
-	private static List<ReportProblem> findDetailedResults(final ResolvableType[] left, final ResolvableType[] right, final int[][] matrix, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	private static List<ReportProblem> findDetailedResults(final MatchableType[] left, final MatchableType[] right, final int[][] matrix, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		List<ReportProblem> problems = new ArrayList<>();
 
 		int rowIndex = right.length;
@@ -141,8 +141,8 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 			}
 			data = matrix[rowIndex][columnIndex];
 
-			ResolvableType curLeft = columnIndex > 0 ? left[columnIndex - 1] : null;
-			ResolvableType curRight = rowIndex > 0 ? right[rowIndex - 1] : null;
+			MatchableType curLeft = columnIndex > 0 ? left[columnIndex - 1] : null;
+			MatchableType curRight = rowIndex > 0 ? right[rowIndex - 1] : null;
 			if (columnIndex > 0 && rowIndex > 0 && curLeft.equals(curRight)) {
 				columnIndex--;
 				rowIndex--;

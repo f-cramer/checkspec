@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.FieldUtils;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
@@ -28,7 +28,7 @@ public class FieldSpecification extends AbstractExtendable<FieldSpecification, F
 	private final String name;
 
 	@NonNull
-	private final ResolvableType type;
+	private final MatchableType type;
 
 	@NonNull
 	private final ModifiersSpecification modifiers;

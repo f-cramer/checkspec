@@ -10,7 +10,7 @@ import checkspec.report.ClassReport;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.MatchingState;
 
 public class SuperclassAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
@@ -22,9 +22,9 @@ public class SuperclassAnalysis implements ClassAnalysis<Optional<ReportProblem>
 	private static final String SHOULD_DECLARE_DIFFERENT = "should declare \"%s\" as its super class";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
-		ResolvableType specificationSuperType = specification.getSuperclassSpecification().getRawElement();
-		ResolvableType actualSuperType = actual.getSuperType();
+	public Optional<ReportProblem> analyze(MatchableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+		MatchableType specificationSuperType = specification.getSuperclassSpecification().getRawElement();
+		MatchableType actualSuperType = actual.getSuperType();
 
 		MatchingState state = specificationSuperType.matches(actualSuperType, oldReports);
 		if (state == MatchingState.FULL_MATCH) {

@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -23,9 +23,9 @@ public final class ConstructorUtils {
 		return MemberUtils.getVisibility(constructor.getModifiers());
 	}
 
-	public static ResolvableType[] getParametersAsResolvableType(@NonNull Constructor<?> constructor) {
+	public static MatchableType[] getParametersAsResolvableType(@NonNull Constructor<?> constructor) {
 		return getParameterList(constructor)
-				.toArray(ResolvableType[]::new);
+				.toArray(MatchableType[]::new);
 	}
 
 	public static String getParametersAsString(@NonNull Constructor<?> constructor) {
@@ -34,8 +34,8 @@ public final class ConstructorUtils {
 				.collect(Collectors.joining(", "));
 	}
 
-	private static Stream<ResolvableType> getParameterList(Constructor<?> constructor) {
+	private static Stream<MatchableType> getParameterList(Constructor<?> constructor) {
 		return IntStream.range(0, constructor.getParameterCount()).parallel()
-				.mapToObj(i -> ResolvableType.forConstructorParameter(constructor, i));
+				.mapToObj(i -> MatchableType.forConstructorParameter(constructor, i));
 	}
 }

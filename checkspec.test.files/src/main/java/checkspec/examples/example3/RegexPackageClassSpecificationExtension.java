@@ -4,12 +4,12 @@ import java.util.regex.Pattern;
 
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ClassSpecificationExtension;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class RegexPackageClassSpecificationExtension implements ClassSpecificationExtension {
 
 	@Override
-	public void extend(ClassSpecification extensionPoint, ResolvableType payload) {
+	public void extend(ClassSpecification extensionPoint, MatchableType payload) {
 		Class<?> clazz = payload.getRawClass();
 		RegexPackage regexPackage = clazz.getAnnotation(RegexPackage.class);
 

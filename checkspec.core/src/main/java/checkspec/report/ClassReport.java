@@ -6,19 +6,19 @@ import java.util.Collections;
 import java.util.List;
 
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class ClassReport extends Report<ResolvableType, ClassSpecification> {
+public class ClassReport extends Report<MatchableType, ClassSpecification> {
 
 	private List<FieldReport> fieldReports = new ArrayList<>();
 	private List<ConstructorReport> constructorReports = new ArrayList<>();
 	private List<MethodReport> methodReports = new ArrayList<>();
 
 	public ClassReport(ClassSpecification spec, Class<?> implementation) {
-		super(spec, ResolvableType.forClass(implementation), ClassUtils.toString(implementation));
+		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ClassReport extends Report<ResolvableType, ClassSpecification> {
 	}
 
 	@Override
-	protected String getRawTypeName(ResolvableType raw) {
+	protected String getRawTypeName(MatchableType raw) {
 		return ClassUtils.getName(raw);
 	}
 }

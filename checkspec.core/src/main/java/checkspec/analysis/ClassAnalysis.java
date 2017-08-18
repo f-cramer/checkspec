@@ -4,9 +4,9 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
-public interface ClassAnalysis<ReturnType> extends Analysis<ResolvableType, ClassSpecification, ReturnType, MultiValuedMap<Class<?>, Class<?>>> {
+public interface ClassAnalysis<ReturnType> extends Analysis<MatchableType, ClassSpecification, ReturnType, MultiValuedMap<Class<?>, Class<?>>> {
 
 	void add(ClassReport report, ReturnType returnType);
 

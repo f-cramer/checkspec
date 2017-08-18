@@ -6,7 +6,7 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class ParametersSpecification implements Specification<List<Parameter>> {
 	@Getter(AccessLevel.PACKAGE)
 	private final List<ParameterSpecification> parameterSpecifications;
 
-	public ParametersSpecification(Parameter[] parameters, IntFunction<ResolvableType> typeGenerator) {
+	public ParametersSpecification(Parameter[] parameters, IntFunction<MatchableType> typeGenerator) {
 		parameterSpecifications = IntStream.range(0, parameters.length)
 				.mapToObj(i -> new ParameterSpecification(parameters[i], typeGenerator.apply(i)))
 				.collect(Collectors.toList());

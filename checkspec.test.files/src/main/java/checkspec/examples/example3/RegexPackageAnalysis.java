@@ -9,14 +9,14 @@ import checkspec.analysis.PackageAnalysis;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class RegexPackageAnalysis extends PackageAnalysis {
 
 	private static final String FORMAT = "package name should match pattern \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	public Optional<ReportProblem> analyze(MatchableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		Optional<RegexPackageSpecification> optional = specification.getExtension(RegexPackageSpecification.class);
 		if (optional.isPresent()) {
 			RegexPackageSpecification spec = optional.get();

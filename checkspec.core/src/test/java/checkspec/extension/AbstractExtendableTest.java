@@ -10,16 +10,16 @@ import org.junit.Test;
 
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ClassSpecificationExtension;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class AbstractExtendableTest {
 
 	private String extension;
-	private AbstractExtendable<ClassSpecification, ResolvableType> extendable;
+	private AbstractExtendable<ClassSpecification, MatchableType> extendable;
 
 	@Before
 	public void setUp() {
-		extendable = new AbstractExtendable<ClassSpecification, ResolvableType>() {
+		extendable = new AbstractExtendable<ClassSpecification, MatchableType>() {
 		};
 		extension = "";
 	}

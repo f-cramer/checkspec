@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -30,12 +30,12 @@ public final class MethodUtils {
 	}
 
 	public static String getReturnTypeName(@NonNull Method method) {
-		return ClassUtils.getName(ResolvableType.forMethodReturnType(method));
+		return ClassUtils.getName(MatchableType.forMethodReturnType(method));
 	}
 
 	public static String getParameterList(@NonNull Method method) {
 		return IntStream.range(0, method.getParameterCount()).parallel()
-				.mapToObj(i -> ResolvableType.forMethodParameter(method, i))
+				.mapToObj(i -> MatchableType.forMethodParameter(method, i))
 				.map(ClassUtils::getName)
 				.collect(Collectors.joining(", "));
 	}
@@ -44,7 +44,7 @@ public final class MethodUtils {
 		return Modifier.isAbstract(method.getModifiers());
 	}
 
-	public static int calculateParameterDistance(@NonNull ResolvableType[] left, @NonNull ResolvableType[] right, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public static int calculateParameterDistance(@NonNull MatchableType[] left, @NonNull MatchableType[] right, MultiValuedMap<Class<?>, Class<?>> matches) {
 		/*
 		 * This implementation use two variable to record the previous cost counts, So
 		 * this implementation use less memory than previous impl.
@@ -67,7 +67,7 @@ public final class MethodUtils {
 		int upperLeft;
 		int upper;
 
-		ResolvableType rightJ; // jth parameter of right
+		MatchableType rightJ; // jth parameter of right
 		int cost; // cost
 
 		for (leftIterator = 0; leftIterator <= leftLength; leftIterator++) {
@@ -81,7 +81,7 @@ public final class MethodUtils {
 
 			for (leftIterator = 1; leftIterator <= leftLength; leftIterator++) {
 				upper = costs[leftIterator];
-				ResolvableType leftJ = left[leftIterator - 1];
+				MatchableType leftJ = left[leftIterator - 1];
 				cost = leftJ.matches(rightJ, matches).evaluate(0, 5, 10);
 				// minimum of cell to the left+1, to the top+1, diagonally left
 				// and up +cost

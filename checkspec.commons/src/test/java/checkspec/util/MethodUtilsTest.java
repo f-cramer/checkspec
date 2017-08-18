@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class MethodUtilsTest {
 
@@ -81,11 +81,11 @@ public class MethodUtilsTest {
 
 	@Test
 	public void calculateParameterDistanceTest() {
-		ResolvableType[] emptyParameterList = new ResolvableType[0];
-		ResolvableType[] oneParameterList = { ResolvableType.forClass(Integer.TYPE) };
-		ResolvableType[] anotherOneParameterList = { ResolvableType.forClass(Integer.class) };
-		ResolvableType[] yetAnotherOneParameterList = { ResolvableType.forClass(String.class) };
-		ResolvableType[] twoParameterList = { ResolvableType.forClass(Integer.class), ResolvableType.forClass(String.class) };
+		MatchableType[] emptyParameterList = new MatchableType[0];
+		MatchableType[] oneParameterList = { MatchableType.forClass(Integer.TYPE) };
+		MatchableType[] anotherOneParameterList = { MatchableType.forClass(Integer.class) };
+		MatchableType[] yetAnotherOneParameterList = { MatchableType.forClass(String.class) };
+		MatchableType[] twoParameterList = { MatchableType.forClass(Integer.class), MatchableType.forClass(String.class) };
 
 		int result = calculateParameterDistance(emptyParameterList, oneParameterList, null);
 		assertThat(result).isEqualTo(20);
@@ -108,12 +108,12 @@ public class MethodUtilsTest {
 
 	@Test(expected = NullPointerException.class)
 	public void calculateParameterDistanceNullTest() {
-		calculateParameterDistance(null, new ResolvableType[0], null);
+		calculateParameterDistance(null, new MatchableType[0], null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void calculateParameterDistanceNullTest2() {
-		calculateParameterDistance(new ResolvableType[0], null, null);
+		calculateParameterDistance(new MatchableType[0], null, null);
 	}
 
 	@Test(expected = NullPointerException.class)

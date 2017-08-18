@@ -18,30 +18,30 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>> {
+class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>> {
 
-	private final ResolvableType genericDeclarationType;
-	private final ResolvableType[] bounds;
+	private final MatchableType genericDeclarationType;
+	private final MatchableType[] bounds;
 	private final int index;
 
-	public TypeVariableResolvableType(final TypeVariable<?> rawType) {
+	public TypeVariableMatchableType(final TypeVariable<?> rawType) {
 		super(rawType);
-		this.genericDeclarationType = ResolvableType.forClass(getClass(rawType.getGenericDeclaration()));
+		this.genericDeclarationType = MatchableType.forClass(getClass(rawType.getGenericDeclaration()));
 		this.bounds = Arrays.stream(rawType.getBounds())
-				.map(ResolvableType::forType)
-				.toArray(ResolvableType[]::new);
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
 		this.index = getIndex(rawType);
 	}
 
 	@Override
-	public MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (equals(type)) {
 			return MatchingState.FULL_MATCH;
 		}
 
 		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof TypeVariableResolvableType) {
-			ResolvableType oGenericDeclarationType = ((TypeVariableResolvableType) type).getGenericDeclarationType();
+		if (type instanceof TypeVariableMatchableType) {
+			MatchableType oGenericDeclarationType = ((TypeVariableMatchableType) type).getGenericDeclarationType();
 			state = state.merge(genericDeclarationType.matches(oGenericDeclarationType, matches));
 			if (state == MatchingState.NO_MATCH) {
 				return MatchingState.NO_MATCH;
@@ -56,7 +56,7 @@ class TypeVariableResolvableType extends AbstractResolvableType<TypeVariable<?>>
 	@Override
 	public Class<?> getRawClass() {
 		List<Class<?>> rawClasses = Arrays.stream(bounds)
-				.map(ResolvableType::getRawClass)
+				.map(MatchableType::getRawClass)
 				.collect(Collectors.toList());
 		return TypeUtils.getLowestCommonSuperType(rawClasses);
 	}

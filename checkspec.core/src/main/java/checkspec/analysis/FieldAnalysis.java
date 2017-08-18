@@ -13,7 +13,7 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.FieldSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.FieldUtils;
 import lombok.Getter;
 
@@ -50,8 +50,8 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 		VISIBILITY_ANALYSIS.analyze(field, spec).ifPresent(report::addProblem);
 		report.addProblems(MODIFIERS_ANALYSIS.analyze(field, spec));
 
-		ResolvableType fieldType = FieldUtils.getType(field);
-		ResolvableType specType = spec.getType();
+		MatchableType fieldType = FieldUtils.getType(field);
+		MatchableType specType = spec.getType();
 
 		BinaryOperator<String> compatibleString = (s, a) -> String.format(COMPATIBLE_TYPE, s, a);
 		BinaryOperator<String> incompatibleString = (a, s) -> String.format(INCOMPATIBLE_TYPE, a, s);

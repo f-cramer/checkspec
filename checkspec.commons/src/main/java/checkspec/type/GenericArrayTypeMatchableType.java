@@ -11,23 +11,23 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class GenericArrayTypeResolvabelType extends AbstractResolvableType<GenericArrayType> {
+class GenericArrayTypeMatchableType extends AbstractMatchableType<GenericArrayType> {
 
-	private final ResolvableType componentType;
+	private final MatchableType componentType;
 
-	public GenericArrayTypeResolvabelType(final GenericArrayType rawType) {
+	public GenericArrayTypeMatchableType(final GenericArrayType rawType) {
 		super(rawType);
-		this.componentType = ResolvableType.forType(rawType.getGenericComponentType());
+		this.componentType = MatchableType.forType(rawType.getGenericComponentType());
 	}
 
 	@Override
-	public MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (equals(type)) {
 			return MatchingState.FULL_MATCH;
 		}
 
-		if (type instanceof GenericArrayTypeResolvabelType) {
-			ResolvableType oComponentType = ((GenericArrayTypeResolvabelType) type).getComponentType();
+		if (type instanceof GenericArrayTypeMatchableType) {
+			MatchableType oComponentType = ((GenericArrayTypeMatchableType) type).getComponentType();
 			return componentType.matches(oComponentType, matches);
 		}
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -27,7 +27,7 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 	private final String name;
 
 	@NonNull
-	private final ResolvableType returnType;
+	private final MatchableType returnType;
 
 	@NonNull
 	private final ParametersSpecification parameters;
@@ -43,9 +43,9 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 
 	public MethodSpecification(Method method) {
 		name = method.getName();
-		returnType = ResolvableType.forMethodReturnType(method);
+		returnType = MatchableType.forMethodReturnType(method);
 
-		parameters = new ParametersSpecification(method.getParameters(), index -> ResolvableType.forMethodParameter(method, index));
+		parameters = new ParametersSpecification(method.getParameters(), index -> MatchableType.forMethodParameter(method, index));
 		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
 		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());
 		rawElement = method;

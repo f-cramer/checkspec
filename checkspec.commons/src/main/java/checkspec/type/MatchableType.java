@@ -15,76 +15,76 @@ import org.apache.commons.collections4.MultiValuedMap;
 import checkspec.util.MatchingState;
 import lombok.NonNull;
 
-public interface ResolvableType {
+public interface MatchableType {
 
 	Type getRawType();
 
 	Class<?> getRawClass();
 
-	default ResolvableType getSuperType() {
+	default MatchableType getSuperType() {
 		Type superType = getRawClass().getGenericSuperclass();
 		if (superType == null) {
-			return ResolvableType.OBJECT;
+			return MatchableType.OBJECT;
 		}
-		return ResolvableType.forType(superType);
+		return MatchableType.forType(superType);
 	}
 
-	default ResolvableType[] getInterfaces() {
+	default MatchableType[] getInterfaces() {
 		return Arrays.stream(getRawClass().getGenericInterfaces())
-				.map(ResolvableType::forType)
-				.toArray(ResolvableType[]::new);
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
 	}
 
-	MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches);
+	MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches);
 
-	ResolvableType OBJECT = new ClassResolvableType(Object.class) {
+	MatchableType OBJECT = new ClassMatchableType(Object.class) {
 		@Override
-		public ResolvableType getSuperType() {
+		public MatchableType getSuperType() {
 			return null;
 		}
 	};
 
-	static ResolvableType forClass(@NonNull Class<?> clazz) {
-		return ResolvableTypeCache.get(clazz)
-				.orElseGet(() -> new ClassResolvableType(clazz));
+	static MatchableType forClass(@NonNull Class<?> clazz) {
+		return MatchableTypeCache.get(clazz)
+				.orElseGet(() -> new ClassMatchableType(clazz));
 	}
 
-	static ResolvableType forType(@NonNull Type type) {
-		return ResolvableTypeCache.get(type)
+	static MatchableType forType(@NonNull Type type) {
+		return MatchableTypeCache.get(type)
 				.orElseGet(() -> {
 					if (type instanceof Class) {
 						return forClass((Class<?>) type);
 					} else if (type instanceof ParameterizedType) {
-						return new ParameterizedTypeResolvableType((ParameterizedType) type);
+						return new ParameterizedTypeMatchableType((ParameterizedType) type);
 					} else if (type instanceof WildcardType) {
-						return new WildcardTypeResolvableType((WildcardType) type);
+						return new WildcardTypeMatchableType((WildcardType) type);
 					} else if (type instanceof TypeVariable) {
-						return new TypeVariableResolvableType((TypeVariable<?>) type);
+						return new TypeVariableMatchableType((TypeVariable<?>) type);
 					} else if (type instanceof GenericArrayType) {
-						return new GenericArrayTypeResolvabelType((GenericArrayType) type);
+						return new GenericArrayTypeMatchableType((GenericArrayType) type);
 					}
 					throw new IllegalArgumentException(type.getClass().getName());
 				});
 
 	}
 
-	static ResolvableType forField(Field field) {
+	static MatchableType forField(Field field) {
 		return forFieldType(field);
 	}
 
-	static ResolvableType forFieldType(Field field) {
+	static MatchableType forFieldType(Field field) {
 		return forType(field.getGenericType());
 	}
 
-	static ResolvableType forMethodReturnType(Method method) {
+	static MatchableType forMethodReturnType(Method method) {
 		return forType(method.getGenericReturnType());
 	}
 
-	static ResolvableType forMethodParameter(Method method, int index) {
+	static MatchableType forMethodParameter(Method method, int index) {
 		return forType(method.getGenericParameterTypes()[index]);
 	}
 
-	static ResolvableType forConstructorParameter(Constructor<?> constructor, int index) {
+	static MatchableType forConstructorParameter(Constructor<?> constructor, int index) {
 		return forType(constructor.getGenericParameterTypes()[index]);
 	}
 }

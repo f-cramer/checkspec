@@ -9,22 +9,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import checkspec.specification.ClassSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 
 public class ReportTest {
 
-	private ResolvableType type;
+	private MatchableType type;
 	private ClassSpecification specification;
-	private Report<ResolvableType, ClassSpecification> report;
-	private Report<ResolvableType, ClassSpecification> reportWithoutImplementation;
-	private Report<ResolvableType, ClassSpecification> reportWithoutProblems;
+	private Report<MatchableType, ClassSpecification> report;
+	private Report<MatchableType, ClassSpecification> reportWithoutImplementation;
+	private Report<MatchableType, ClassSpecification> reportWithoutProblems;
 	private ReportProblem warning = new ReportProblem(1, "Warning", ReportProblemType.WARNING);
 	private ReportProblem error = new ReportProblem(10, "Error", ReportProblemType.ERROR);
 
 	@Before
 	public void setUp() {
-		type = ResolvableType.forClass(ReportTest.class);
+		type = MatchableType.forClass(ReportTest.class);
 		specification = new ClassSpecification(ReportTest.class);
 
 		report = new TestReport(specification, type, "Report");
@@ -58,7 +58,7 @@ public class ReportTest {
 
 	@Test
 	public void getImplementationTest() {
-		ResolvableType result = report.getImplementation();
+		MatchableType result = report.getImplementation();
 		assertThat(result).isEqualTo(type);
 	}
 
@@ -166,13 +166,13 @@ public class ReportTest {
 		assertThat(result).isEqualTo(0);
 	}
 
-	private static class TestReport extends Report<ResolvableType, ClassSpecification> {
+	private static class TestReport extends Report<MatchableType, ClassSpecification> {
 
-		public TestReport(ClassSpecification spec, ResolvableType implementation, String title) {
+		public TestReport(ClassSpecification spec, MatchableType implementation, String title) {
 			super(spec, implementation, title);
 		}
 
-		public TestReport(ClassSpecification spec, ResolvableType implementation) {
+		public TestReport(ClassSpecification spec, MatchableType implementation) {
 			super(spec, implementation);
 		}
 
@@ -181,7 +181,7 @@ public class ReportTest {
 		}
 
 		@Override
-		protected String getRawTypeName(ResolvableType rawType) {
+		protected String getRawTypeName(MatchableType rawType) {
 			return ClassUtils.getName(rawType);
 		}
 	}

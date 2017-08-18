@@ -15,33 +15,33 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class ParameterizedTypeResolvableType extends AbstractResolvableType<ParameterizedType> {
+class ParameterizedTypeMatchableType extends AbstractMatchableType<ParameterizedType> {
 
-	private final ResolvableType typeWithoutGenerics;
-	private final ResolvableType[] actualTypeArguments;
+	private final MatchableType typeWithoutGenerics;
+	private final MatchableType[] actualTypeArguments;
 
-	public ParameterizedTypeResolvableType(final ParameterizedType rawType) {
+	public ParameterizedTypeMatchableType(final ParameterizedType rawType) {
 		super(rawType);
-		this.typeWithoutGenerics = ResolvableType.forType(rawType.getRawType());
+		this.typeWithoutGenerics = MatchableType.forType(rawType.getRawType());
 		this.actualTypeArguments = Arrays.stream(rawType.getActualTypeArguments())
-				.map(ResolvableType::forType)
-				.toArray(ResolvableType[]::new);
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
 	}
 
 	@Override
-	public MatchingState matches(ResolvableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		if (equals(type)) {
 			return MatchingState.FULL_MATCH;
 		}
 
 		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof ParameterizedTypeResolvableType) {
-			ResolvableType oTypeWithoutGenerics = ((ParameterizedTypeResolvableType) type).getTypeWithoutGenerics();
+		if (type instanceof ParameterizedTypeMatchableType) {
+			MatchableType oTypeWithoutGenerics = ((ParameterizedTypeMatchableType) type).getTypeWithoutGenerics();
 			state = state.merge(typeWithoutGenerics.matches(oTypeWithoutGenerics, matches));
 			if (state == MatchingState.NO_MATCH) {
 				return MatchingState.NO_MATCH;
 			}
-			ResolvableType[] oActualTypeArguments = ((ParameterizedTypeResolvableType) type).getActualTypeArguments();
+			MatchableType[] oActualTypeArguments = ((ParameterizedTypeMatchableType) type).getActualTypeArguments();
 			state = state.merge(IntStream.range(0, Math.min(actualTypeArguments.length, oActualTypeArguments.length))
 					.mapToObj(i -> actualTypeArguments[i].matches(oActualTypeArguments[i], matches))
 					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
@@ -64,7 +64,7 @@ class ParameterizedTypeResolvableType extends AbstractResolvableType<Parameteriz
 	public String toString() {
 		String name = rawType.getRawType().getTypeName();
 		String arguments = Arrays.stream(rawType.getActualTypeArguments())
-				.map(ResolvableType::forType)
+				.map(MatchableType::forType)
 				.filter(Objects::nonNull)
 				.map(Object::toString)
 				.collect(Collectors.joining(", "));

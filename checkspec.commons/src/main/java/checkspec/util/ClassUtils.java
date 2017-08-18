@@ -7,17 +7,17 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 /**
  * Miscellaneous methods that are working on instances of {@link Class} and / or
- * {@link ResolvableType}. Mainly for internal use within the framework itself.
+ * {@link MatchableType}. Mainly for internal use within the framework itself.
  *
  * @author Florian Cramer
  * @see Class
- * @see ResolvableType
+ * @see MatchableType
  */
 @UtilityClass
 public final class ClassUtils {
@@ -40,10 +40,10 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Returns a string representation of the given {@link ResolvableType}. This
+	 * Returns a string representation of the given {@link MatchableType}. This
 	 * looks exactly like the type header you would write to define the given type
 	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
-	 * "public final class String" for an instance of {@link ResolvableType} that
+	 * "public final class String" for an instance of {@link MatchableType} that
 	 * was created from {@code java.lang.String}.
 	 * <p>
 	 * The modifiers of the given type are sorted using the canonical order found in
@@ -56,7 +56,7 @@ public final class ClassUtils {
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 */
-	public static String toString(@NonNull ResolvableType type) {
+	public static String toString(@NonNull MatchableType type) {
 		String modifiers = ModifierUtils.toString(type);
 		String classType = getType(type);
 		String name = getName(type);
@@ -80,10 +80,10 @@ public final class ClassUtils {
 	 *             if {@code type} is {@code null}
 	 */
 	public static String toString(@NonNull Class<?> type) {
-		return toString(ResolvableType.forClass(type));
+		return toString(MatchableType.forClass(type));
 	}
 
-	private static String getType(ResolvableType type) {
+	private static String getType(MatchableType type) {
 		Class<?> clazz = type.getRawClass();
 		if (clazz.isEnum()) {
 			return "enum";
@@ -106,7 +106,7 @@ public final class ClassUtils {
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 */
-	public static String getName(@NonNull ResolvableType type) {
+	public static String getName(@NonNull MatchableType type) {
 		return type.toString();
 	}
 
@@ -121,7 +121,7 @@ public final class ClassUtils {
 	 *             if {@code type} is {@code null}
 	 */
 	public static String getName(@NonNull Class<?> clazz) {
-		return getName(ResolvableType.forClass(clazz));
+		return getName(MatchableType.forClass(clazz));
 	}
 
 	/**
@@ -170,7 +170,7 @@ public final class ClassUtils {
 
 	/**
 	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for a {@link ResolvableType} that was created from an instance of
+	 * for a {@link MatchableType} that was created from an instance of
 	 * {@code java.lang.String}.
 	 *
 	 * @param type
@@ -182,7 +182,7 @@ public final class ClassUtils {
 	 * @see #getPackage(Class)
 	 * @see #getPackage(String)
 	 */
-	public static String getPackage(@NonNull ResolvableType type) {
+	public static String getPackage(@NonNull MatchableType type) {
 		return org.apache.commons.lang3.ClassUtils.getPackageName(type.getRawClass());
 	}
 
@@ -328,7 +328,7 @@ public final class ClassUtils {
 
 	/**
 	 * Returns the {@link Visibility} of the given type, e.g.
-	 * {@link Visibility#PUBLIC PUBLIC} for an instance of @{@link ResolvableType}
+	 * {@link Visibility#PUBLIC PUBLIC} for an instance of @{@link MatchableType}
 	 * created from {@code checkspec.util.ClassUtils}.
 	 *
 	 * @param type
@@ -337,7 +337,7 @@ public final class ClassUtils {
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 */
-	public static Visibility getVisibility(@NonNull ResolvableType type) {
+	public static Visibility getVisibility(@NonNull MatchableType type) {
 		return MemberUtils.getVisibility(type.getRawClass().getModifiers());
 	}
 

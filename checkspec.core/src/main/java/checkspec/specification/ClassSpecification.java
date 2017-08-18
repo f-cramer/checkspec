@@ -8,7 +8,7 @@ import java.util.List;
 
 import checkspec.api.Spec;
 import checkspec.extension.AbstractExtendable;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,7 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class ClassSpecification extends AbstractExtendable<ClassSpecification, ResolvableType> implements Specification<ResolvableType> {
+public class ClassSpecification extends AbstractExtendable<ClassSpecification, MatchableType> implements Specification<MatchableType> {
 
 	private static final ClassSpecificationExtension[] EXTENSIONS;
 
@@ -56,10 +56,10 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, R
 	private final ConstructorSpecification[] constructorSpecifications;
 
 	@NonNull
-	private final ResolvableType rawElement;
+	private final MatchableType rawElement;
 
 	public ClassSpecification(Class<?> clazz) {
-		rawElement = ResolvableType.forClass(clazz);
+		rawElement = MatchableType.forClass(clazz);
 
 		name = clazz.getName();
 		pkg = new PackageSpecification(clazz.getPackage(), clazz.getAnnotations());

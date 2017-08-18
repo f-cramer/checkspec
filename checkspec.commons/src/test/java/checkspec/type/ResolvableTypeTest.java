@@ -17,30 +17,30 @@ public class ResolvableTypeTest {
 	private static final Class<?> stringClass = String.class;
 	private static final Class<?> listClass = List.class;
 
-	private ResolvableType stringType;
-	private ResolvableType listType;
+	private MatchableType stringType;
+	private MatchableType listType;
 	private MultiValuedMap<Class<?>, Class<?>> matches;
 
 	@Before
 	public void setUp() throws Exception {
-		stringType = ResolvableType.forClass(stringClass);
-		listType = ResolvableType.forClass(listClass);
+		stringType = MatchableType.forClass(stringClass);
+		listType = MatchableType.forClass(listClass);
 		matches = new HashSetValuedHashMap<>();
 	}
 
 	@Test
 	public void intShouldPartiallyMatchInteger() {
-		ResolvableType intType = ResolvableType.forClass(int.class);
-		ResolvableType integerType = ResolvableType.forClass(Integer.class);
+		MatchableType intType = MatchableType.forClass(int.class);
+		MatchableType integerType = MatchableType.forClass(Integer.class);
 		assertThat(intType.matches(integerType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
 
 	@Test
 	public void listStringShouldPartiallyMatchListExtendsString() throws NoSuchMethodException, SecurityException {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+		MatchableType stringListType = MatchableType.forMethodReturnType(getStringList);
 		Method getExtendsStringList = ListSupplier.class.getDeclaredMethod("getExtendsStringList");
-		ResolvableType extendsStringListType = ResolvableType.forMethodReturnType(getExtendsStringList);
+		MatchableType extendsStringListType = MatchableType.forMethodReturnType(getExtendsStringList);
 
 		assertThat(stringListType.matches(extendsStringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
@@ -48,9 +48,9 @@ public class ResolvableTypeTest {
 	@Test
 	public void listStringShouldPartiallyMatchListSuperString() throws NoSuchMethodException, SecurityException {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+		MatchableType stringListType = MatchableType.forMethodReturnType(getStringList);
 		Method getSuperStringList = ListSupplier.class.getDeclaredMethod("getSuperStringList");
-		ResolvableType superStringListType = ResolvableType.forMethodReturnType(getSuperStringList);
+		MatchableType superStringListType = MatchableType.forMethodReturnType(getSuperStringList);
 
 		assertThat(stringListType.matches(superStringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
@@ -58,9 +58,9 @@ public class ResolvableTypeTest {
 	@Test
 	public void listExtendsStringShouldPartiallyMatchListString() throws NoSuchMethodException, SecurityException {
 		Method getExtendsStringList = ListSupplier.class.getDeclaredMethod("getExtendsStringList");
-		ResolvableType extendsStringListType = ResolvableType.forMethodReturnType(getExtendsStringList);
+		MatchableType extendsStringListType = MatchableType.forMethodReturnType(getExtendsStringList);
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+		MatchableType stringListType = MatchableType.forMethodReturnType(getStringList);
 
 		assertThat(extendsStringListType.matches(stringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
@@ -68,9 +68,9 @@ public class ResolvableTypeTest {
 	@Test
 	public void listSuperStringShouldPartiallyMatchListString() throws NoSuchMethodException, SecurityException {
 		Method getSuperStringList = ListSupplier.class.getDeclaredMethod("getSuperStringList");
-		ResolvableType superStringListType = ResolvableType.forMethodReturnType(getSuperStringList);
+		MatchableType superStringListType = MatchableType.forMethodReturnType(getSuperStringList);
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+		MatchableType stringListType = MatchableType.forMethodReturnType(getStringList);
 
 		assertThat(superStringListType.matches(stringListType, matches)).isEqualTo(MatchingState.PARTIAL_MATCH);
 	}
@@ -78,7 +78,7 @@ public class ResolvableTypeTest {
 	@Test
 	public void listStringShouldMatchItself() throws NoSuchMethodException, SecurityException {
 		Method getStringList = ListSupplier.class.getDeclaredMethod("getStringList");
-		ResolvableType stringListType = ResolvableType.forMethodReturnType(getStringList);
+		MatchableType stringListType = MatchableType.forMethodReturnType(getStringList);
 
 		assertThat(stringListType.matches(stringListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
@@ -120,8 +120,8 @@ public class ResolvableTypeTest {
 		Method aList = A.class.getDeclaredMethod("list");
 		Method bList = B.class.getDeclaredMethod("list");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bListType = MatchableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
 		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -131,8 +131,8 @@ public class ResolvableTypeTest {
 	public void aListShouldNotBeMatchingB() throws NoSuchMethodException, SecurityException {
 		Method aList = A.class.getDeclaredMethod("list");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType aType = ResolvableType.forClass(A.class);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType aType = MatchableType.forClass(A.class);
 
 		assertThat(aListType.matches(aType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
@@ -141,8 +141,8 @@ public class ResolvableTypeTest {
 	public void aListShouldNotBeMatchingBEvenIfAMatchesB() throws NoSuchMethodException, SecurityException {
 		Method aList = A.class.getDeclaredMethod("list");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bType = ResolvableType.forClass(B.class);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bType = MatchableType.forClass(B.class);
 
 		matches.put(A.class, B.class);
 		assertThat(aListType.matches(bType, matches)).isEqualTo(MatchingState.NO_MATCH);
@@ -152,8 +152,8 @@ public class ResolvableTypeTest {
 	public void aShouldNotBeMatchingListB() throws NoSuchMethodException, SecurityException {
 		Method aList = A.class.getDeclaredMethod("list");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bType = ResolvableType.forClass(A.class);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bType = MatchableType.forClass(A.class);
 
 		assertThat(bType.matches(aListType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
@@ -163,8 +163,8 @@ public class ResolvableTypeTest {
 		Method aList = A.class.getDeclaredMethod("extendsList");
 		Method bList = B.class.getDeclaredMethod("extendsList");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bListType = MatchableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
 		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -175,8 +175,8 @@ public class ResolvableTypeTest {
 		Method aList = A.class.getDeclaredMethod("superList");
 		Method bList = B.class.getDeclaredMethod("superList");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bListType = MatchableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
 		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -187,8 +187,8 @@ public class ResolvableTypeTest {
 		Method aArray = A.class.getDeclaredMethod("array");
 		Method bArray = B.class.getDeclaredMethod("array");
 
-		ResolvableType aArrayType = ResolvableType.forMethodReturnType(aArray);
-		ResolvableType bArrayType = ResolvableType.forMethodReturnType(bArray);
+		MatchableType aArrayType = MatchableType.forMethodReturnType(aArray);
+		MatchableType bArrayType = MatchableType.forMethodReturnType(bArray);
 
 		matches.put(A.class, B.class);
 		assertThat(aArrayType.matches(bArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -198,7 +198,7 @@ public class ResolvableTypeTest {
 	public void typeVariableEShouldBeMatchingItself() throws NoSuchMethodException, SecurityException {
 		Method dElement = D.class.getDeclaredMethod("element");
 
-		ResolvableType eType = ResolvableType.forMethodReturnType(dElement);
+		MatchableType eType = MatchableType.forMethodReturnType(dElement);
 
 		assertThat(eType.matches(eType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
@@ -208,8 +208,8 @@ public class ResolvableTypeTest {
 		Method dList = D.class.getDeclaredMethod("list");
 		Method fList = F.class.getDeclaredMethod("list");
 
-		ResolvableType dListType = ResolvableType.forMethodReturnType(dList);
-		ResolvableType fListType = ResolvableType.forMethodReturnType(fList);
+		MatchableType dListType = MatchableType.forMethodReturnType(dList);
+		MatchableType fListType = MatchableType.forMethodReturnType(fList);
 
 		matches.put(D.class, F.class);
 		assertThat(dListType.matches(fListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -220,8 +220,8 @@ public class ResolvableTypeTest {
 		Method eArray = D.class.getDeclaredMethod("array");
 		Method gArray = F.class.getDeclaredMethod("array");
 
-		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
-		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
+		MatchableType eArrayType = MatchableType.forMethodReturnType(eArray);
+		MatchableType gArrayType = MatchableType.forMethodReturnType(gArray);
 
 		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
@@ -230,7 +230,7 @@ public class ResolvableTypeTest {
 	public void typeVariableEArrayShouldBeMatchingItself() throws NoSuchMethodException, SecurityException {
 		Method eArray = D.class.getDeclaredMethod("array");
 
-		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
+		MatchableType eArrayType = MatchableType.forMethodReturnType(eArray);
 
 		assertThat(eArrayType.matches(eArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
 	}
@@ -240,8 +240,8 @@ public class ResolvableTypeTest {
 		Method eArray = D.class.getDeclaredMethod("array");
 		Method gArray = F.class.getDeclaredMethod("array");
 
-		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
-		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
+		MatchableType eArrayType = MatchableType.forMethodReturnType(eArray);
+		MatchableType gArrayType = MatchableType.forMethodReturnType(gArray);
 
 		matches.put(D.class, F.class);
 		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -251,7 +251,7 @@ public class ResolvableTypeTest {
 	public void typeVariableEArrayShouldNotMatchString() throws NoSuchMethodException, SecurityException {
 		Method eArray = D.class.getDeclaredMethod("array");
 
-		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
+		MatchableType eArrayType = MatchableType.forMethodReturnType(eArray);
 
 		matches.put(D.class, F.class);
 		assertThat(eArrayType.matches(stringType, matches)).isEqualTo(MatchingState.NO_MATCH);
@@ -262,8 +262,8 @@ public class ResolvableTypeTest {
 		Method eArray = D.class.getDeclaredMethod("listOfArray");
 		Method gArray = F.class.getDeclaredMethod("listOfArray");
 
-		ResolvableType eArrayType = ResolvableType.forMethodReturnType(eArray);
-		ResolvableType gArrayType = ResolvableType.forMethodReturnType(gArray);
+		MatchableType eArrayType = MatchableType.forMethodReturnType(eArray);
+		MatchableType gArrayType = MatchableType.forMethodReturnType(gArray);
 
 		assertThat(eArrayType.matches(gArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
@@ -273,8 +273,8 @@ public class ResolvableTypeTest {
 		Method eList = D.class.getDeclaredMethod("listOfArray");
 		Method gList = F.class.getDeclaredMethod("listOfArray");
 
-		ResolvableType eListType = ResolvableType.forMethodReturnType(eList);
-		ResolvableType gListType = ResolvableType.forMethodReturnType(gList);
+		MatchableType eListType = MatchableType.forMethodReturnType(eList);
+		MatchableType gListType = MatchableType.forMethodReturnType(gList);
 
 		matches.put(D.class, F.class);
 		assertThat(eListType.matches(gListType, matches)).isEqualTo(MatchingState.FULL_MATCH);
@@ -285,8 +285,8 @@ public class ResolvableTypeTest {
 		Method aArray = A.class.getDeclaredMethod("listOfArray");
 		Method bArray = B.class.getDeclaredMethod("listOfArray");
 
-		ResolvableType aArrayType = ResolvableType.forMethodReturnType(aArray);
-		ResolvableType bArrayType = ResolvableType.forMethodReturnType(bArray);
+		MatchableType aArrayType = MatchableType.forMethodReturnType(aArray);
+		MatchableType bArrayType = MatchableType.forMethodReturnType(bArray);
 
 		assertThat(aArrayType.matches(bArrayType, matches)).isEqualTo(MatchingState.NO_MATCH);
 	}
@@ -296,8 +296,8 @@ public class ResolvableTypeTest {
 		Method aList = A.class.getDeclaredMethod("listOfArray");
 		Method bList = B.class.getDeclaredMethod("listOfArray");
 
-		ResolvableType aListType = ResolvableType.forMethodReturnType(aList);
-		ResolvableType bListType = ResolvableType.forMethodReturnType(bList);
+		MatchableType aListType = MatchableType.forMethodReturnType(aList);
+		MatchableType bListType = MatchableType.forMethodReturnType(bList);
 
 		matches.put(A.class, B.class);
 		assertThat(aListType.matches(bListType, matches)).isEqualTo(MatchingState.FULL_MATCH);

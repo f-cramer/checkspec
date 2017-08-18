@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import checkspec.api.Visibility;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.Value;
 
 public class ClassUtilsTest {
@@ -28,7 +28,7 @@ public class ClassUtilsTest {
 	private static final ClassLoader SYSTEM_CLASS_LOADER = SecurityUtils.doPrivileged(() -> ClassLoader.getSystemClassLoader());
 
 	private static final Class<?> CLASS = ClassUtilsTest.class;
-	private static final ResolvableType TYPE = ResolvableType.forClass(CLASS);
+	private static final MatchableType TYPE = MatchableType.forClass(CLASS);
 
 	private static final String UNDETECTABLE_CLASS_NAME = "checkspec.util.ClassThatCannotBeFound";
 	private static final String ERROR_FORMAT = "error-format %s";
@@ -53,19 +53,19 @@ public class ClassUtilsTest {
 		String result = ClassUtils.toString(TYPE);
 		assertThat(result).isEqualTo("public class checkspec.util.ClassUtilsTest");
 
-		result = ClassUtils.toString(ResolvableType.forClass(Serializable.class));
+		result = ClassUtils.toString(MatchableType.forClass(Serializable.class));
 		assertThat(result).isEqualTo("public interface java.io.Serializable");
 
-		result = ClassUtils.toString(ResolvableType.forClass(Override.class));
+		result = ClassUtils.toString(MatchableType.forClass(Override.class));
 		assertThat(result).isEqualTo("public @interface java.lang.Override");
 
-		result = ClassUtils.toString(ResolvableType.forClass(TimeUnit.class));
+		result = ClassUtils.toString(MatchableType.forClass(TimeUnit.class));
 		assertThat(result).isEqualTo("public enum java.util.concurrent.TimeUnit");
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void toStringResolvableTypeNullTest() {
-		ClassUtils.toString((ResolvableType) null);
+		ClassUtils.toString((MatchableType) null);
 	}
 
 	@Test
@@ -84,13 +84,13 @@ public class ClassUtilsTest {
 		String result = getName(TYPE);
 		assertThat(result).isEqualTo("checkspec.util.ClassUtilsTest");
 
-		result = getName(ResolvableType.forClass(Integer[].class));
+		result = getName(MatchableType.forClass(Integer[].class));
 		assertThat(result).isEqualTo("java.lang.Integer[]");
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void getNameResolvableTypeNullTest() {
-		getName((ResolvableType) null);
+		getName((MatchableType) null);
 	}
 
 	@Test
@@ -143,7 +143,7 @@ public class ClassUtilsTest {
 
 	@Test(expected = NullPointerException.class)
 	public void getPackageResolvableTypeNullTest() {
-		getPackage((ResolvableType) null);
+		getPackage((MatchableType) null);
 	}
 
 	@Test
@@ -240,7 +240,7 @@ public class ClassUtilsTest {
 
 	@Test
 	public void getVisibilityTest() {
-		Visibility result = getVisibility(ResolvableType.forClass(ClassUtilsTest.class));
+		Visibility result = getVisibility(MatchableType.forClass(ClassUtilsTest.class));
 		assertThat(result).isEqualTo(Visibility.PUBLIC);
 	}
 

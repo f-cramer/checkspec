@@ -2,14 +2,14 @@ package checkspec.util;
 
 import java.lang.reflect.Modifier;
 
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ModifierUtils {
 
-	public static String toString(@NonNull ResolvableType type) {
+	public static String toString(@NonNull MatchableType type) {
 		int mod = type.getRawClass().getModifiers();
 		boolean isEnum = type.getRawClass().isEnum();
 		boolean isInterface = Modifier.isInterface(mod);

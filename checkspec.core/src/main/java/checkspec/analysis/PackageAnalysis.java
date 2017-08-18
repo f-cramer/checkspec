@@ -9,14 +9,14 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.PackageSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public class PackageAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final String FORMAT = "should live in package \"%s\"";
 
 	@Override
-	public Optional<ReportProblem> analyze(ResolvableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
+	public Optional<ReportProblem> analyze(MatchableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
 		PackageSpecification packageSpecification = specification.getPackage();
 		String packageName = packageSpecification.getName();
 

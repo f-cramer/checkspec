@@ -6,14 +6,14 @@ import java.util.Comparator;
 import checkspec.report.Report;
 import checkspec.specification.ExecutableSpecification;
 import checkspec.specification.ParametersSpecification;
-import checkspec.type.ResolvableType;
+import checkspec.type.MatchableType;
 
 public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 
 	protected static final ParametersAnalysis PARAMETERS_ANALYSIS = new ParametersAnalysis();
 
-	private static final Comparator<ResolvableType> CLASS_NAME_COMPARATOR = Comparator.comparing(ResolvableType::getRawClass, Comparator.comparing(Class::getSimpleName));
+	private static final Comparator<MatchableType> CLASS_NAME_COMPARATOR = Comparator.comparing(MatchableType::getRawClass, Comparator.comparing(Class::getSimpleName));
 
 	private final Comparator<ReportType> parameterComparator = (left, right) -> {
 		ParametersSpecification leftParameters = left.getSpec().getParameters();
