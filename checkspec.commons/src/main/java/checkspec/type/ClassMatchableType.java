@@ -24,12 +24,14 @@ class ClassMatchableType extends AbstractMatchableType<Class<?>> {
 	private static final String TYPE_VARIABLE_FORMAT = "%s %s";
 
 	private final TypeVariableMatchableType[] typeParameters;
+	private final MatchableType componentType;
 
 	public ClassMatchableType(final Class<?> rawType) {
 		super(rawType);
 		this.typeParameters = Arrays.stream(rawType.getTypeParameters())
 				.map(TypeVariableMatchableType::new)
 				.toArray(TypeVariableMatchableType[]::new);
+		this.componentType = rawType.isArray() ? MatchableType.forClass(rawType.getComponentType()) : null;
 	}
 
 	@Override
@@ -50,9 +52,7 @@ class ClassMatchableType extends AbstractMatchableType<Class<?>> {
 			}
 
 			if (rawType.isArray() && oRawType.isArray()) {
-				Class<?> compType = rawType.getComponentType();
-				Class<?> oCompType = oRawType.getComponentType();
-				return MatchableType.forClass(compType).matches(MatchableType.forClass(oCompType), matches);
+				return componentType.matches(((ClassMatchableType) type).getComponentType(), matches);
 			}
 
 			// primitive and its wrapper
