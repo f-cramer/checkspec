@@ -20,11 +20,11 @@ public final class FieldUtils {
 	}
 
 	public static MatchableType getType(@NonNull Field field) {
-		return MatchableType.forField(field);
+		return MatchableType.forFieldType(field);
 	}
 
 	public static String getTypeName(@NonNull Field field) {
-		return ClassUtils.getName(MatchableType.forField(field));
+		return ClassUtils.getName(MatchableType.forFieldType(field));
 	}
 
 	public static Visibility getVisibility(@NonNull Field field) {

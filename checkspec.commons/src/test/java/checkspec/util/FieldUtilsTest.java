@@ -36,7 +36,7 @@ public class FieldUtilsTest {
 	@Test
 	public void getTypeTest() {
 		MatchableType result = getType(FIELD);
-		assertThat(result).isEqualTo(MatchableType.forField(FIELD));
+		assertThat(result).isEqualTo(MatchableType.forFieldType(FIELD));
 	}
 
 	@Test(expected = NullPointerException.class)

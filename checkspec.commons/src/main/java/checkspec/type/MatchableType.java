@@ -68,10 +68,6 @@ public interface MatchableType {
 
 	}
 
-	static MatchableType forField(Field field) {
-		return forFieldType(field);
-	}
-
 	static MatchableType forFieldType(Field field) {
 		return forType(field.getGenericType());
 	}
