@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -42,17 +43,18 @@ class ParameterizedTypeMatchableType extends AbstractMatchableType<Parameterized
 				return MatchingState.NO_MATCH;
 			}
 			MatchableType[] oActualTypeArguments = ((ParameterizedTypeMatchableType) type).getActualTypeArguments();
-			state = state.merge(IntStream.range(0, Math.min(actualTypeArguments.length, oActualTypeArguments.length))
-					.mapToObj(i -> actualTypeArguments[i].matches(oActualTypeArguments[i], matches))
-					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
-			if (state == MatchingState.NO_MATCH) {
-				return MatchingState.NO_MATCH;
-			}
+			state = state.merge(matches(actualTypeArguments, oActualTypeArguments, matches));
 
 			return state;
 		}
 
 		return MatchingState.NO_MATCH;
+	}
+
+	private static Optional<MatchingState> matches(MatchableType[] arguments, MatchableType[] oArguments, MultiValuedMap<Class<?>, Class<?>> matches) {
+		return IntStream.range(0, Math.min(arguments.length, oArguments.length))
+				.mapToObj(i -> arguments[i].matches(oArguments[i], matches))
+				.max(Comparator.naturalOrder());
 	}
 
 	@Override

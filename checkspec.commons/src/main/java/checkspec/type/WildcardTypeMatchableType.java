@@ -57,19 +57,16 @@ class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType> {
 			state = state.merge(IntStream.range(0, lowerBounds.length)
 					.mapToObj(i -> upperBounds[i].matches(oUpperBounds[i], matches))
 					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
-			if (state == MatchingState.NO_MATCH) {
-				return MatchingState.NO_MATCH;
-			}
+			return state;
 		} else if (type instanceof ClassMatchableType) {
 			// to match wildcard to class, i.e. "? extends String" to "String"
 			state = state.merge(MatchingState.PARTIAL_MATCH);
 			state = state.merge(matchesUpperBounds(type, matches));
 			state = state.merge(matches(lowerBounds, type, matches));
-		} else {
-			return MatchingState.NO_MATCH;
+			return state;
 		}
 
-		return state;
+		return MatchingState.NO_MATCH;
 	}
 
 	private static Optional<MatchingState> matches(MatchableType[] bounds, MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
