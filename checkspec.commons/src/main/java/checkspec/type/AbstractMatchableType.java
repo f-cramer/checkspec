@@ -14,7 +14,6 @@ abstract class AbstractMatchableType<RawType extends Type> implements MatchableT
 
 	protected AbstractMatchableType(@NonNull final RawType rawType) {
 		this.rawType = rawType;
-		MatchableTypeCache.put(rawType, this);
 	}
 
 	@Override

@@ -45,27 +45,32 @@ public interface MatchableType {
 	};
 
 	static MatchableType forClass(@NonNull Class<?> clazz) {
-		return MatchableTypeCache.get(clazz)
-				.orElseGet(() -> new ClassMatchableType(clazz));
+		return forType(clazz);
 	}
 
 	static MatchableType forType(@NonNull Type type) {
-		return MatchableTypeCache.get(type)
-				.orElseGet(() -> {
-					if (type instanceof Class) {
-						return forClass((Class<?>) type);
-					} else if (type instanceof ParameterizedType) {
-						return new ParameterizedTypeMatchableType((ParameterizedType) type);
-					} else if (type instanceof WildcardType) {
-						return new WildcardTypeMatchableType((WildcardType) type);
-					} else if (type instanceof TypeVariable) {
-						return new TypeVariableMatchableType((TypeVariable<?>) type);
-					} else if (type instanceof GenericArrayType) {
-						return new GenericArrayTypeMatchableType((GenericArrayType) type);
-					}
-					throw new IllegalArgumentException(type.getClass().getName());
-				});
-
+		synchronized (OBJECT) {
+			return MatchableTypeCache.get(type)
+					.orElseGet(() -> {
+						MatchableType matchableType = null;
+						if (type instanceof Class) {
+							matchableType = forClass((Class<?>) type);
+						} else if (type instanceof ParameterizedType) {
+							matchableType = new ParameterizedTypeMatchableType((ParameterizedType) type);
+						} else if (type instanceof WildcardType) {
+							matchableType = new WildcardTypeMatchableType((WildcardType) type);
+						} else if (type instanceof TypeVariable) {
+							matchableType = new TypeVariableMatchableType((TypeVariable<?>) type);
+						} else if (type instanceof GenericArrayType) {
+							matchableType = new GenericArrayTypeMatchableType((GenericArrayType) type);
+						}
+						if (matchableType != null) {
+							MatchableTypeCache.put(type, matchableType);
+							return matchableType;
+						}
+						throw new IllegalArgumentException(type.getClass().getName());
+					});
+		}
 	}
 
 	static MatchableType forFieldType(Field field) {

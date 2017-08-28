@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-abstract class MatchableTypeCache {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+class MatchableTypeCache {
 
 	private static final Map<Type, MatchableType> CACHE = new HashMap<>();
 
-	public static final void put(Type type, MatchableType resolvableType) {
-		CACHE.put(type, resolvableType);
+	public static final Optional<MatchableType> put(Type type, MatchableType matchableType) {
+		return Optional.ofNullable(CACHE.put(type, matchableType));
 	}
 
 	public static final Optional<MatchableType> get(Type type) {
