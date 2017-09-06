@@ -18,7 +18,7 @@ public class ClassReport extends Report<MatchableType, ClassSpecification> {
 	private List<MethodReport> methodReports = new ArrayList<>();
 
 	public ClassReport(ClassSpecification spec, Class<?> implementation) {
-		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation));
+		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation) + " - " + ClassUtils.getLocation(implementation));
 	}
 
 	@Override

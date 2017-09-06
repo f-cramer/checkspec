@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -42,6 +43,14 @@ public final class CheckSpec {
 	private static volatile CheckSpec LIBRARY_LESS_INSTANCE;
 	private static final Object LIBRARY_LESS_SYNC = new Object();
 
+	/**
+	 * Returns the lazyly created default instance of this class. It is created
+	 * using {@link ReflectionsUtils#createDefaultReflections()
+	 * createDefaultReflections()} and {@link ClassUtils#getBaseClassLoader()
+	 * getBaseClassLoader()}.
+	 *
+	 * @return default {@code CheckSpec} instance
+	 */
 	public static CheckSpec getDefaultInstance() {
 		if (DEFAULT_INSTANCE == null) {
 			synchronized (DEFAULT_SYNC) {
@@ -55,6 +64,14 @@ public final class CheckSpec {
 		return DEFAULT_INSTANCE;
 	}
 
+	/**
+	 * Returns an instance of this class that is created by using only the
+	 * locally created classes excluding any dependencies in .jar-files. It is
+	 * created using {@link ReflectionsUtils#createDefaultReflections()
+	 * createDefaultReflections()}.
+	 *
+	 * @return {@code CheckSpec} instance excluding .jar-files
+	 */
 	public static CheckSpec getInstanceForClassPathWithoutJars() {
 		if (LIBRARY_LESS_INSTANCE == null) {
 			synchronized (LIBRARY_LESS_SYNC) {
@@ -72,13 +89,34 @@ public final class CheckSpec {
 		return LIBRARY_LESS_INSTANCE;
 	}
 
-	public static CheckSpec getInstanceForClassPath(URL[] urls) {
+	/**
+	 * Returns an instance of {@link CheckSpec} that is created using the given
+	 * {@link URL}s as classpath. This method uses
+	 * {@link ReflectionsUtils#createReflections(URL[])
+	 * createReflections(URL[])} to create an instance of {@link Reflections}.
+	 *
+	 * @param urls
+	 *            the classpath, null not permitted
+	 * @return an instance created using the given urls as classpath
+	 */
+	public static CheckSpec getInstanceForClassPath(@NonNull URL[] urls) {
 		Reflections reflections = ReflectionsUtils.createReflections(urls);
 		ClassLoader classLoader = doPrivileged(() -> new URLClassLoader(urls, ClassUtils.getBaseClassLoader()));
 		return new CheckSpec(reflections, classLoader);
 	}
 
-	public static <T> T createProxy(SpecReport report) {
+	/**
+	 * Creates a proxy instance for the given {@link SpecReport}. This proxy
+	 * will try to call the methods that were found to be the best matching in
+	 * the best {@link ClassReport}.
+	 *
+	 * @param <T>
+	 *            the class to proxy
+	 * @param report
+	 *            the non-null {@link SpecReport}
+	 * @return a proxy instance of the given {@link SpecReport}
+	 */
+	public static <T> T createProxy(@NonNull SpecReport report) {
 		Class<?> clazz = report.getSpec().getRawElement().getRawClass();
 		MethodInvocationHandler handler = StaticChecker.createInvocationHandler(clazz, report);
 		return StaticChecker.createProxy(clazz, handler);
@@ -115,6 +153,7 @@ public final class CheckSpec {
 				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 				.map(clazz -> (Class<ClassAnalysis<?>>) clazz)
 				.flatMap(ClassUtils.instantiate(ERROR_FORMAT))
+				.sorted(Comparator.comparingInt(ClassAnalysis::getPriority))
 				.toArray(length -> new ClassAnalysis<?>[length]);
 	}
 
@@ -129,26 +168,59 @@ public final class CheckSpec {
 	}
 
 	/**
-	 * Creates a {@link SpecReport} for the given specification {@code spec} that is
-	 * populated with a {@link ClassReport} for any class that in any way matches
-	 * {@code spec}.
+	 * Creates a list of {@link SpecReport}s for the given specifications
+	 * {@code specs} each of which is populated with a {@link ClassReport} for
+	 * any class that in any way matches the current {@code spec}.
 	 * <p>
-	 * Behaves the same as a call to {@code checkSpec(spec, "")}.
+	 * Behaves the same as a call to {@code checkSpec(specs, "")}.
 	 *
 	 * @param specs
-	 *            the non-null specification the return {@code SpecReport} should be
-	 *            based on
-	 * @return a {@code SpecReport} that is populated with a {@code ClassReport} for
-	 *         any class that in any way matches {@code spec}
+	 *            the non-null list of specifications the returned list of
+	 *            {@link SpecReport}s should be based on
+	 * @return a list of {@link SpecReport} that is populated with a
+	 *         {@link ClassReport} for any class that in any way matches
+	 *         {@code spec}
 	 */
 	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs) {
 		return checkSpec(specs, "");
 	}
 
+	/**
+	 * Creates a list of {@link SpecReport}s for the given specifications
+	 * {@code specs} each of which is populated with a {@link ClassReport} for
+	 * any class in the same base package as {@code basePackage} that in any way
+	 * matches the current {@code spec}.
+	 *
+	 * @param specs
+	 *            the non-null list of specifications the returned list of
+	 *            {@link SpecReport}s should be baseed on
+	 * @param basePackage
+	 *            the base package in which all implementations contained in the
+	 *            returned {@link SpecReport}s should be inside of.
+	 * @return a list of {@link SpecReport} that is populated with a
+	 *         {@link ClassReport} for any class that in any way matches
+	 *         {@code spec}
+	 */
 	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs, @NonNull Class<?> basePackage) {
 		return checkSpec(specs, ClassUtils.getPackage(basePackage));
 	}
 
+	/**
+	 * Creates a list of {@link SpecReport}s for the given specifications
+	 * {@code specs} each of which is populated with a {@link ClassReport} for
+	 * any class in the same base package as {@code basePackage} that in any way
+	 * matches the current {@code spec}.
+	 *
+	 * @param specs
+	 *            the non-null list of specifications the returned list of
+	 *            {@link SpecReport}s should be baseed on
+	 * @param basePackageName
+	 *            the base package in which all implementations contained in the
+	 *            returned {@link SpecReport}s should be inside of.
+	 * @return a list of {@link SpecReport} that is populated with a
+	 *         {@link ClassReport} for any class that in any way matches
+	 *         {@code spec}
+	 */
 	public List<SpecReport> checkSpec(@NonNull Collection<ClassSpecification> specs, @NonNull String basePackageName) {
 		List<Class<?>> possibleClasses = getPossibleClasses(specs, basePackageName);
 
@@ -171,7 +243,7 @@ public final class CheckSpec {
 	}
 
 	private static List<SpecReport> performChecks(Collection<ClassSpecification> specs, Collection<Class<?>> possibleClasses, MultiValuedMap<Class<?>, Class<?>> bestMatches) {
-		return specs.parallelStream()
+		return specs.stream()
 				.map(spec -> performSingleCheck(spec, possibleClasses, bestMatches))
 				.collect(Collectors.toList());
 	}
@@ -225,11 +297,14 @@ public final class CheckSpec {
 				.map(spec -> ClassUtils.getLocation(spec.getRawElement().getRawClass()))
 				.collect(Collectors.toList());
 		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
+		String basePackage = basePackageName.toLowerCase();
+
 		return classNames.parallelStream()
-				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackageName))
+				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackage))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(StreamUtils.inPredicate(specLocations, ClassUtils::getLocation).negate())
 				.filter(this::loadedFromValidLocation)
+				.distinct()
 				.collect(Collectors.toList());
 	}
 

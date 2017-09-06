@@ -14,7 +14,7 @@ import checkspec.specification.VisibilitySpecification;
 public abstract class AbstractVisibilityAnalysis {
 
 	private static final String SHOULD_NOT_HAVE_ANY = "should not have any visibility modifier";
-	private static final String SHOULD_HAVE_SINGLE = "should haven visibility \"%s\"";
+	private static final String SHOULD_HAVE_SINGLE = "should have visibility \"%s\"";
 	private static final String SHOULD_HAVE_MULTIPLE = "should have any of the following visibilities: \"%s\"";
 
 	protected static Optional<ReportProblem> analyseVisibility(int actualModifiers, VisibilitySpecification spec) {

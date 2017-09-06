@@ -40,12 +40,12 @@ public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 			if (interf.isPresent()) {
 				notFoundInterfaces.remove(interf.get());
 			} else {
-				problems.add(new ReportProblem(1, String.format(SHOULD, ClassUtils.getName(interf.get())), ReportProblemType.ERROR));
+				problems.add(new ReportProblem(15, String.format(SHOULD, ClassUtils.getName(specification.getRawElement())), ReportProblemType.ERROR));
 			}
 		}
 
 		for (MatchableType notFoundInterface : notFoundInterfaces) {
-			problems.add(new ReportProblem(1, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), ReportProblemType.ERROR));
+			problems.add(new ReportProblem(15, String.format(SHOULD_NOT, ClassUtils.getName(notFoundInterface)), ReportProblemType.ERROR));
 		}
 
 		return problems;

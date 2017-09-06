@@ -125,7 +125,7 @@ public class CommandLineInterface {
 		System.out.printf(WELCOME, VERSION, OUTPUT_FORMATTER.format(TIMESTAMP));
 	}
 
-	protected final SpecReport[] parse(String[] args) throws CommandLineException {
+	protected final void parse(String[] args) throws CommandLineException {
 		CommandLine commandLine;
 		try {
 			commandLine = new DefaultParser().parse(OPTIONS, args);
@@ -135,7 +135,7 @@ public class CommandLineInterface {
 
 		if (HELP.isSet(commandLine)) {
 			HELP_FORMATTER.printHelp(SYNTAX, OPTIONS);
-			return null;
+			return;
 		}
 
 		URL[] specificationClasspath = parseSpecificationClasspath(commandLine);
@@ -144,23 +144,23 @@ public class CommandLineInterface {
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		String basePackage = parseBasePackage(commandLine);
 
-		return run(specifications, specificationClasspath, implementationUrls, basePackage, outputter);
+		run(specifications, specificationClasspath, implementationUrls, basePackage, outputter);
 	}
 
-	public final SpecReport[] run(String[] specificationClassNames, URL[] specificationClasspath, URL[] implementationClasspath, String basePackage, Outputter outputter)
+	public final SpecReport[] run(String[] specClassNames, URL[] specClasspath, URL[] implClasspath, String basePackage, Outputter outputter)
 			throws CommandLineException {
 		ClassLoader specificationClassLoader;
-		if (specificationClasspath.length == 0) {
+		if (specClasspath.length == 0) {
 			specificationClassLoader = ClassUtils.getBaseClassLoader();
 		} else {
-			specificationClassLoader = doPrivileged(() -> new URLClassLoader(specificationClasspath, ClassUtils.getBaseClassLoader()));
+			specificationClassLoader = doPrivileged(() -> new URLClassLoader(specClasspath, ClassUtils.getBaseClassLoader()));
 		}
 
 		Class<?>[] specificationClasses;
-		if (specificationClassNames.length == 0) {
-			specificationClasses = ReflectionsUtils.findClassAnnotatedWithEnabledSpec(specificationClasspath, specificationClassLoader);
+		if (specClassNames.length == 0) {
+			specificationClasses = ReflectionsUtils.findClassAnnotatedWithEnabledSpec(specClasspath, specificationClassLoader);
 		} else {
-			specificationClasses = Arrays.stream(specificationClassNames)
+			specificationClasses = Arrays.stream(specClassNames)
 					.flatMap(ClassUtils.classStreamSupplier(specificationClassLoader))
 					.toArray(i -> new Class<?>[i]);
 		}
@@ -169,17 +169,12 @@ public class CommandLineInterface {
 				.map(ClassSpecification::new)
 				.toArray(ClassSpecification[]::new);
 
-		return run(specifications, implementationClasspath, basePackage, outputter);
-	}
-
-	protected final SpecReport[] run(ClassSpecification[] specifications, URL[] implementationClasspath, String basePackage, Outputter outputter) throws CommandLineException {
 		Consumer<SpecReport> wrappedOutputter = wrapOutputter(outputter);
-		CheckSpec checkSpec = implementationClasspath.length == 0 ? CheckSpec.getDefaultInstance() : CheckSpec.getInstanceForClassPath(implementationClasspath);
+		CheckSpec checkSpec = implClasspath.length == 0 ? CheckSpec.getDefaultInstance() : CheckSpec.getInstanceForClassPath(implClasspath);
 
 		return checkSpec.checkSpec(Arrays.asList(specifications), basePackage).stream()
 				.peek(wrappedOutputter::accept)
 				.toArray(SpecReport[]::new);
-
 	}
 
 	private Consumer<SpecReport> wrapOutputter(Outputter outputter) {
