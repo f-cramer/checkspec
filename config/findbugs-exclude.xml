@@ -5,6 +5,9 @@
 	<Match>
 		<Package name="~checkspec\.test.*" />
 	</Match>
+	<Match>
+		<Package name="~bowling.*" />
+	</Match>
 
 	<Match>
 		<Class name="checkspec.report.output.gui.HtmlExportMenuItem" />
