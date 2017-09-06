@@ -20,7 +20,6 @@ import checkspec.api.Spec;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-
 public final class ReflectionsUtils {
 
 	private static final String JAVA_CLASS_PATH = "java.class.path";
@@ -86,7 +85,8 @@ public final class ReflectionsUtils {
 		return createReflections(urls).getAllTypes().parallelStream()
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(ReflectionsUtils::hasSpecAnnotation)
-				.toArray(i -> new Class<?>[i]); // checkstyle does not like this being a method reference
+				.toArray(i -> new Class<?>[i]); // checkstyle does not like this
+												// being a method reference
 	}
 
 	private static boolean hasSpecAnnotation(Class<?> clazz) {

@@ -16,13 +16,13 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class ParameterizedTypeMatchableType extends AbstractMatchableType<ParameterizedType> {
+public class ParameterizedTypeMatchableType extends AbstractMatchableType<ParameterizedType, ParameterizedTypeMatchableType> {
 
 	private final MatchableType typeWithoutGenerics;
 	private final MatchableType[] actualTypeArguments;
 
-	public ParameterizedTypeMatchableType(final ParameterizedType rawType) {
-		super(rawType);
+	ParameterizedTypeMatchableType(final ParameterizedType rawType) {
+		super(ParameterizedTypeMatchableType.class, rawType);
 		this.typeWithoutGenerics = MatchableType.forType(rawType.getRawType());
 		this.actualTypeArguments = Arrays.stream(rawType.getActualTypeArguments())
 				.map(MatchableType::forType)
@@ -30,25 +30,17 @@ class ParameterizedTypeMatchableType extends AbstractMatchableType<Parameterized
 	}
 
 	@Override
-	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		if (equals(type)) {
-			return MatchingState.FULL_MATCH;
-		}
-
+	public Optional<MatchingState> matchesImpl(ParameterizedTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof ParameterizedTypeMatchableType) {
-			MatchableType oTypeWithoutGenerics = ((ParameterizedTypeMatchableType) type).getTypeWithoutGenerics();
-			state = state.merge(typeWithoutGenerics.matches(oTypeWithoutGenerics, matches));
-			if (state == MatchingState.NO_MATCH) {
-				return MatchingState.NO_MATCH;
-			}
-			MatchableType[] oActualTypeArguments = ((ParameterizedTypeMatchableType) type).getActualTypeArguments();
-			state = state.merge(matches(actualTypeArguments, oActualTypeArguments, matches));
-
-			return state;
+		MatchableType oTypeWithoutGenerics = type.getTypeWithoutGenerics();
+		state = state.merge(typeWithoutGenerics.matches(oTypeWithoutGenerics, matches));
+		if (state == MatchingState.NO_MATCH) {
+			return Optional.of(MatchingState.NO_MATCH);
 		}
+		MatchableType[] oActualTypeArguments = type.getActualTypeArguments();
+		state = state.merge(matches(actualTypeArguments, oActualTypeArguments, matches));
 
-		return MatchingState.NO_MATCH;
+		return Optional.of(state);
 	}
 
 	private static Optional<MatchingState> matches(MatchableType[] arguments, MatchableType[] oArguments, MultiValuedMap<Class<?>, Class<?>> matches) {

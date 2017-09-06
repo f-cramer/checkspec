@@ -52,21 +52,16 @@ public interface MatchableType {
 		synchronized (OBJECT) {
 			return MatchableTypeCache.get(type)
 					.orElseGet(() -> {
-						MatchableType matchableType = null;
 						if (type instanceof Class) {
-							matchableType = forClass((Class<?>) type);
+							return new ClassMatchableType((Class<?>) type);
 						} else if (type instanceof ParameterizedType) {
-							matchableType = new ParameterizedTypeMatchableType((ParameterizedType) type);
+							return new ParameterizedTypeMatchableType((ParameterizedType) type);
 						} else if (type instanceof WildcardType) {
-							matchableType = new WildcardTypeMatchableType((WildcardType) type);
+							return new WildcardTypeMatchableType((WildcardType) type);
 						} else if (type instanceof TypeVariable) {
-							matchableType = new TypeVariableMatchableType((TypeVariable<?>) type);
+							return new TypeVariableMatchableType((TypeVariable<?>) type);
 						} else if (type instanceof GenericArrayType) {
-							matchableType = new GenericArrayTypeMatchableType((GenericArrayType) type);
-						}
-						if (matchableType != null) {
-							MatchableTypeCache.put(type, matchableType);
-							return matchableType;
+							return new GenericArrayTypeMatchableType((GenericArrayType) type);
 						}
 						throw new IllegalArgumentException(type.getClass().getName());
 					});

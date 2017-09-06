@@ -6,7 +6,7 @@ public enum MatchingState {
 
 	FULL_MATCH, PARTIAL_MATCH, NO_MATCH;
 
-	public <T> T evaluate(T full, T partial, T no) {
+	public <T, U extends T, V extends T, W extends T> T evaluate(U full, V partial, W no) {
 		switch (this) {
 		case FULL_MATCH:
 			return full;

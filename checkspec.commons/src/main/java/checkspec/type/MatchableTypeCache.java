@@ -10,7 +10,12 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 class MatchableTypeCache {
 
-	private static final Map<Type, MatchableType> CACHE = new HashMap<>();
+	private static final Map<Type, MatchableType> CACHE;
+
+	static {
+		CACHE = new HashMap<>();
+		CACHE.put(Object.class, MatchableType.OBJECT);
+	}
 
 	public static final Optional<MatchableType> put(Type type, MatchableType matchableType) {
 		return Optional.ofNullable(CACHE.put(type, matchableType));

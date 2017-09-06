@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,14 +19,14 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>> {
+public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>, TypeVariableMatchableType> {
 
 	private final MatchableType genericDeclarationType;
 	private final MatchableType[] bounds;
 	private final int index;
 
-	public TypeVariableMatchableType(final TypeVariable<?> rawType) {
-		super(rawType);
+	TypeVariableMatchableType(final TypeVariable<?> rawType) {
+		super(TypeVariableMatchableType.class, rawType);
 		this.genericDeclarationType = MatchableType.forClass(getClass(rawType.getGenericDeclaration()));
 		this.bounds = Arrays.stream(rawType.getBounds())
 				.map(MatchableType::forType)
@@ -34,23 +35,9 @@ class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>> {
 	}
 
 	@Override
-	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		if (equals(type)) {
-			return MatchingState.FULL_MATCH;
-		}
-
-		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof TypeVariableMatchableType) {
-			MatchableType oGenericDeclarationType = ((TypeVariableMatchableType) type).getGenericDeclarationType();
-			state = state.merge(genericDeclarationType.matches(oGenericDeclarationType, matches));
-			if (state == MatchingState.NO_MATCH) {
-				return MatchingState.NO_MATCH;
-			}
-
-			return state;
-		}
-
-		return MatchingState.NO_MATCH;
+	public Optional<MatchingState> matchesImpl(TypeVariableMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		MatchableType oGenericDeclarationType = type.getGenericDeclarationType();
+		return Optional.of(genericDeclarationType.matches(oGenericDeclarationType, matches));
 	}
 
 	@Override

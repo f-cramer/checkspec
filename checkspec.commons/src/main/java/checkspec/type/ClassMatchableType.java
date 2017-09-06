@@ -1,16 +1,16 @@
 package checkspec.type;
 
+import static org.apache.commons.lang3.ClassUtils.*;
+
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.lang3.ClassUtils;
 
 import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,7 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class ClassMatchableType extends AbstractMatchableType<Class<?>> {
+public class ClassMatchableType extends AbstractMatchableType<Class<?>, ClassMatchableType> {
 
 	private static final String TYPE_FORMAT = "%s%s";
 	private static final String TYPE_VARIABLE_FORMAT = "%s %s";
@@ -26,8 +26,8 @@ class ClassMatchableType extends AbstractMatchableType<Class<?>> {
 	private final TypeVariableMatchableType[] typeParameters;
 	private final MatchableType componentType;
 
-	public ClassMatchableType(final Class<?> rawType) {
-		super(rawType);
+	ClassMatchableType(final Class<?> rawType) {
+		super(ClassMatchableType.class, rawType);
 		this.typeParameters = Arrays.stream(rawType.getTypeParameters())
 				.map(TypeVariableMatchableType::new)
 				.toArray(TypeVariableMatchableType[]::new);
@@ -35,46 +35,24 @@ class ClassMatchableType extends AbstractMatchableType<Class<?>> {
 	}
 
 	@Override
-	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		if (equals(type)) {
-			return MatchingState.FULL_MATCH;
+	protected Optional<MatchingState> matchesImpl(ClassMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		Class<?> oRawType = type.getRawType();
+		if (matches != null) {
+			if (matches.containsMapping(rawType, oRawType)) {
+				return Optional.of(MatchingState.FULL_MATCH);
+			}
 		}
 
-		if (type instanceof ClassMatchableType) {
-			// match class to class, i.e. "String" to "String"
-
-			Class<?> oRawType = ((ClassMatchableType) type).getRawType();
-			if (matches != null) {
-				// direct match was found
-				if (matches.containsMapping(rawType, oRawType)) {
-					return MatchingState.FULL_MATCH;
-				}
-			}
-
-			if (rawType.isArray() && oRawType.isArray()) {
-				return componentType.matches(((ClassMatchableType) type).getComponentType(), matches);
-			}
-
-			// primitive and its wrapper
-			if (ClassUtils.isAssignable(rawType, oRawType) && ClassUtils.isAssignable(oRawType, rawType)) {
-				return MatchingState.PARTIAL_MATCH;
-			}
-		} else if (type instanceof WildcardTypeMatchableType) {
-			// match class to wildcard, i.e. "String" to "? extends String"
-			WildcardTypeMatchableType oType = (WildcardTypeMatchableType) type;
-			MatchingState state = MatchingState.PARTIAL_MATCH;
-			state.merge(matches(oType.getUpperBounds(), matches));
-			state.merge(matches(oType.getLowerBounds(), matches));
-			return state;
+		if (rawType.isArray() && oRawType.isArray()) {
+			return Optional.of(componentType.matches(type.getComponentType(), matches));
 		}
 
-		return MatchingState.NO_MATCH;
-	}
+		// primitive and its wrapper
+		if (isAssignable(rawType, oRawType) && isAssignable(oRawType, rawType)) {
+			return Optional.of(MatchingState.PARTIAL_MATCH);
+		}
 
-	private Optional<MatchingState> matches(MatchableType[] bounds, MultiValuedMap<Class<?>, Class<?>> matches) {
-		return Arrays.stream(bounds)
-				.map(bound -> this.matches(bound, matches))
-				.max(Comparator.naturalOrder());
+		return Optional.empty();
 	}
 
 	@Override

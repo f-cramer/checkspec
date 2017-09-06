@@ -41,14 +41,14 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a string representation of the given {@link MatchableType}. This
-	 * looks exactly like the type header you would write to define the given type
-	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
-	 * "public final class String" for an instance of {@link MatchableType} that
-	 * was created from {@code java.lang.String}.
+	 * looks exactly like the type header you would write to define the given
+	 * type excluding any {@code extends} and / or {@code implements} statement.
+	 * E.g. "public final class String" for an instance of {@link MatchableType}
+	 * that was created from {@code java.lang.String}.
 	 * <p>
-	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link java.lang.reflect.Modifier#toString(int)}, the class name is given in
-	 * the form that is given by {@link Class#getName()}.
+	 * The modifiers of the given type are sorted using the canonical order
+	 * found in {@link java.lang.reflect.Modifier#toString(int)}, the class name
+	 * is given in the form that is given by {@link Class#getName()}.
 	 *
 	 * @param type
 	 *            the non-null type
@@ -69,9 +69,9 @@ public final class ClassUtils {
 	 * excluding any {@code extends} and / or {@code implements} statement. E.g.
 	 * "public final class String" for {@code java.lang.String}.
 	 * <p>
-	 * The modifiers of the given type are sorted using the canonical order found in
-	 * {@link java.lang.reflect.Modifier#toString(int)}, the class name is given in
-	 * the form that is given by {@link Class#getName()}.
+	 * The modifiers of the given type are sorted using the canonical order
+	 * found in {@link java.lang.reflect.Modifier#toString(int)}, the class name
+	 * is given in the form that is given by {@link Class#getName()}.
 	 *
 	 * @param type
 	 *            the non-null type
@@ -125,14 +125,14 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Returns the runtime class descriptor for the class that is associated with
-	 * the given fully-qualified name. If such class could not be found {@code null}
-	 * is returned.
+	 * Returns the runtime class descriptor for the class that is associated
+	 * with the given fully-qualified name. If such class could not be found
+	 * {@code null} is returned.
 	 *
 	 * @param className
 	 *            the class name
-	 * @return the class associated with the given class name if one could be found,
-	 *         null otherwise
+	 * @return the class associated with the given class name if one could be
+	 *         found, null otherwise
 	 * @throws NullPointerException
 	 *             if {@code className} is {@code null}
 	 * @see #getClassAsStream(String)
@@ -153,8 +153,9 @@ public final class ClassUtils {
 	 *
 	 * @param className
 	 *            the class name
-	 * @return a {@code Stream} containing the class associated with the given class
-	 *         name if one could be found, an empty {@code Stream} otherwise.
+	 * @return a {@code Stream} containing the class associated with the given
+	 *         class name if one could be found, an empty {@code Stream}
+	 *         otherwise.
 	 * @throws NullPointerException
 	 *             if {@code className} is {@code null}
 	 * @see #getClass(String)
@@ -169,14 +170,14 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for a {@link MatchableType} that was created from an instance of
-	 * {@code java.lang.String}.
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for a {@link MatchableType} that was created from an instance
+	 * of {@code java.lang.String}.
 	 *
 	 * @param type
 	 *            the type
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 * @see #getPackage(Class)
@@ -187,13 +188,13 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for {@code java.lang.String}.
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for {@code java.lang.String}.
 	 *
 	 * @param type
 	 *            the type
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 * @see #getPackage(Class)
@@ -204,13 +205,13 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Determines and returns the package name of the given type. E.g. "java.lang"
-	 * for "java.lang.String".
+	 * Determines and returns the package name of the given type. E.g.
+	 * "java.lang" for "java.lang.String".
 	 *
 	 * @param className
 	 *            the class name
-	 * @return the package name, or and empty string if the class was defined in the
-	 *         default package
+	 * @return the package name, or and empty string if the class was defined in
+	 *         the default package
 	 * @throws NullPointerException
 	 *             if {@code class name} is {@code null}
 	 * @see #getPackage(Class)
@@ -246,14 +247,15 @@ public final class ClassUtils {
 
 	/**
 	 * Creates a lambda function that loads a class by its name from the given
-	 * {@link ClassLoader} and wraps it in a {@link Stream}. If no such class could
-	 * be found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)}
-	 * throws a {@link ClassNotFoundException}, an empty stream is returned.
+	 * {@link ClassLoader} and wraps it in a {@link Stream}. If no such class
+	 * could be found, i.e. if {@link ClassLoader#loadClass(String)
+	 * loadClass(String)} throws a {@link ClassNotFoundException}, an empty
+	 * stream is returned.
 	 *
 	 * @param loader
 	 *            the class loader
-	 * @return a lambda function that loads a class from the given class loader and
-	 *         wraps it in an instance of {@link Stream}
+	 * @return a lambda function that loads a class from the given class loader
+	 *         and wraps it in an instance of {@link Stream}
 	 * @throws NullPointerException
 	 *             if {@code loader} is {@code null}
 	 * @see #getClassAsStream(String)
@@ -272,11 +274,11 @@ public final class ClassUtils {
 	/**
 	 * Creates a lambda function that loads a class by its name from the system
 	 * class loader and wraps it in a {@link Stream}. If no such class could be
-	 * found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)} throws
-	 * a {@link ClassNotFoundException}, an empty stream is returned.
+	 * found, i.e. if {@link ClassLoader#loadClass(String) loadClass(String)}
+	 * throws a {@link ClassNotFoundException}, an empty stream is returned.
 	 *
-	 * @return a lambda function that loads a class from the given class loader and
-	 *         wraps it in an instance of {@link Stream}
+	 * @return a lambda function that loads a class from the given class loader
+	 *         and wraps it in an instance of {@link Stream}
 	 * @see #getClassAsStream(String)
 	 * @see #getBaseClassLoader()
 	 * @see ClassLoader#loadClass(String)
@@ -287,12 +289,14 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a lambda function that creates and instance for a given class and
-	 * wrappes it in a {@link Stream}. If the given class could not be instantiated,
-	 * i.e. if throws an {@link InstantiationException}, an empty stream is
-	 * returned.
+	 * wrappes it in a {@link Stream}. If the given class could not be
+	 * instantiated, i.e. if throws an {@link InstantiationException}, an empty
+	 * stream is returned.
 	 *
-	 * @return a lambda function that instantiates a given class and wraps it in an
-	 *         instance of {@link Stream}
+	 * @param <T>
+	 *            the class type
+	 * @return a lambda function that instantiates a given class and wraps it in
+	 *         an instance of {@link Stream}
 	 * @see #instantiate(String)
 	 */
 	public static <T> Function<Class<? extends T>, Stream<? extends T>> instantiate() {
@@ -301,14 +305,17 @@ public final class ClassUtils {
 
 	/**
 	 * Returns a lambda function that creates and instance for a given class and
-	 * wrappes it in a {@link Stream}. If the given class could not be instantiated,
-	 * i.e. if throws an {@link InstantiationException}, the given error message is
-	 * printed to {@link System#err} and an empty stream is returned.
+	 * wrappes it in a {@link Stream}. If the given class could not be
+	 * instantiated, i.e. if throws an {@link InstantiationException}, the given
+	 * error message is printed to {@link System#err} and an empty stream is
+	 * returned.
 	 *
+	 * @param <T>
+	 *            the class type
 	 * @param errorFormat
 	 *            the error format
-	 * @return a lambda function that instantiates a given class and wraps it in an
-	 *         instance of {@link Stream}
+	 * @return a lambda function that instantiates a given class and wraps it in
+	 *         an instance of {@link Stream}
 	 * @throws NullPointerException
 	 *             if {@code errorFormat} is {@code null}
 	 * @see #instantiate()
@@ -328,8 +335,8 @@ public final class ClassUtils {
 
 	/**
 	 * Returns the {@link Visibility} of the given type, e.g.
-	 * {@link Visibility#PUBLIC PUBLIC} for an instance of @{@link MatchableType}
-	 * created from {@code checkspec.util.ClassUtils}.
+	 * {@link Visibility#PUBLIC PUBLIC} for an instance
+	 * of @{@link MatchableType} created from {@code checkspec.util.ClassUtils}.
 	 *
 	 * @param type
 	 *            the type
@@ -342,13 +349,13 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if a type {@code superType} is a super type of {@code type}. This is
-	 * {@code true} any of the following checks are {@code true}
+	 * Checks if a type {@code superType} is a super type of {@code type}. This
+	 * is {@code true} any of the following checks are {@code true}
 	 * <ul>
-	 * <li>{@code type} and {@code superType} describe the same class or the same
-	 * interface.
-	 * <li>{@code type} and {@code superType} describe different classes and any of
-	 * the following checks are {@code true}
+	 * <li>{@code type} and {@code superType} describe the same class or the
+	 * same interface.
+	 * <li>{@code type} and {@code superType} describe different classes and any
+	 * of the following checks are {@code true}
 	 * <ul>
 	 * <li>it is the direct super class of {@code type}</li>
 	 * <li>it is a super type of the direct super class {@code superClass} of
@@ -356,8 +363,8 @@ public final class ClassUtils {
 	 * {@code true}</li>
 	 * </ul>
 	 * </li>
-	 * <li>{@code type} describes a class and {@code superType} an interface and any
-	 * of the following checks are {@code true}
+	 * <li>{@code type} describes a class and {@code superType} an interface and
+	 * any of the following checks are {@code true}
 	 * <ul>
 	 * <li>it is implemented by {@code type}</li>
 	 * <li>it is a super type of the direct super class {@code superClass} of
@@ -369,8 +376,8 @@ public final class ClassUtils {
 	 * {@code interf} in {@code interfs}
 	 * </ul>
 	 * </li>
-	 * <li>{@code type} and {@code superType} describe different interfaces and any
-	 * of the following checks are {@code true}
+	 * <li>{@code type} and {@code superType} describe different interfaces and
+	 * any of the following checks are {@code true}
 	 * <ul>
 	 * <li>{@code type} directly extends {@code superType}</li>
 	 * <li>any of the interfaces {@code interfs} that are directly extended by
@@ -397,10 +404,10 @@ public final class ClassUtils {
 	 * Returns the base class loader for this framework. By default this is the
 	 * system class loader that is loaded via
 	 * {@link ClassLoader#getSystemClassLoader()}.
-	 * 
+	 *
 	 * The base class loader can be changed using the
 	 * {@link #setBaseClassLoader(ClassLoader)} method.
-	 * 
+	 *
 	 * @return the base class loader
 	 * @see #setBaseClassLoader(ClassLoader)
 	 */
@@ -415,7 +422,7 @@ public final class ClassUtils {
 	/**
 	 * Sets the base class loader for this framework. If {@code classLoader} is
 	 * {@code null} the base class loader is reset to the system class loader.
-	 * 
+	 *
 	 * @param classLoader
 	 *            the base class loader
 	 * @see #getBaseClassLoader()
@@ -425,9 +432,9 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Utility method for lazy initialization of the {@link #SYSTEM_CLASS_LOADER}
-	 * constant.
-	 * 
+	 * Utility method for lazy initialization of the
+	 * {@link #SYSTEM_CLASS_LOADER} constant.
+	 *
 	 * @return the system class loader
 	 */
 	private static ClassLoader getSystemClassLoader() {
@@ -443,13 +450,15 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks whether the given types refer to the same class or the same interface.
+	 * Checks whether the given types refer to the same class or the same
+	 * interface.
 	 *
 	 * @param t1
 	 *            the first type
 	 * @param t2
 	 *            the second type
-	 * @return whether or not the given types refer to the same class or the same
+	 * @return whether or not the given types refer to the same class or the
+	 *         same
 	 * @throws NullPointerException
 	 *             if {@code t1} or {@code t2} are {@code null} interface
 	 */
@@ -458,7 +467,8 @@ public final class ClassUtils {
 			return t1 == t2;
 		}
 
-		// should be false if same class is loaded by two different class loaders
+		// should be false if same class is loaded by two different class
+		// loaders
 		if (t1 == t2) {
 			return true;
 		}
@@ -472,7 +482,7 @@ public final class ClassUtils {
 
 	/**
 	 * Returns the location of the class file the given class was loaded from.
-	 * 
+	 *
 	 * @param clazz
 	 *            the class
 	 * @return the location of the class file

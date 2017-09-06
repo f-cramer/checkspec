@@ -17,13 +17,13 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType> {
+public class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType, WildcardTypeMatchableType> {
 
 	private final MatchableType[] upperBounds;
 	private final MatchableType[] lowerBounds;
 
-	public WildcardTypeMatchableType(final WildcardType rawType) {
-		super(rawType);
+	WildcardTypeMatchableType(final WildcardType rawType) {
+		super(WildcardTypeMatchableType.class, rawType);
 		this.upperBounds = Arrays.stream(rawType.getUpperBounds())
 				.map(MatchableType::forType)
 				.toArray(MatchableType[]::new);
@@ -33,56 +33,27 @@ class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType> {
 	}
 
 	@Override
-	public MatchingState matches(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		if (equals(type)) {
-			return MatchingState.FULL_MATCH;
+	public Optional<MatchingState> matchesImpl(WildcardTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+		// match wildcard to wildcard, i.e. "?" to "?"
+		MatchableType[] oUpperBounds = type.getUpperBounds();
+		MatchableType[] oLowerBounds = type.getLowerBounds();
+		if (upperBounds.length != oUpperBounds.length || lowerBounds.length != oLowerBounds.length) {
+			return Optional.of(MatchingState.NO_MATCH);
 		}
 
-		MatchingState state = MatchingState.FULL_MATCH;
-		if (type instanceof WildcardTypeMatchableType) {
-			// match wildcard to wildcard, i.e. "?" to "?"
-			MatchableType[] oUpperBounds = ((WildcardTypeMatchableType) type).getUpperBounds();
-			MatchableType[] oLowerBounds = ((WildcardTypeMatchableType) type).getLowerBounds();
-			if (upperBounds.length != oUpperBounds.length || lowerBounds.length != oLowerBounds.length) {
-				return MatchingState.NO_MATCH;
-			}
-
-			state = state.merge(IntStream.range(0, upperBounds.length)
-					.mapToObj(i -> upperBounds[i].matches(oUpperBounds[i], matches))
-					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
-			if (state == MatchingState.NO_MATCH) {
-				return MatchingState.NO_MATCH;
-			}
-
-			state = state.merge(IntStream.range(0, lowerBounds.length)
-					.mapToObj(i -> upperBounds[i].matches(oUpperBounds[i], matches))
-					.max(Comparator.naturalOrder()).orElse(MatchingState.FULL_MATCH));
-			return state;
-		} else if (type instanceof ClassMatchableType) {
-			// to match wildcard to class, i.e. "? extends String" to "String"
-			state = state.merge(MatchingState.PARTIAL_MATCH);
-			state = state.merge(matchesUpperBounds(type, matches));
-			state = state.merge(matches(lowerBounds, type, matches));
-			return state;
+		MatchingState state = matchBounds(upperBounds, oUpperBounds, matches).orElse(MatchingState.FULL_MATCH);
+		if (state == MatchingState.NO_MATCH) {
+			return Optional.of(MatchingState.NO_MATCH);
 		}
 
-		return MatchingState.NO_MATCH;
+		state = state.merge(matchBounds(lowerBounds, oLowerBounds, matches));
+		return Optional.of(state);
 	}
 
-	private static Optional<MatchingState> matches(MatchableType[] bounds, MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		return Arrays.stream(bounds)
-				.map(bound -> bound.matches(type, matches))
+	private static Optional<MatchingState> matchBounds(MatchableType[] bounds, MatchableType[] oBounds, MultiValuedMap<Class<?>, Class<?>> matches) {
+		return IntStream.range(0, bounds.length)
+				.mapToObj(i -> bounds[i].matches(oBounds[i], matches))
 				.max(Comparator.naturalOrder());
-	}
-
-	private Optional<MatchingState> matchesUpperBounds(MatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
-		if (upperBounds.length == 1) {
-			Class<?> rawClass = upperBounds[0].getRawClass();
-			if (rawClass == Object.class) {
-				return Optional.of(MatchingState.FULL_MATCH);
-			}
-		}
-		return matches(upperBounds, type, matches);
 	}
 
 	@Override
