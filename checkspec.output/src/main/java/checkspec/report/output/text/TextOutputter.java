@@ -25,6 +25,11 @@ public class TextOutputter implements Outputter {
 	@NonNull
 	private final Writer writer;
 	private final boolean colored;
+	private final boolean bright;
+
+	public TextOutputter(Writer writer, boolean colored) {
+		this(writer, colored, true);
+	}
 
 	@Override
 	public void output(SpecReport report) throws OutputException {
@@ -72,18 +77,30 @@ public class TextOutputter implements Outputter {
 			Ansi ansi = ansi();
 			switch (type) {
 			case SUCCESS:
-				ansi = ansi.fgBrightGreen();
+				ansi = getGreen(ansi);
 				break;
 			case WARNING:
-				ansi = ansi.fgBrightYellow();
+				ansi = getYellow(ansi);
 				break;
 			case ERROR:
-				ansi = ansi.fgBrightRed();
+				ansi = getRed(ansi);
 				break;
 			}
 			return ansi.a(string).toString();
 		} else {
 			return string;
 		}
+	}
+
+	private Ansi getGreen(Ansi ansi) {
+		return bright ? ansi.fgBrightGreen() : ansi.fgGreen();
+	}
+
+	private Ansi getYellow(Ansi ansi) {
+		return bright ? ansi.fgBrightYellow() : ansi.fgYellow();
+	}
+
+	private Ansi getRed(Ansi ansi) {
+		return bright ? ansi.fgBrightRed() : ansi.fgRed();
 	}
 }
