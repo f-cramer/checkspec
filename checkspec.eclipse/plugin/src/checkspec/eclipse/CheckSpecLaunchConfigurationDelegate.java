@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -31,14 +30,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.osgi.framework.Bundle;
 
-import checkspec.cli.CommandLineException;
-import checkspec.cli.CommandLineInterface;
+import checkspec.CheckSpecRunner;
 import checkspec.eclipse.ui.view.ResultView;
 import checkspec.eclipse.util.DisplayUtils;
 import checkspec.eclipse.util.ReverseUrlClassLoader;
 import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.report.SpecReport;
-import checkspec.report.output.Outputter;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
 import checkspec.util.TypeDiscovery;
@@ -55,31 +52,28 @@ import checkspec.util.TypeDiscovery;
  */
 public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
+	private static final CheckSpecRunner RUNNER = new CheckSpecRunner();
+
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		try {
-			URL[] extensionsClasspath = findExtensionClasspath(configuration);
+		URL[] extensionsClasspath = findExtensionClasspath(configuration);
 
-			ClassLoader baseLoader = getClass().getClassLoader();
-			if (extensionsClasspath.length > 0) {
-				baseLoader = new ReverseUrlClassLoader(baseLoader, extensionsClasspath);
-			}
-			ClassUtils.setBaseClassLoader(baseLoader);
-			TypeDiscovery.setReflections(ReflectionsUtils.createDefaultReflections());
-
-			CommandLineInterface cli = new CommandLineInterface();
-			String[] specificationClassNames = findSpecificationClassNames(configuration);
-			URL[] specificationClasspath = findSpecificationClasspath(configuration);
-			URL[] implementationClasspath = findImplementationClasspath(configuration);
-			String basePackage = findBasePackage(configuration);
-
-			SpecReport[] reports = cli.run(specificationClassNames, specificationClasspath, implementationClasspath, basePackage, Outputter.NULL_OUTPUTTER);
-			ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
-			DisplayUtils.asyncExec(() -> resultView.setReports(reports));
-			ClassUtils.setBaseClassLoader(null);
-		} catch (CommandLineException e) {
-			throw new CoreException(new Status(Status.ERROR, Constants.PLUGIN_ID, e.getMessage()));
+		ClassLoader baseLoader = getClass().getClassLoader();
+		if (extensionsClasspath.length > 0) {
+			baseLoader = new ReverseUrlClassLoader(baseLoader, extensionsClasspath);
 		}
+		ClassUtils.setBaseClassLoader(baseLoader);
+		TypeDiscovery.setReflections(ReflectionsUtils.createDefaultReflections());
+
+		String[] specificationClassNames = findSpecificationClassNames(configuration);
+		URL[] specificationClasspath = findSpecificationClasspath(configuration);
+		URL[] implementationClasspath = findImplementationClasspath(configuration);
+		String basePackage = findBasePackage(configuration);
+
+		SpecReport[] reports = RUNNER.generateReports(specificationClassNames, specificationClasspath, implementationClasspath, basePackage);
+		ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
+		DisplayUtils.asyncExec(() -> resultView.setReports(reports));
+		ClassUtils.setBaseClassLoader(null);
 	}
 
 	private String[] findSpecificationClassNames(ILaunchConfiguration configuration) throws CoreException {

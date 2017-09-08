@@ -1,7 +1,5 @@
 package checkspec.cli;
 
-import static checkspec.util.SecurityUtils.*;
-
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -34,7 +31,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 
-import checkspec.CheckSpec;
+import checkspec.CheckSpecRunner;
 import checkspec.cli.option.ArgumentCommandLineOption;
 import checkspec.cli.option.CommandLineOption;
 import checkspec.cli.option.EnumCommandLineOption;
@@ -47,9 +44,6 @@ import checkspec.report.output.Outputter;
 import checkspec.report.output.gui.GuiOutputter;
 import checkspec.report.output.html.HtmlOutputter;
 import checkspec.report.output.text.TextOutputter;
-import checkspec.specification.ClassSpecification;
-import checkspec.util.ClassUtils;
-import checkspec.util.ReflectionsUtils;
 import checkspec.util.Wrapper;
 import lombok.NoArgsConstructor;
 
@@ -95,6 +89,8 @@ public class CommandLineInterface {
 	private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 	private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
 	private static final String WELCOME = "You are using CheckSpec CLI version %s from %s%n";
+
+	private static final CheckSpecRunner RUNNER = new CheckSpecRunner();
 
 	static {
 		try {
@@ -144,37 +140,9 @@ public class CommandLineInterface {
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		String basePackage = parseBasePackage(commandLine);
 
-		run(specifications, specificationClasspath, implementationUrls, basePackage, outputter);
-	}
-
-	public final SpecReport[] run(String[] specClassNames, URL[] specClasspath, URL[] implClasspath, String basePackage, Outputter outputter)
-			throws CommandLineException {
-		ClassLoader specificationClassLoader;
-		if (specClasspath.length == 0) {
-			specificationClassLoader = ClassUtils.getBaseClassLoader();
-		} else {
-			specificationClassLoader = doPrivileged(() -> new URLClassLoader(specClasspath, ClassUtils.getBaseClassLoader()));
-		}
-
-		Class<?>[] specificationClasses;
-		if (specClassNames.length == 0) {
-			specificationClasses = ReflectionsUtils.findClassAnnotatedWithEnabledSpec(specClasspath, specificationClassLoader);
-		} else {
-			specificationClasses = Arrays.stream(specClassNames)
-					.flatMap(ClassUtils.classStreamSupplier(specificationClassLoader))
-					.toArray(i -> new Class<?>[i]);
-		}
-
-		ClassSpecification[] specifications = Arrays.stream(specificationClasses).parallel()
-				.map(ClassSpecification::new)
-				.toArray(ClassSpecification[]::new);
-
-		Consumer<SpecReport> wrappedOutputter = wrapOutputter(outputter);
-		CheckSpec checkSpec = implClasspath.length == 0 ? CheckSpec.getDefaultInstance() : CheckSpec.getInstanceForClassPath(implClasspath);
-
-		return checkSpec.checkSpec(Arrays.asList(specifications), basePackage).stream()
-				.peek(wrappedOutputter::accept)
-				.toArray(SpecReport[]::new);
+		SpecReport[] reports = RUNNER.generateReports(specifications, specificationClasspath, implementationUrls, basePackage);
+		Arrays.stream(reports).forEach(wrapOutputter(outputter));
+		outputter.finished();
 	}
 
 	private Consumer<SpecReport> wrapOutputter(Outputter outputter) {

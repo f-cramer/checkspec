@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import checkspec.CheckSpecRunner;
+
 public abstract class AbstractIntegrationTest {
+
+	protected final CheckSpecRunner runner = new CheckSpecRunner();
 
 	protected final URL[] getSpecClasspath() {
 		return getClasspath("checkspec.test.files.results", "target", "classes");
