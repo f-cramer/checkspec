@@ -1,7 +1,6 @@
 package checkspec.report.output.gui;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -18,22 +17,22 @@ class HtmlExportMenuItem extends AbstractExportMenuItem {
 	}
 
 	@Override
-	protected Optional<Throwable> export() {
-		Optional<Path> directory = selectHtmlDirectory();
-		return directory == null ? null : directory.flatMap(this::exportHtml);
+	protected ExportResult<Throwable> export() {
+		ExportResult<Path> directory = selectHtmlDirectory();
+		return directory.flatMap(this::exportHtml);
 	}
 
-	private Optional<Throwable> exportHtml(Path path) {
+	private ExportResult<Throwable> exportHtml(Path path) {
 		try {
 			Outputter outputter = new HtmlOutputter(path);
-			outputter.output(parent.getReport());
-			return Optional.empty();
+			outputter.output(parent.getCurrentReport());
+			return ExportResult.error();
 		} catch (Exception e) {
-			return Optional.of(e);
+			return ExportResult.of(e);
 		}
 	}
 
-	private Optional<Path> selectHtmlDirectory() {
+	private ExportResult<Path> selectHtmlDirectory() {
 		JFileChooser fileChooser = new JFileChooser();
 
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -42,12 +41,12 @@ class HtmlExportMenuItem extends AbstractExportMenuItem {
 
 		switch (option) {
 		case JFileChooser.APPROVE_OPTION:
-			return Optional.ofNullable(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
+			return ExportResult.of(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
 		case JFileChooser.ERROR_OPTION:
-			JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR).trim());
-			return Optional.empty();
+			JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR, "").trim());
+			return ExportResult.error();
 		}
 
-		return null;
+		return ExportResult.noExport();
 	}
 }

@@ -7,10 +7,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GuiOutputter implements Outputter {
 
+	private final CheckSpecFrame frame = new CheckSpecFrame();
+
 	@Override
 	public void output(SpecReport report) {
-		CheckSpecFrame frame = new CheckSpecFrame(report);
+		frame.addReport(report);
+	}
+
+	@Override
+	public void finished() {
+		frame.finishedAddingReports();
 		frame.setVisible(true);
-		FrameHolder.getInstance().addWindow(frame);
 	}
 }

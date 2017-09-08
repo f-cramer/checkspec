@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -11,11 +13,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 import checkspec.report.ClassReport;
 import checkspec.report.Report;
@@ -42,21 +49,22 @@ class CheckSpecFrame extends JFrame {
 	static final String TEXT_EXTENSION = String.format(FILE_EXTENSION, TEXT);
 	static final String TEXT_DESCRIPTION = String.format(FILE_DESCRIPTION, TEXT);
 
-	private static final JMenuBar menuBar = new JMenuBar();
+	private final JMenuBar menuBar = new JMenuBar();
+	private final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+	private final JTree tree = new JTree(rootNode);
+
+	private final JMenuItem textExport;
+	private final JMenuItem htmlExport;
+	private final TreeSelectionListener treeSelectionListener;
 
 	@Getter(AccessLevel.PACKAGE)
-	private final SpecReport report;
+	private final List<SpecReport> reports = new LinkedList<>();
 
-	public CheckSpecFrame(SpecReport report) {
-		this.report = report;
-		init();
-	}
-
-	private void init() {
+	public CheckSpecFrame() {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new GridBagLayout());
 
-		setTitle(report.toString());
+		setTitle("CheckSpec");
 
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -66,29 +74,50 @@ class CheckSpecFrame extends JFrame {
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 
-		add(new JScrollPane(getReportTreeView(report)), constraints);
+		treeSelectionListener = new CustomTreeSelectionListener();
+		add(new JScrollPane(getReportTreeView()), constraints);
 
 		pack();
 		setLocationRelativeTo(null);
 
 		JMenu exportMenu = new JMenu("Export");
 		exportMenu.setMnemonic('E');
-		exportMenu.add(new TextExportMenuItem(this));
-		exportMenu.add(new HtmlExportMenuItem(this));
+		exportMenu.add(textExport = new TextExportMenuItem(this));
+		exportMenu.add(htmlExport = new HtmlExportMenuItem(this));
+		treeSelectionListener.valueChanged(null);
 
 		menuBar.add(exportMenu);
 		setJMenuBar(menuBar);
-
 	}
 
-	private Component getReportTreeView(SpecReport report) {
-		MutableTreeNode rootNode = createNode(report);
-		JTree tree = new JTree(rootNode);
-		// tree.setRootVisible(false);
+	private JTree getReportTreeView() {
 		tree.setCellRenderer(new CustomTreeCellRenderer(tree.getCellRenderer()));
+		tree.addTreeSelectionListener(treeSelectionListener);
 		expandAllNodes(tree);
 
 		return tree;
+	}
+
+	public void addReport(SpecReport report) {
+		reports.add(report);
+		MutableTreeNode node = createNode(report);
+		rootNode.add(node);
+	}
+
+	public void finishedAddingReports() {
+		((DefaultTreeModel) tree.getModel()).reload();
+		expandAllNodes(tree);
+		pack();
+	}
+
+	public SpecReport getCurrentReport() {
+		TreePath selectionPath = tree.getSelectionPath();
+
+		if (selectionPath != null && selectionPath.getPathCount() > 1) {
+			DefaultMutableTreeNode reportNode = (DefaultMutableTreeNode) selectionPath.getPathComponent(1);
+			return (SpecReport) reportNode.getUserObject();
+		}
+		return null;
 	}
 
 	private static MutableTreeNode createNode(SpecReport report) {
@@ -173,6 +202,16 @@ class CheckSpecFrame extends JFrame {
 			}
 
 			return component;
+		}
+	}
+
+	private class CustomTreeSelectionListener implements TreeSelectionListener {
+
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			boolean enabled = getCurrentReport() != null;
+			textExport.setEnabled(enabled);
+			htmlExport.setEnabled(enabled);
 		}
 	}
 

@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -24,9 +23,9 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 	}
 
 	@Override
-	protected Optional<Throwable> export() {
-		Optional<Path> file = selectTextFile();
-		return file == null ? null : file.map(this::addTextExtensionIfNecessary).flatMap(this::exportText);
+	protected ExportResult<Throwable> export() {
+		ExportResult<Path> file = selectTextFile();
+		return file.map(this::addTextExtensionIfNecessary).flatMap(this::exportText);
 	}
 
 	private Path addTextExtensionIfNecessary(Path path) {
@@ -37,18 +36,17 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 		}
 	}
 
-	private Optional<Throwable> exportText(Path path) {
+	private ExportResult<Throwable> exportText(Path path) {
 		try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
 			Outputter outputter = new TextOutputter(writer, false);
-			outputter.output(parent.getReport());
+			outputter.output(parent.getCurrentReport());
+			return ExportResult.error();
 		} catch (Exception e) {
-			return Optional.of(e);
+			return ExportResult.of(e);
 		}
-
-		return Optional.empty();
 	}
 
-	private Optional<Path> selectTextFile() {
+	private ExportResult<Path> selectTextFile() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.addChoosableFileFilter(new FileFilter() {
 			@Override
@@ -71,12 +69,12 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 
 		switch (option) {
 		case JFileChooser.APPROVE_OPTION:
-			return Optional.ofNullable(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
+			return ExportResult.of(fileChooser.getSelectedFile() == null ? null : fileChooser.getSelectedFile().toPath());
 		case JFileChooser.ERROR_OPTION:
-			JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR).trim());
-			return Optional.empty();
+			JOptionPane.showMessageDialog(this, String.format(CheckSpecFrame.ERROR, "").trim());
+			return ExportResult.error();
 		}
 
-		return null;
+		return ExportResult.noExport();
 	}
 }

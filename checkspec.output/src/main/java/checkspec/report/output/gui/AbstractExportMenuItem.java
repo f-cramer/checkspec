@@ -1,7 +1,6 @@
 package checkspec.report.output.gui;
 
 import java.awt.event.ActionEvent;
-import java.util.Optional;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -23,8 +22,8 @@ abstract class AbstractExportMenuItem extends JMenuItem {
 	}
 
 	private void export(ActionEvent event) {
-		Optional<Throwable> export = export();
-		if (export != null) {
+		ExportResult<Throwable> export = export();
+		if (!export.isNoExport()) {
 			String message = export.map(e -> String.format(CheckSpecFrame.ERROR, e.getMessage())).orElse(CheckSpecFrame.SUCCESS);
 			JOptionPane.showMessageDialog(parent, message.trim());
 		}
@@ -41,5 +40,5 @@ abstract class AbstractExportMenuItem extends JMenuItem {
 	 *         <li>Optional without value - if export was successful</li>
 	 *         </ul>
 	 */
-	protected abstract Optional<Throwable> export();
+	protected abstract ExportResult<Throwable> export();
 }
