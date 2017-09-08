@@ -12,7 +12,7 @@ import checkspec.type.MatchableType;
 
 public class ClassNameAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
-	private static final String SHOULD = "should have name %s";
+	private static final String SHOULD = "should be called \"%s\"";
 
 	@Override
 	public Optional<ReportProblem> analyze(MatchableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> payload) {
