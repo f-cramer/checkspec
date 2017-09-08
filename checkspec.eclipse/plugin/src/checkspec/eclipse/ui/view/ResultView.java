@@ -69,8 +69,8 @@ public class ResultView extends ViewPart {
 		TreeItem item = new TreeItem(parent, 0);
 		item.setText(report.toString());
 		item.setImage(CheckSpecPlugin.getImage(getImageName(report)));
-		report.getSubReports().forEach(subReport -> addReport(subReport, item));
 		report.getProblems().forEach(problem -> addProblem(problem, item));
+		report.getSubReports().forEach(subReport -> addReport(subReport, item));
 	}
 
 	private void addProblem(ReportProblem problem, TreeItem parent) {
