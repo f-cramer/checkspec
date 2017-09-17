@@ -1,5 +1,7 @@
 package checkspec.eclipse;
 
+import static checkspec.CheckSpecRunner.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,7 +32,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.osgi.framework.Bundle;
 
-import checkspec.CheckSpecRunner;
 import checkspec.eclipse.ui.view.ResultView;
 import checkspec.eclipse.util.DisplayUtils;
 import checkspec.eclipse.util.ReverseUrlClassLoader;
@@ -52,8 +53,6 @@ import checkspec.util.TypeDiscovery;
  */
 public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
-	private static final CheckSpecRunner RUNNER = new CheckSpecRunner();
-
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		URL[] extensionsClasspath = findExtensionClasspath(configuration);
@@ -70,7 +69,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 		URL[] implementationClasspath = findImplementationClasspath(configuration);
 		String basePackage = findBasePackage(configuration);
 
-		SpecReport[] reports = RUNNER.generateReports(specificationClassNames, specificationClasspath, implementationClasspath, basePackage);
+		SpecReport[] reports = generateReports(specificationClassNames, specificationClasspath, implementationClasspath, basePackage);
 		ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
 		DisplayUtils.asyncExec(() -> resultView.setReports(reports));
 		ClassUtils.setBaseClassLoader(null);

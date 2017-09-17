@@ -1,5 +1,6 @@
 package checkspec.test;
 
+import static checkspec.CheckSpecRunner.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
@@ -12,7 +13,7 @@ public class BowlingTest extends AbstractIntegrationTest {
 	@Test
 	public void bowlingTest() throws CommandLineException {
 		String[] specClassNames = { "bowling.Bowling", "bowling.Game", "bowling.Player", "bowling.TannenbaumKegeln" };
-		SpecReport[] reports = runner.generateReports(specClassNames, getSpecClasspath(), getImplementationClasspath(), "bowling");
+		SpecReport[] reports = generateReports(specClassNames, getSpecClasspath(), getImplementationClasspath(), "bowling");
 
 		assertThat(reports).hasSize(4);
 	}

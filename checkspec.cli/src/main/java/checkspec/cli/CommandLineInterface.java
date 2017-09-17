@@ -1,5 +1,7 @@
 package checkspec.cli;
 
+import static checkspec.CheckSpecRunner.*;
+
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.io.IOException;
@@ -31,7 +33,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 
-import checkspec.CheckSpecRunner;
 import checkspec.cli.option.ArgumentCommandLineOption;
 import checkspec.cli.option.CommandLineOption;
 import checkspec.cli.option.EnumCommandLineOption;
@@ -90,8 +91,6 @@ public class CommandLineInterface {
 	private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
 	private static final String WELCOME = "You are using CheckSpec CLI version %s from %s%n";
 
-	private static final CheckSpecRunner RUNNER = new CheckSpecRunner();
-
 	static {
 		try {
 			Class<CommandLineInterface> clazz = CommandLineInterface.class;
@@ -140,7 +139,7 @@ public class CommandLineInterface {
 		URL[] implementationUrls = parseImplemenationUrls(commandLine);
 		String basePackage = parseBasePackage(commandLine);
 
-		SpecReport[] reports = RUNNER.generateReports(specifications, specificationClasspath, implementationUrls, basePackage);
+		SpecReport[] reports = generateReports(specifications, specificationClasspath, implementationUrls, basePackage);
 		Arrays.stream(reports).forEach(wrapOutputter(outputter));
 		outputter.finished();
 	}
