@@ -12,6 +12,7 @@ public abstract class ExecutableAnalysis<MemberType extends Executable, Specific
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 
 	protected static final ParametersAnalysis PARAMETERS_ANALYSIS = new ParametersAnalysis();
+	protected static final ExceptionsAnalysis EXCEPTION_ANALYSIS = new ExceptionsAnalysis();
 
 	private static final Comparator<MatchableType> CLASS_NAME_COMPARATOR = Comparator.comparing(MatchableType::getRawClass, Comparator.comparing(Class::getSimpleName));
 

@@ -1,8 +1,10 @@
 package checkspec.specification;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.List;
 
+import checkspec.analysis.ExceptionSpecification;
 import checkspec.extension.AbstractExtendable;
 import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
@@ -34,6 +36,9 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 	private final ParametersSpecification parameters;
 
 	@NonNull
+	private final ExceptionSpecification exceptions;
+
+	@NonNull
 	private final Constructor<?> rawElement;
 
 	public ConstructorSpecification(Constructor<?> constructor) {
@@ -43,6 +48,10 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 		rawElement = constructor;
 
 		parameters = new ParametersSpecification(constructor.getParameters(), index -> MatchableType.forConstructorParameter(constructor, index));
+		MatchableType[] exceptionTypes = Arrays.stream(constructor.getGenericExceptionTypes())
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
+		exceptions = new ExceptionSpecification(exceptionTypes);
 
 		performExtensions(EXTENSIONS, this, constructor);
 	}

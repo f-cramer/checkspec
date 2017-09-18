@@ -42,6 +42,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 
 		VISIBILITY_ANALYSIS.analyze(method, spec).ifPresent(report::addProblem);
 		report.addProblems(MODIFIERS_ANALYSIS.analyze(method, spec));
+		report.addProblems(EXCEPTION_ANALYSIS.analyze(method, spec, oldReports));
 
 		String methodName = method.getName();
 		String specName = spec.getName();

@@ -30,6 +30,7 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 
 		VISIBILITY_ANALYSIS.analyze(constructor, spec).ifPresent(report::addProblem);
 		report.addProblems(MODIFIERS_ANALYSIS.analyze(constructor, spec));
+		report.addProblems(EXCEPTION_ANALYSIS.analyze(constructor, spec, oldReports));
 
 		return report;
 	}

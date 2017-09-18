@@ -1,10 +1,12 @@
 package checkspec.specification;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import checkspec.analysis.ExceptionSpecification;
 import checkspec.extension.AbstractExtendable;
 import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
@@ -39,6 +41,9 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 	private final VisibilitySpecification visibility;
 
 	@NonNull
+	private final ExceptionSpecification exceptions;
+
+	@NonNull
 	private final Method rawElement;
 
 	public MethodSpecification(Method method) {
@@ -48,6 +53,11 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 		parameters = new ParametersSpecification(method.getParameters(), index -> MatchableType.forMethodParameter(method, index));
 		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
 		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());
+
+		MatchableType[] exceptionTypes = Arrays.stream(method.getGenericExceptionTypes())
+				.map(MatchableType::forType)
+				.toArray(MatchableType[]::new);
+		exceptions = new ExceptionSpecification(exceptionTypes);
 		rawElement = method;
 
 		performExtensions(EXTENSIONS, this, method);
