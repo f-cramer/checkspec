@@ -1,21 +1,10 @@
 package bowling;
 
-/**
- * Models the "Tannenbaum Kegeln" bowling-style game.
- *
- * @author Nicolas Weber
- */
 public class TannenbaumKegeln extends Game {
-	// internal attributes
+
 	private int[][] counts;
 	private int state;
 
-	/**
-	 * Creates a new instance of "Tannenbaum Kegeln" for up to maxPlayerCount
-	 * players.
-	 *
-	 * @param maxPlayerCount the maximum number of players for this game
-	 */
 	public TannenbaumKegeln(int maxPlayerCount) {
 		super(maxPlayerCount);
 		counts = new int[maxPlayerCount][getPinCount()];
@@ -34,8 +23,6 @@ public class TannenbaumKegeln extends Game {
 		}
 	}
 
-	// implementation of the abstract methods from class bowling.Game
-	
 	@Override
 	public String getName() {
 		return "Tannenbaum Kegeln";
@@ -51,11 +38,11 @@ public class TannenbaumKegeln extends Game {
 		return 100;
 	}
 
-
 	@Override
 	public int[] getScore(Player player) {
-		if (!isValidPlayer(player))
+		if (!isValidPlayer(player)) {
 			return null;
+		}
 
 		return counts[player.getID()];
 	}
@@ -71,8 +58,9 @@ public class TannenbaumKegeln extends Game {
 				int score = 0;
 				int[] scores = getScore(p);
 
-				for (int value : scores)
+				for (int value : scores) {
 					score += value;
+				}
 
 				if (score < bestScore) {
 					bestPlayer = p;
@@ -85,58 +73,39 @@ public class TannenbaumKegeln extends Game {
 
 		return null;
 	}
-	
-	// overridden or additional methods below
-	
-	/**
-	 * the current player throws a new ball and hits 'count' pins
-	 * 
-	 * @param count number of pins hit
-	 * @return false if the throw is invalid (e.g. too many pins are hit), else
-	 *         true
-	 */
+
 	@Override
 	public boolean throwBall(int count) {
-		// is this a valid throw?
-		if (!super.throwBall(count))
+		if (!super.throwBall(count)) {
 			return false;
+		}
 
-		// get player id
 		int playerID = getActivePlayer().getID();
 
-		// increment state
 		state += count;
 
-		// is this either the second throw or
-		// getThrow() == 3 is necessary as throwBall already incremented the value
 		if (getThrow() == 3 || count == getPinCount()) {
-			// decrement count
-			if (state > 0 && counts[playerID][state - 1] != 0)
+			if (state > 0 && counts[playerID][state - 1] != 0) {
 				counts[playerID][state - 1]--;
+			}
 
-			// reset state
 			state = 0;
 
-			// finished game if player has won
 			if (hasPlayerWon()) {
 				overwriteRound(Integer.MAX_VALUE);
-			}
-			// switch player
-			else {
+			} else {
 				nextPlayer();
 			}
 		}
 
-		// return
 		return true;
 	}
 
-	// internal helper method
-	// returns true if the player has struck all pin values from his "tree"
 	private boolean hasPlayerWon() {
 		for (int i : counts[getActivePlayer().getID()]) {
-			if (i != 0)
+			if (i != 0) {
 				return false;
+			}
 		}
 
 		return true;

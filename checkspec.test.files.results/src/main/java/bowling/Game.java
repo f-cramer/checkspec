@@ -1,7 +1,7 @@
 package bowling;
 
 public abstract class Game implements IGame {
-	// private attributes
+
 	private int activePlayerCount;
 	private int activePlayerID;
 	private int currentRound;
