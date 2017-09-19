@@ -23,7 +23,7 @@ public class ConstructorReport extends ExecutableReport<Constructor<?>, Construc
 
 	@Override
 	public String getTitle() {
-		Constructor<?> specConstructor = getSpec().getRawElement();
+		Constructor<?> specConstructor = getSpecification().getRawElement();
 		if (getImplementation() == null) {
 			return missing(createString(specConstructor));
 		} else if (getType() == ReportType.SUCCESS) {

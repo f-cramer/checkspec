@@ -23,7 +23,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 	private static final String COMPATIBLE_TYPE = "returns compatible type \"%s\"";
 	private static final String INCOMPATIBLE_TYPE = "returns incompatible type \"%s\"";
 
-	private Comparator<MethodReport> comparator = Comparator.comparing(MethodReport::getSpec);
+	private Comparator<MethodReport> comparator = Comparator.comparing(MethodReport::getSpecification);
 
 	@Override
 	protected MethodSpecification[] getMemberSpecifications(ClassSpecification spec) {

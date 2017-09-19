@@ -24,7 +24,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 	private static final String COMPATIBLE_TYPE = "has compatible type \"%s\" rather than \"%s\"";
 	private static final String INCOMPATIBLE_TYPE = "has incompatible type \"%s\" rather than \"%s\"";
 
-	private Comparator<FieldReport> comparator = Comparator.comparing(FieldReport::getSpec);
+	private Comparator<FieldReport> comparator = Comparator.comparing(FieldReport::getSpecification);
 
 	@Override
 	protected FieldSpecification[] getMemberSpecifications(ClassSpecification spec) {

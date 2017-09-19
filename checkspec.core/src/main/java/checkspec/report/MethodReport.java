@@ -23,7 +23,7 @@ public class MethodReport extends ExecutableReport<Method, MethodSpecification> 
 
 	@Override
 	public String getTitle() {
-		Method specMethod = getSpec().getRawElement();
+		Method specMethod = getSpecification().getRawElement();
 		if (getImplementation() == null) {
 			return missing(MethodUtils.toString(specMethod));
 		} else if (getType() == ReportType.SUCCESS) {

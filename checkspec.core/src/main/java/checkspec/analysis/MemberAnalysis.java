@@ -28,7 +28,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 	protected static final MemberVisibilityAnalysis VISIBILITY_ANALYSIS = new MemberVisibilityAnalysis();
 	protected static final MemberModifiersAnalysis MODIFIERS_ANALYSIS = new MemberModifiersAnalysis();
 
-	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpec().getName());
+	private final Comparator<ReportType> comparator = Comparator.comparing(report -> report.getSpecification().getName());
 
 	@Override
 	public Collection<? extends ReportType> analyze(MatchableType type, ClassSpecification spec, MultiValuedMap<Class<?>, Class<?>> matches) {
@@ -47,7 +47,7 @@ public abstract class MemberAnalysis<MemberType extends Member, SpecificationTyp
 		while (iterator.hasNext()) {
 			ReportType report = iterator.next();
 			MemberType member = report.getImplementation();
-			SpecificationType memberSpec = report.getSpec();
+			SpecificationType memberSpec = report.getSpecification();
 			if (unusedMembers.contains(member) && notFoundSpecs.contains(memberSpec)) {
 				unusedMembers.remove(member);
 				notFoundSpecs.remove(memberSpec);

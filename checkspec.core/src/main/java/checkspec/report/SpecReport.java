@@ -12,7 +12,7 @@ import lombok.Value;
 public class SpecReport {
 
 	@NonNull
-	private final ClassSpecification spec;
+	private final ClassSpecification specification;
 
 	@NonNull
 	private final List<ClassReport> classReports;
@@ -23,6 +23,6 @@ public class SpecReport {
 
 	@Override
 	public String toString() {
-		return String.format("Reports for specification %s - %s", ClassUtils.getName(spec.getRawElement()), ClassUtils.getLocation(spec.getRawElement().getRawClass()));
+		return String.format("Reports for specification %s", ClassUtils.getName(specification.getRawElement()));
 	}
 }

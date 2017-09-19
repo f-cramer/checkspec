@@ -23,7 +23,7 @@ public class FieldReport extends Report<Field, FieldSpecification> {
 
 	@Override
 	public String getTitle() {
-		Field specField = getSpec().getRawElement();
+		Field specField = getSpecification().getRawElement();
 		if (getImplementation() == null) {
 			return missing(FieldUtils.toString(specField));
 		} else if (getType() == ReportType.SUCCESS) {

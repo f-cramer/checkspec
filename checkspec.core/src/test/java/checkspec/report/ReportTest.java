@@ -51,8 +51,8 @@ public class ReportTest {
 	}
 
 	@Test
-	public void getSpecTest() {
-		ClassSpecification result = report.getSpec();
+	public void getSpecificationTest() {
+		ClassSpecification result = report.getSpecification();
 		assertThat(result).isEqualTo(specification);
 	}
 

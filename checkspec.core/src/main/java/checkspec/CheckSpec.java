@@ -117,7 +117,7 @@ public final class CheckSpec {
 	 * @return a proxy instance of the given {@link SpecReport}
 	 */
 	public static <T> T createProxy(@NonNull SpecReport report) {
-		Class<?> clazz = report.getSpec().getRawElement().getRawClass();
+		Class<?> clazz = report.getSpecification().getRawElement().getRawClass();
 		MethodInvocationHandler handler = StaticChecker.createInvocationHandler(clazz, report);
 		return StaticChecker.createProxy(clazz, handler);
 	}
@@ -281,7 +281,7 @@ public final class CheckSpec {
 
 	private static MultiValuedMap<Class<?>, Class<?>> convert(List<SpecReport> reports) {
 		HashSetValuedHashMap<Class<?>, Class<?>> map = new HashSetValuedHashMap<>();
-		reports.forEach(report -> map.putAll(report.getSpec().getRawElement().getRawClass(), getImplementationClasses(report)));
+		reports.forEach(report -> map.putAll(report.getSpecification().getRawElement().getRawClass(), getImplementationClasses(report)));
 		return map;
 	}
 
@@ -313,6 +313,6 @@ public final class CheckSpec {
 				.filter(ClassReport::isAnyImplemenationMatching)
 				.sorted()
 				.collect(Collectors.toList());
-		return new SpecReport(report.getSpec(), classReports);
+		return new SpecReport(report.getSpecification(), classReports);
 	}
 }

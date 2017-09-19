@@ -56,7 +56,7 @@ final class StaticChecker {
 			Object implementation = implementingClass.newInstance();
 
 			Map<Method, MethodReport> methodReports = classReport.getMethodReports().parallelStream()
-					.collect(Collectors.toMap(e -> e.getSpec().getRawElement(), Function.identity()));
+					.collect(Collectors.toMap(e -> e.getSpecification().getRawElement(), Function.identity()));
 
 			return new MethodInvocationHandler() {
 				@Override

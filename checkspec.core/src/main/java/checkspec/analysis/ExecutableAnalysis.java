@@ -17,8 +17,8 @@ public abstract class ExecutableAnalysis<MemberType extends Executable, Specific
 	private static final Comparator<MatchableType> CLASS_NAME_COMPARATOR = Comparator.comparing(MatchableType::getRawClass, Comparator.comparing(Class::getSimpleName));
 
 	private final Comparator<ReportType> parameterComparator = (left, right) -> {
-		ParametersSpecification leftParameters = left.getSpec().getParameters();
-		ParametersSpecification rightParameters = right.getSpec().getParameters();
+		ParametersSpecification leftParameters = left.getSpecification().getParameters();
+		ParametersSpecification rightParameters = right.getSpecification().getParameters();
 		int minLength = Math.min(leftParameters.getCount(), rightParameters.getCount());
 
 		for (int i = 0; i < minLength; i++) {
