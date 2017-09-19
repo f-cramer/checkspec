@@ -18,7 +18,7 @@ public class ClassReport extends Report<MatchableType, ClassSpecification> {
 	private List<MethodReport> methodReports = new ArrayList<>();
 
 	public ClassReport(ClassSpecification spec, Class<?> implementation) {
-		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation) + " - " + ClassUtils.getLocation(implementation));
+		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation));
 	}
 
 	@Override
@@ -29,6 +29,17 @@ public class ClassReport extends Report<MatchableType, ClassSpecification> {
 		subReports.addAll(methodReports);
 
 		return Collections.unmodifiableList(subReports);
+	}
+
+	@Override
+	public void removeSubReport(Report<?, ?> report) {
+		if (report instanceof FieldReport) {
+			fieldReports.remove(report);
+		} else if (report instanceof ConstructorReport) {
+			constructorReports.remove(report);
+		} else if (report instanceof MethodReport) {
+			methodReports.remove(report);
+		}
 	}
 
 	public void addFieldReport(FieldReport report) {

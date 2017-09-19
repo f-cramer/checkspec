@@ -17,7 +17,7 @@ import lombok.NonNull;
 @EqualsAndHashCode
 public abstract class Report<RawType, SpecificationType extends Specification<RawType>> implements Comparable<Report<?, ?>> {
 
-	private final SpecificationType spec;
+	private final SpecificationType specification;
 	private final RawType implementation;
 	private final String title;
 
@@ -31,8 +31,8 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 		this(spec, implementation, null);
 	}
 
-	protected Report(@NonNull SpecificationType spec, RawType implementation, String title) {
-		this.spec = spec;
+	protected Report(@NonNull SpecificationType specification, RawType implementation, String title) {
+		this.specification = specification;
 		this.implementation = implementation;
 		this.title = title;
 	}
@@ -41,8 +41,15 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 		return Collections.unmodifiableList(problems);
 	}
 
+	public void removeProblem(ReportProblem problem) {
+		this.problems.remove(problem);
+	}
+
 	public List<Report<?, ?>> getSubReports() {
 		return Collections.emptyList();
+	}
+
+	public void removeSubReport(Report<?, ?> report) {
 	}
 
 	public void addProblem(@NonNull ReportProblem entry) {
@@ -69,7 +76,7 @@ public abstract class Report<RawType, SpecificationType extends Specification<Ra
 	}
 
 	protected boolean isNameFitting() {
-		return implementation == null ? false : spec.getName().equals(getRawTypeName(implementation));
+		return implementation == null ? false : specification.getName().equals(getRawTypeName(implementation));
 	}
 
 	public int getScore() {

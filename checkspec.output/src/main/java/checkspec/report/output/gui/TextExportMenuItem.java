@@ -18,6 +18,13 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 
 	private static final long serialVersionUID = -3089459732868339613L;
 
+	private static final String TEXT = "txt";
+	private static final String FILE_EXTENSION = ".%s";
+	private static final String FILE_DESCRIPTION = ".%s Files";
+
+	private static final String TEXT_EXTENSION = String.format(FILE_EXTENSION, TEXT);
+	private static final String TEXT_DESCRIPTION = String.format(FILE_DESCRIPTION, TEXT);
+
 	public TextExportMenuItem(final CheckSpecFrame parent) {
 		super(parent, "As Text", 'T', "export_text");
 	}
@@ -32,7 +39,7 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 		if (path.getFileName().toString().contains(".")) {
 			return path;
 		} else {
-			return Paths.get(path.toString() + CheckSpecFrame.TEXT_EXTENSION);
+			return Paths.get(path.toString() + TEXT_EXTENSION);
 		}
 	}
 
@@ -51,12 +58,12 @@ class TextExportMenuItem extends AbstractExportMenuItem {
 		fileChooser.addChoosableFileFilter(new FileFilter() {
 			@Override
 			public String getDescription() {
-				return CheckSpecFrame.TEXT_DESCRIPTION;
+				return TEXT_DESCRIPTION;
 			}
 
 			@Override
 			public boolean accept(File file) {
-				return file.getName().endsWith(CheckSpecFrame.TEXT_EXTENSION) || file.isDirectory();
+				return file.getName().endsWith(TEXT_EXTENSION) || file.isDirectory();
 			}
 		});
 
