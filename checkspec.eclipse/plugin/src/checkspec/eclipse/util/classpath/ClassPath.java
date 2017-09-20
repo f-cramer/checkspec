@@ -50,6 +50,10 @@ public final class ClassPath {
 				.collect(Collectors.toList());
 	}
 
+	public List<ClassPathEntry> getEntries() {
+		return Collections.unmodifiableList(entries);
+	}
+
 	private Stream<String> getEntriesStringStream() {
 		return entries.stream()
 				.map(ClassPathEntrySerializer::toString);

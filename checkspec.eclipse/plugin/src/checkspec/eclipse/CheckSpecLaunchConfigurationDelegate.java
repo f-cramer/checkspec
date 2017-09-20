@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.StringJoiner;
@@ -44,12 +43,6 @@ import checkspec.util.TypeDiscovery;
 /**
  * Launch configuration delegate for a CheckSpec specification check as a Java
  * application.
- *
- * <p>
- * Clients can instantiate and extend this class.
- * </p>
- *
- * @since 3.3
  */
 public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
@@ -137,30 +130,13 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 		String[] libraries = stream(bundle.getEntryPaths("/lib"))
 				.map(bundle::getEntry)
-				.map(url -> checkedToFile(url, false))
-				.map(file -> {
-					try {
-						return file.getAbsoluteFile().getCanonicalPath();
-					} catch (IOException e) {
-						return null;
-					}
-				})
-				.filter(Objects::nonNull)
+				.flatMap(url -> toFilePath(url, false))
 				.toArray(String[]::new);
 		if (libraries.length > 0) {
 			int length = classpath.length;
 			classpath = Arrays.copyOf(classpath, length + libraries.length);
 			System.arraycopy(libraries, 0, classpath, length, libraries.length);
 		}
-
-		// URL url = bundle.getEntry("/lib/checkspec.bundle.jar");
-		// File file;
-		// try {
-		// file = toFile(url, false);
-		// classpath = Arrays.copyOf(classpath, classpath.length + 1);
-		// classpath[classpath.length - 1] = file.getAbsolutePath();
-		// } catch (URISyntaxException | IOException e) {
-		// }
 
 		URL url = bundle.getEntry("/");
 		try {
@@ -181,29 +157,29 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 		return file;
 	}
 
-	private File checkedToFile(URL url, boolean checkForDevelopmentMode) {
+	private Stream<String> toFilePath(URL url, boolean checkForDevelopmentMode) {
 		try {
-			return toFile(url, checkForDevelopmentMode);
+			return Stream.of(toFile(url, checkForDevelopmentMode).getCanonicalPath());
 		} catch (URISyntaxException | IOException e) {
-			return null;
+			return Stream.empty();
 		}
 	}
 
 	private <T> Stream<T> stream(Enumeration<T> e) {
-		return StreamSupport.stream(
-				Spliterators.spliteratorUnknownSize(
-						new Iterator<T>() {
-							@Override
-							public T next() {
-								return e.nextElement();
-							}
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(e), Spliterator.ORDERED), false);
+	}
 
-							@Override
-							public boolean hasNext() {
-								return e.hasMoreElements();
-							}
-						},
-						Spliterator.ORDERED),
-				false);
+	private <T> Iterator<T> iterator(Enumeration<T> e) {
+		return new Iterator<T>() {
+			@Override
+			public boolean hasNext() {
+				return e.hasMoreElements();
+			}
+
+			@Override
+			public T next() {
+				return e.nextElement();
+			}
+		};
 	}
 }

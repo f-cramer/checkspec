@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -27,5 +28,15 @@ public class SourceClassPathEntry implements ClassPathEntry {
 	public List<URL> resolve(IJavaProject project) {
 		IPath workspacePath = project.getProject().getWorkspace().getRoot().getLocation();
 		return Collections.singletonList(PathConverter.toUrl(workspacePath.append(path)));
+	}
+
+	@Override
+	public ClassPathType getType() {
+		return ClassPathType.SOURCE;
+	}
+
+	@Override
+	public String getName(IWorkspace workspace) {
+		return path.toString();
 	}
 }

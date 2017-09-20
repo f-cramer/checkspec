@@ -65,4 +65,24 @@ public class ProjectClassPathEntry implements ClassPathEntry {
 		}
 		return urls;
 	}
+
+	@Override
+	public ClassPathType getType() {
+		return ClassPathType.PROJECT;
+	}
+
+	@Override
+	public String getName(IWorkspace workspace) {
+		IProject[] projects = workspace.getRoot().getProjects();
+		Optional<IProject> optProject = Arrays.stream(projects)
+				.filter(p -> projectPath.equals(p.getFullPath()))
+				.findAny();
+		if (!optProject.isPresent()) {
+			return null;
+		}
+
+		IProject project = optProject.get();
+		IJavaProject javaProject = project.getAdapter(IJavaProject.class);
+		return javaProject.getElementName();
+	}
 }

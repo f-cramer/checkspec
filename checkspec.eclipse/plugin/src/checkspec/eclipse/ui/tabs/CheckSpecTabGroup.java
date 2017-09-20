@@ -6,12 +6,9 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 public class CheckSpecTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	public CheckSpecTabGroup() {
-	}
-
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = { new CheckSpecTab(), };
+		ILaunchConfigurationTab[] tabs = { new CheckSpecTab(), new SpecificationClasspathTab(), new ImplementationClasspathTab(), new ExtensionClasspathTab() };
 		setTabs(tabs);
 	}
 }

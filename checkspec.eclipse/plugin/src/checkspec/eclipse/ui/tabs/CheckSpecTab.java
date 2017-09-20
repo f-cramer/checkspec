@@ -48,6 +48,8 @@ public class CheckSpecTab extends JavaLaunchTab {
 	private Text specificationText;
 	private Button searchButton;
 
+	private Text basePackageText;
+
 	private WidgetListener listener = new WidgetListener();
 
 	@Override
@@ -62,6 +64,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 		createProjectEditor(composite);
 		createVerticalSpacer(composite, 1);
 		createSpecificationEditor(composite);
+		createBasePacakgeEditor(composite);
 		setControl(composite);
 	}
 
@@ -78,6 +81,15 @@ public class CheckSpecTab extends JavaLaunchTab {
 		projectText.addModifyListener(listener);
 		projectButton = createPushButton(group, "&Browse...", null);
 		projectButton.addSelectionListener(listener);
+	}
+
+	private void handleProjectButtonSelected() {
+		IJavaProject project = chooseJavaProject();
+		if (project == null) {
+			return;
+		}
+		String projectName = project.getElementName();
+		projectText.setText(projectName);
 	}
 
 	private void createSpecificationEditor(Composite parent) {
@@ -141,13 +153,22 @@ public class CheckSpecTab extends JavaLaunchTab {
 		}
 	}
 
-	private void handleProjectButtonSelected() {
-		IJavaProject project = chooseJavaProject();
-		if (project == null) {
-			return;
-		}
-		String projectName = project.getElementName();
-		projectText.setText(projectName);
+	private void createBasePacakgeEditor(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout(2, false));
+		group.setText("Base package");
+		GridData groupData = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(groupData);
+
+		basePackageText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		GridData textData = new GridData(GridData.FILL_HORIZONTAL);
+		basePackageText.setLayoutData(textData);
+		basePackageText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 
 	private IJavaProject chooseJavaProject() {
@@ -192,6 +213,9 @@ public class CheckSpecTab extends JavaLaunchTab {
 
 			List<String> specifications = configuration.getAttribute(Constants.ATTR_SPECIFICATION_TYPE_NAMES, Collections.emptyList());
 			specificationText.setText(specifications.size() > 0 ? specifications.get(0) : "");
+
+			String basePackage = configuration.getAttribute(Constants.ATTR_BASE_PACKAGE, "");
+			basePackageText.setText(basePackage);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -202,6 +226,7 @@ public class CheckSpecTab extends JavaLaunchTab {
 		super.initializeFrom(config);
 		updateProjectFromConfig(config);
 		updateSpecificationFromConfig(config);
+		updateBasePackageFromConfig(config);
 	}
 
 	private void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -225,15 +250,25 @@ public class CheckSpecTab extends JavaLaunchTab {
 		specificationText.setText(specificationName);
 	}
 
+	private void updateBasePackageFromConfig(ILaunchConfiguration config) {
+		String basePackage = "";
+		try {
+			basePackage = config.getAttribute(Constants.ATTR_BASE_PACKAGE, "");
+		} catch (CoreException expected) {
+		}
+		basePackageText.setText(basePackage);
+	}
+
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectText.getText());
 		configuration.setAttribute(Constants.ATTR_SPECIFICATION_TYPE_NAMES, Collections.singletonList(specificationText.getText()));
+		configuration.setAttribute(Constants.ATTR_BASE_PACKAGE, basePackageText.getText());
 	}
 
 	@Override
 	public String getName() {
-		return null;
+		return "Main";
 	}
 
 	private class WidgetListener implements ModifyListener, SelectionListener {
