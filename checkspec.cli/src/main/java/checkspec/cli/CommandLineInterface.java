@@ -48,6 +48,12 @@ import checkspec.report.output.text.TextOutputter;
 import checkspec.util.Wrapper;
 import lombok.NoArgsConstructor;
 
+/**
+ * The command line interface for {@code CheckSpec}
+ *
+ * @author Florian Cramer
+ *
+ */
 @NoArgsConstructor
 public class CommandLineInterface {
 
@@ -104,6 +110,12 @@ public class CommandLineInterface {
 		}
 	}
 
+	/**
+	 * Runs the command line interface
+	 *
+	 * @param args
+	 *            the command line arguments
+	 */
 	public static void main(String[] args) {
 		try {
 			printWelcomeMessage();
