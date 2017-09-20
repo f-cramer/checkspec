@@ -1,8 +1,6 @@
 package checkspec.analysis;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import checkspec.extension.AbstractExtendable;
 import checkspec.specification.Specification;
@@ -14,7 +12,7 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class ExceptionSpecification extends AbstractExtendable<ExceptionSpecification, MatchableType[]> implements Specification<MatchableType[]> {
+public class ExceptionSpecification extends AbstractExtendable<ExceptionSpecification, MatchableType> implements Specification<MatchableType> {
 
 	private static final ExceptionSpecificationExtension[] EXTENSIONS;
 
@@ -24,13 +22,11 @@ public class ExceptionSpecification extends AbstractExtendable<ExceptionSpecific
 	}
 
 	private final String name;
-	private final MatchableType[] rawElement;
+	private final MatchableType rawElement;
 
-	public ExceptionSpecification(@NonNull MatchableType[] throwables) {
-		this.name = Arrays.stream(throwables)
-				.map(MatchableType::toString)
-				.collect(Collectors.joining(", "));
-		this.rawElement = throwables;
+	public ExceptionSpecification(@NonNull MatchableType throwable) {
+		this.name = throwable.toString();
+		this.rawElement = throwable;
 
 		performExtensions(EXTENSIONS, this, rawElement);
 	}

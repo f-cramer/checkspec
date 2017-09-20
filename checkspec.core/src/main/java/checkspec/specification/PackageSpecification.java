@@ -28,7 +28,6 @@ public class PackageSpecification extends AbstractExtendable<PackageSpecificatio
 
 	public PackageSpecification(Package pkg, Annotation[] annotations) {
 		rawElement = pkg;
-
 		name = pkg.getName();
 
 		performExtensions(EXTENSIONS, this, rawElement);

@@ -8,5 +8,5 @@ public interface ExecutableSpecification<RawType extends Executable> extends Mem
 
 	ParametersSpecification getParameters();
 
-	ExceptionSpecification getExceptions();
+	ExceptionSpecification[] getExceptions();
 }

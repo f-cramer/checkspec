@@ -36,7 +36,7 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 	private final ParametersSpecification parameters;
 
 	@NonNull
-	private final ExceptionSpecification exceptions;
+	private final ExceptionSpecification[] exceptions;
 
 	@NonNull
 	private final Constructor<?> rawElement;
@@ -48,10 +48,10 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 		rawElement = constructor;
 
 		parameters = new ParametersSpecification(constructor.getParameters(), index -> MatchableType.forConstructorParameter(constructor, index));
-		MatchableType[] exceptionTypes = Arrays.stream(constructor.getGenericExceptionTypes())
+		exceptions = Arrays.stream(constructor.getGenericExceptionTypes())
 				.map(MatchableType::forType)
-				.toArray(MatchableType[]::new);
-		exceptions = new ExceptionSpecification(exceptionTypes);
+				.map(ExceptionSpecification::new)
+				.toArray(ExceptionSpecification[]::new);
 
 		performExtensions(EXTENSIONS, this, constructor);
 	}

@@ -41,7 +41,7 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private final ExceptionSpecification exceptions;
+	private final ExceptionSpecification[] exceptions;
 
 	@NonNull
 	private final Method rawElement;
@@ -54,10 +54,10 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 		modifiers = new ModifiersSpecification(method.getModifiers(), method.getAnnotations());
 		visibility = new VisibilitySpecification(method.getModifiers(), method.getAnnotations());
 
-		MatchableType[] exceptionTypes = Arrays.stream(method.getGenericExceptionTypes())
+		exceptions = Arrays.stream(method.getGenericExceptionTypes())
 				.map(MatchableType::forType)
-				.toArray(MatchableType[]::new);
-		exceptions = new ExceptionSpecification(exceptionTypes);
+				.map(ExceptionSpecification::new)
+				.toArray(ExceptionSpecification[]::new);
 		rawElement = method;
 
 		performExtensions(EXTENSIONS, this, method);

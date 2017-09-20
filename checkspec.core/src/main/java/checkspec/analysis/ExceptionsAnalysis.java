@@ -28,7 +28,9 @@ public class ExceptionsAnalysis implements Analysis<Executable, ExecutableSpecif
 				.map(MatchableType::forType)
 				// needs to be mutable
 				.collect(Collectors.toCollection(ArrayList::new));
-		MatchableType[] specifications = spec.getExceptions().getRawElement();
+		MatchableType[] specifications = Arrays.stream(spec.getExceptions())
+				.map(ExceptionSpecification::getRawElement)
+				.toArray(MatchableType[]::new);
 
 		for (MatchableType specification : specifications) {
 			Optional<MatchableType> interf = notFoundThrowables.parallelStream()
