@@ -20,8 +20,6 @@ package checkspec;
  * #L%
  */
 
-
-
 import static checkspec.util.ClassUtils.*;
 import static checkspec.util.ReflectionsUtils.*;
 import static checkspec.util.SecurityUtils.*;

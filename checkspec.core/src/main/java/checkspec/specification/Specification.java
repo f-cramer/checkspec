@@ -20,8 +20,6 @@ package checkspec.specification;
  * #L%
  */
 
-
-
 /**
  * A template for a type or class member.
  *

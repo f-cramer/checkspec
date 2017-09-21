@@ -20,8 +20,6 @@ package checkspec.specification;
  * #L%
  */
 
-
-
 import checkspec.extension.Extension;
 import checkspec.type.MatchableType;
 

@@ -20,7 +20,6 @@ package bowling;
  * #L%
  */
 
-
 public class Player {
 
 	private String name;

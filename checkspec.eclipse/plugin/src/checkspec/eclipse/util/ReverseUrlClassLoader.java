@@ -20,8 +20,6 @@ package checkspec.eclipse.util;
  * #L%
  */
 
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

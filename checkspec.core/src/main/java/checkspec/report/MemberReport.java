@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 import java.lang.reflect.Member;
 
 import checkspec.specification.Specification;

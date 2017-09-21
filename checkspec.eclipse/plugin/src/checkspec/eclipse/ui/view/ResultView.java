@@ -20,8 +20,6 @@ package checkspec.eclipse.ui.view;
  * #L%
  */
 
-
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

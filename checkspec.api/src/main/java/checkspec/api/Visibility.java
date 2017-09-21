@@ -20,7 +20,6 @@ package checkspec.api;
  * #L%
  */
 
-
 import java.util.Locale;
 
 /**

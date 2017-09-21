@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.ClassUtils.*;

@@ -20,8 +20,6 @@ package checkspec.cli;
  * #L%
  */
 
-
-
 import static checkspec.CheckSpecRunner.*;
 
 import java.awt.GraphicsEnvironment;

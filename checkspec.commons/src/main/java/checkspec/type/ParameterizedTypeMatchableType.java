@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Comparator;

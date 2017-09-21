@@ -20,8 +20,6 @@ package checkspec.eclipse;
  * #L%
  */
 
-
-
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;

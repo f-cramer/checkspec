@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import lombok.Value;
 
 /**

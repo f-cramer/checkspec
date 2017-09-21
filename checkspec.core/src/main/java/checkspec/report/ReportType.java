@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 /**
  * The type of a report.
  *

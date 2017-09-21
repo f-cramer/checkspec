@@ -20,8 +20,6 @@ package checkspec.util;
  * #L%
  */
 
-
-
 import java.lang.reflect.Modifier;
 
 import checkspec.api.Visibility;

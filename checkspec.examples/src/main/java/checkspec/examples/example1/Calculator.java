@@ -20,8 +20,6 @@ package checkspec.examples.example1;
  * #L%
  */
 
-
-
 import checkspec.api.Modifiers;
 import checkspec.api.Spec;
 import checkspec.api.State;

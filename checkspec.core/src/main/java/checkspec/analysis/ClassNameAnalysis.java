@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;

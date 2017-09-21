@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import static org.apache.commons.lang3.ClassUtils.*;
 
 import java.lang.reflect.Type;

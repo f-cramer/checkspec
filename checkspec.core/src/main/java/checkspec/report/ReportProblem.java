@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 import lombok.NonNull;
 import lombok.Value;
 

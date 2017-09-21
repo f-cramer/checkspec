@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Arrays;

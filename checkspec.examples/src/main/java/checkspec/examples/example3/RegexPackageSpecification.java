@@ -20,8 +20,6 @@ package checkspec.examples.example3;
  * #L%
  */
 
-
-
 import java.util.regex.Pattern;
 
 import lombok.Value;

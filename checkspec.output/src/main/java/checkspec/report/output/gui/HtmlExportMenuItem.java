@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import java.nio.file.Path;
 
 import javax.swing.JFileChooser;

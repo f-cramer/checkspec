@@ -20,8 +20,6 @@ package checkspec.report.output;
  * #L%
  */
 
-
-
 /**
  * Represents an exception that was thrown while performing an output operation
  * on a {@link checkspec.report.SpecReport}.

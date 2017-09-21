@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Field;

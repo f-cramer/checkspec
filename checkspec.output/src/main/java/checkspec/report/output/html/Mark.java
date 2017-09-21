@@ -20,8 +20,6 @@ package checkspec.report.output.html;
  * #L%
  */
 
-
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -20,8 +20,6 @@ package checkspec.extension;
  * #L%
  */
 
-
-
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;

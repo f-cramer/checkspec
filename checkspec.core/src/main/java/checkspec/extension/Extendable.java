@@ -20,8 +20,6 @@ package checkspec.extension;
  * #L%
  */
 
-
-
 import java.util.Optional;
 
 /**

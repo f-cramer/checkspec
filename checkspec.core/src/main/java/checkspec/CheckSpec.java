@@ -20,8 +20,6 @@ package checkspec;
  * #L%
  */
 
-
-
 import static checkspec.util.SecurityUtils.*;
 
 import java.lang.reflect.Modifier;

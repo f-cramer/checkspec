@@ -20,8 +20,6 @@ package checkspec.examples.example2;
  * #L%
  */
 
-
-
 public class GenericTestImpl<F> {
 
 	public void print(F t) {

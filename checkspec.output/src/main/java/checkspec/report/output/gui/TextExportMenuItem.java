@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import java.io.File;
 import java.io.Writer;
 import java.nio.file.Files;

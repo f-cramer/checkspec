@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import lombok.RequiredArgsConstructor;

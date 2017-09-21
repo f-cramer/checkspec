@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.stream.Collectors;

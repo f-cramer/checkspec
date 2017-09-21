@@ -20,8 +20,6 @@ package checkspec.report.output.text;
  * #L%
  */
 
-
-
 import static org.fusesource.jansi.Ansi.*;
 
 import java.io.IOException;

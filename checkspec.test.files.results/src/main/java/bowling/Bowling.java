@@ -20,7 +20,6 @@ package bowling;
  * #L%
  */
 
-
 public class Bowling extends Game {
 
 	private int scores[][];

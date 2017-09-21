@@ -20,8 +20,6 @@ package checkspec.report.output;
  * #L%
  */
 
-
-
 import checkspec.report.SpecReport;
 
 /**

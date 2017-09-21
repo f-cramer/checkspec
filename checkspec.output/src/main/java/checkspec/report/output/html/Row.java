@@ -20,8 +20,6 @@ package checkspec.report.output.html;
  * #L%
  */
 
-
-
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

@@ -20,8 +20,6 @@ package checkspec.examples.example3.test;
  * #L%
  */
 
-
-
 import checkspec.examples.example3.RegexPackage;
 
 @RegexPackage("checkspec\\..*\\.tests")

@@ -20,8 +20,6 @@ package checkspec.util;
  * #L%
  */
 
-
-
 import java.util.stream.Stream;
 
 import lombok.NonNull;

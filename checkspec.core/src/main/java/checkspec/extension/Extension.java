@@ -20,8 +20,6 @@ package checkspec.extension;
  * #L%
  */
 
-
-
 /**
  * Interface each extension for a given extension point has to implement.
  *

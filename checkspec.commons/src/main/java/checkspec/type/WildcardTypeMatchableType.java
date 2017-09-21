@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Comparator;

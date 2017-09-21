@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import java.util.function.Function;
 
 import lombok.AccessLevel;

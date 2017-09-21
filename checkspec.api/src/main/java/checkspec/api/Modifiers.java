@@ -20,7 +20,6 @@ package checkspec.api;
  * #L%
  */
 
-
 /**
  * Way for setting each modifier for a given specification. Modifiers that are
  * not supported on a specific element (i.e. {@code abstract} for a field) are

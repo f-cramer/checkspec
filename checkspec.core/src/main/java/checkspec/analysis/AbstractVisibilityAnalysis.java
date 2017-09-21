@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 import static checkspec.util.MemberUtils.*;
 
 import java.util.Arrays;

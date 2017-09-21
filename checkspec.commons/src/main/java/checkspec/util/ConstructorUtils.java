@@ -20,8 +20,6 @@ package checkspec.util;
  * #L%
  */
 
-
-
 import java.lang.reflect.Constructor;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

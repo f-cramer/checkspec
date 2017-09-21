@@ -20,7 +20,6 @@ package bowling;
  * #L%
  */
 
-
 public class TannenbaumKegeln extends Game {
 
 	private int[][] counts;

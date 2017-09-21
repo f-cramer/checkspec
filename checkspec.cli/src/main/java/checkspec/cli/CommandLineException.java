@@ -20,8 +20,6 @@ package checkspec.cli;
  * #L%
  */
 
-
-
 /**
  * Represents an exception that is thrown if an error happens in the command
  * line interface.

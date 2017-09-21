@@ -20,8 +20,6 @@ package checkspec.examples.example2;
  * #L%
  */
 
-
-
 import checkspec.api.Spec;
 
 @Spec

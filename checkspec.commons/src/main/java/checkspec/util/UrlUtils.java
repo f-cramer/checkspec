@@ -20,8 +20,6 @@ package checkspec.util;
  * #L%
  */
 
-
-
 import java.net.URL;
 
 import lombok.NonNull;

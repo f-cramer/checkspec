@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

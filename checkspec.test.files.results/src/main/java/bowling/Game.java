@@ -20,8 +20,6 @@ package bowling;
  * #L%
  */
 
-
-
 public abstract class Game implements IGame {
 
 	private int activePlayerCount;

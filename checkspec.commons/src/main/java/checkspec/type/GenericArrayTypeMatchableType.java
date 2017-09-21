@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.util.Optional;

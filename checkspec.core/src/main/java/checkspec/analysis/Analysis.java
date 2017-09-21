@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 /**
  * A single analysis for a given raw and specification type. Each analysis has a
  * payload as well and returns a specific return type.

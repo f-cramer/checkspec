@@ -20,8 +20,6 @@ package checkspec.util;
  * #L%
  */
 
-
-
 import lombok.experimental.UtilityClass;
 
 /**

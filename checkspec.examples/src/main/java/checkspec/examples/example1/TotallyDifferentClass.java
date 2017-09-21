@@ -20,8 +20,6 @@ package checkspec.examples.example1;
  * #L%
  */
 
-
-
 public class TotallyDifferentClass {
 
 	public static void syso() {

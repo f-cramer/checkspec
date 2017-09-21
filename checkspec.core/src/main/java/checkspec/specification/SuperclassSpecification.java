@@ -20,8 +20,6 @@ package checkspec.specification;
  * #L%
  */
 
-
-
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;

@@ -20,8 +20,6 @@ package checkspec.examples.example3;
  * #L%
  */
 
-
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

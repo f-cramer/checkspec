@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.util.MatchingState;

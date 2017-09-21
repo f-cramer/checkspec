@@ -20,8 +20,6 @@ package checkspec.type;
  * #L%
  */
 
-
-
 import java.lang.reflect.Executable;
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Method;

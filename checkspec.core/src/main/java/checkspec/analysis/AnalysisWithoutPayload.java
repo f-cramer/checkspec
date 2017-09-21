@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 /**
  * A specific analysis that doesn not have a payload.
  *

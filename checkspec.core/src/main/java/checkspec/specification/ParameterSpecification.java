@@ -20,8 +20,6 @@ package checkspec.specification;
  * #L%
  */
 
-
-
 import java.lang.reflect.Parameter;
 
 import checkspec.type.MatchableType;

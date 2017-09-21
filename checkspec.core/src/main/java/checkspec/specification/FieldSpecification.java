@@ -20,8 +20,6 @@ package checkspec.specification;
  * #L%
  */
 
-
-
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;

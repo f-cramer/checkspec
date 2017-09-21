@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 import static javax.lang.model.element.Modifier.*;
 
 import java.lang.reflect.Modifier;

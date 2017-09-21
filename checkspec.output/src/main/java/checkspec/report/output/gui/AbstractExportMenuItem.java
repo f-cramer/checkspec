@@ -20,8 +20,6 @@ package checkspec.report.output.gui;
  * #L%
  */
 
-
-
 import java.awt.event.ActionEvent;
 
 import javax.swing.JMenuItem;

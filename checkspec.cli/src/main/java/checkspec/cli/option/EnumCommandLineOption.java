@@ -20,8 +20,6 @@ package checkspec.cli.option;
  * #L%
  */
 
-
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 

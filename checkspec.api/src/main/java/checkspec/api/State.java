@@ -20,7 +20,6 @@ package checkspec.api;
  * #L%
  */
 
-
 /**
  * Represents the state of a modifier.
  *

@@ -20,8 +20,6 @@ package checkspec.report;
  * #L%
  */
 
-
-
 import java.lang.reflect.Executable;
 import java.util.Collections;
 import java.util.List;

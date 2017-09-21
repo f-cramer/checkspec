@@ -20,8 +20,6 @@ package checkspec.eclipse.ui.shortcuts;
  * #L%
  */
 
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

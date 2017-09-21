@@ -20,8 +20,6 @@ package checkspec.cli.option;
  * #L%
  */
 
-
-
 import org.apache.commons.cli.CommandLine;
 
 import checkspec.cli.CommandLineException;

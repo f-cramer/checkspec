@@ -20,8 +20,6 @@ package checkspec.report.output.html;
  * #L%
  */
 
-
-
 import java.util.List;
 import java.util.stream.Collectors;
 

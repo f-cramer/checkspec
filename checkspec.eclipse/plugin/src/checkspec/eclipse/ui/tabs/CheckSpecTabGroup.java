@@ -20,8 +20,6 @@ package checkspec.eclipse.ui.tabs;
  * #L%
  */
 
-
-
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;

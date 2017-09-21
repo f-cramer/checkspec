@@ -20,8 +20,6 @@ package checkspec.analysis;
  * #L%
  */
 
-
-
 import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
