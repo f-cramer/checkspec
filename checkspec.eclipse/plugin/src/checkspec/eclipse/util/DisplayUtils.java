@@ -20,6 +20,8 @@ package checkspec.eclipse.util;
  * #L%
  */
 
+
+
 import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.CoreException;

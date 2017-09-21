@@ -20,9 +20,11 @@ package bowling;
  * #L%
  */
 
+
+
 /**
  * 
- * @author Anna Windt, Nathalie Steubing, Isabell L�mmermann
+ * @author Anna Windt, Nathalie Steubing, Isabell L?mmermann
  *
  */
 public class Player {
@@ -43,7 +45,7 @@ public class Player {
 	}
 	
 	/**
-	 * gibt Name des Players zur�ck	 
+	 * gibt Name des Players zur?ck	 
 	 * @return Name des Players
 	 */
     public String getName(){
@@ -51,7 +53,7 @@ public class Player {
 	}
 	
     /**
-     * gibt ID des Players zur�ck
+     * gibt ID des Players zur?ck
      * @return ID des Players
      */
 	public int getID(){

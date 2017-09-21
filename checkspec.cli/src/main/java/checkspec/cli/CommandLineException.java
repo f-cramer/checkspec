@@ -20,6 +20,8 @@ package checkspec.cli;
  * #L%
  */
 
+
+
 /**
  * Represents an exception that is thrown if an error happens in the command
  * line interface.
@@ -32,7 +34,7 @@ public class CommandLineException extends Exception {
 	private static final long serialVersionUID = -2579147946992451321L;
 
 	/**
-	 * Creates a new {@link CommandLineException} without any message.
+	 * Creates a new {@link CommandLineException} without any message or cause.
 	 */
 	public CommandLineException() {
 	}

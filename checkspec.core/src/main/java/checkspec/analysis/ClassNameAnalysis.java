@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -30,6 +32,12 @@ import checkspec.report.ReportProblemType;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * Analyzes the name of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ClassNameAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final String SHOULD = "should be called \"%s\"";

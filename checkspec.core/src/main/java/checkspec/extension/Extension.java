@@ -20,6 +20,18 @@ package checkspec.extension;
  * #L%
  */
 
+
+
+/**
+ * Interface each extension for a given extension point has to implement.
+ *
+ * @author Florian Cramer
+ *
+ * @param <ExtensionPoint>
+ *            the extendable class
+ * @param <Payload>
+ *            the payload
+ */
 public interface Extension<ExtensionPoint extends Extendable, Payload> {
 
 	void extend(ExtensionPoint extensionPoint, Payload payload);

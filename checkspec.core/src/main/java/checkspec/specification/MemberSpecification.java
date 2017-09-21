@@ -20,11 +20,32 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Member;
 
+/**
+ * Base interface for all specifications of class members such as field,
+ * constructors and methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <MemberType>
+ *            the member type
+ */
 public interface MemberSpecification<MemberType extends Member> extends Specification<MemberType> {
 
+	/**
+	 * Returns the modifiers sub specification for this specification.
+	 *
+	 * @return the modifiers specification
+	 */
 	public ModifiersSpecification getModifiers();
 
+	/**
+	 * Returns the visibility sub specification for this specification.
+	 *
+	 * @return the visibility specification
+	 */
 	public VisibilitySpecification getVisibility();
 }

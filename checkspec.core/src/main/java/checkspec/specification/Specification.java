@@ -20,9 +20,29 @@ package checkspec.specification;
  * #L%
  */
 
+
+
+/**
+ * A template for a type or class member.
+ *
+ * @author Florian Cramer
+ *
+ * @param <RawType>
+ *            the raw type
+ */
 public interface Specification<RawType> {
 
+	/**
+	 * Returns the name of this specification.
+	 *
+	 * @return the name
+	 */
 	public String getName();
 
+	/**
+	 * Returns the raw element this specification was created from.
+	 *
+	 * @return the raw element this specification was created from
+	 */
 	public RawType getRawElement();
 }

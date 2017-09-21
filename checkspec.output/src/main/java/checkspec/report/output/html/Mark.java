@@ -20,15 +20,23 @@ package checkspec.report.output.html;
  * #L%
  */
 
+
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Represents a mark inside of an HTML file.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 enum Mark {
 
-	SUCCESS("mark-success", "✓"), ERROR("mark-error", "✗"), WARNING("mark-warning", " ! ");
+	SUCCESS("mark-success", "?"), ERROR("mark-error", "?"), WARNING("mark-warning", "?!?");
 
 	private final String className;
 	private final String text;

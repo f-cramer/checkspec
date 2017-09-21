@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import static checkspec.util.MemberUtils.*;
 
 import java.util.Arrays;
@@ -31,12 +33,27 @@ import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
 import checkspec.specification.VisibilitySpecification;
 
+/**
+ * An abstract analysis for the visibility of types and class elements.
+ *
+ * @author Florian Cramer
+ *
+ */
 public abstract class AbstractVisibilityAnalysis {
 
 	private static final String SHOULD_NOT_HAVE_ANY = "should not have any visibility modifier";
 	private static final String SHOULD_HAVE_SINGLE = "should have visibility \"%s\"";
 	private static final String SHOULD_HAVE_MULTIPLE = "should have any of the following visibilities: \"%s\"";
 
+	/**
+	 * Analyzes the given visibility with the given specification.
+	 *
+	 * @param actualModifiers
+	 *            the visibility
+	 * @param spec
+	 *            the specification
+	 * @return a problem if one was found
+	 */
 	protected static Optional<ReportProblem> analyseVisibility(int actualModifiers, VisibilitySpecification spec) {
 		Visibility actualVisibility = getVisibility(actualModifiers);
 		ReportProblem problem = null;

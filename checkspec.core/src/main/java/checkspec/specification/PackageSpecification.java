@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -29,6 +31,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for a package.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class PackageSpecification extends AbstractExtendable<PackageSpecification, Package> implements Specification<Package> {
@@ -46,6 +54,15 @@ public class PackageSpecification extends AbstractExtendable<PackageSpecificatio
 	@NonNull
 	private final Package rawElement;
 
+	/**
+	 * Creates a new {@link PackageSpecification} from the given package and
+	 * annotations.
+	 *
+	 * @param pkg
+	 *            the package
+	 * @param annotations
+	 *            the annotations
+	 */
 	public PackageSpecification(Package pkg, Annotation[] annotations) {
 		rawElement = pkg;
 		name = pkg.getName();

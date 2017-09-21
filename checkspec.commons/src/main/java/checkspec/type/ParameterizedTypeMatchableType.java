@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -34,6 +36,13 @@ import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A {@link MatchableType} that was created from an instance of
+ * {@link ParameterizedType}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class ParameterizedTypeMatchableType extends AbstractMatchableType<ParameterizedType, ParameterizedTypeMatchableType> {

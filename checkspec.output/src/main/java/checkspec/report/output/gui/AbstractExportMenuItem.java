@@ -20,6 +20,8 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import java.awt.event.ActionEvent;
 
 import javax.swing.JMenuItem;
@@ -27,6 +29,13 @@ import javax.swing.JOptionPane;
 
 import lombok.NonNull;
 
+/**
+ * Represents a menu item that is used to export a
+ * {@link checkspec.report.SpecReport SpecReport}.
+ *
+ * @author Florian Cramer
+ *
+ */
 abstract class AbstractExportMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 8386968626698622266L;

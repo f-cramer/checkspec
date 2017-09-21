@@ -20,11 +20,38 @@ package checkspec.extension;
  * #L%
  */
 
+
+
 import java.util.Optional;
 
+/**
+ * An implementation of this interface has the ability to be extended with data.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface Extendable {
 
+	/**
+	 * Adds a new extension. Previously defined extensions of the same type will
+	 * be deleted.
+	 *
+	 * @param object
+	 *            the extension
+	 * @param <T>
+	 *            the extension type
+	 * @return a previously defined extension of the same type
+	 */
 	<T> Optional<T> addExtension(T object);
 
+	/**
+	 * Returns a previously registered extension of the given type.
+	 *
+	 * @param clazz
+	 *            the extension type
+	 * @param <T>
+	 *            the extension type
+	 * @return the extension if one exists
+	 */
 	<T> Optional<T> getExtension(Class<T> clazz);
 }

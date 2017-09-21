@@ -20,6 +20,8 @@ package checkspec;
  * #L%
  */
 
+
+
 import static checkspec.util.ClassUtils.*;
 import static checkspec.util.ReflectionsUtils.*;
 import static checkspec.util.SecurityUtils.*;
@@ -33,9 +35,28 @@ import checkspec.report.SpecReport;
 import checkspec.specification.ClassSpecification;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Helper class that provides methods to easier make calls on {@link CheckSpec}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @UtilityClass
 public class CheckSpecRunner {
 
+	/**
+	 * Generates reports for the given parameters.
+	 *
+	 * @param specClassNames
+	 *            the class names for which specification should be created
+	 * @param specClasspath
+	 *            the classpath from which specifications are loaded
+	 * @param implClasspath
+	 *            the classpath from which implementations are loaded
+	 * @param basePackage
+	 *            the base package for all implementations
+	 * @return the generated reports
+	 */
 	public static SpecReport[] generateReports(String[] specClassNames, URL[] specClasspath, URL[] implClasspath, String basePackage) {
 		ClassLoader specificationClassLoader;
 		if (specClasspath == null || specClasspath.length == 0) {

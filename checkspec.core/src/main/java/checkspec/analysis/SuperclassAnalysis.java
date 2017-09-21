@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import static checkspec.util.ClassUtils.*;
 
 import java.util.Optional;
@@ -33,6 +35,12 @@ import checkspec.specification.ClassSpecification;
 import checkspec.type.MatchableType;
 import checkspec.util.MatchingState;
 
+/**
+ * Analyzes the super class of a type.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class SuperclassAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final MatchableType OBJECT = MatchableType.OBJECT;

@@ -20,6 +20,8 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import java.nio.file.Path;
 
 import javax.swing.JFileChooser;
@@ -28,6 +30,13 @@ import javax.swing.JOptionPane;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.html.HtmlOutputter;
 
+/**
+ * Menu item used to export a {@link checkspec.report.SpecReport SpecReport} to
+ * HTML.
+ *
+ * @author Florian Cramer
+ *
+ */
 class HtmlExportMenuItem extends AbstractExportMenuItem {
 
 	private static final long serialVersionUID = -3089459732868339613L;

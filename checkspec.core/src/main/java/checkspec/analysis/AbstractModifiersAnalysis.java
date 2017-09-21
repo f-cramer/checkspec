@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import static javax.lang.model.element.Modifier.*;
 
 import java.lang.reflect.Modifier;
@@ -33,11 +35,28 @@ import checkspec.report.ReportProblemType;
 import checkspec.specification.ModifiersSpecification;
 import checkspec.specification.ModifiersSpecification.State;
 
+/**
+ * An abstract analysis for modifiers of types and class elements.
+ *
+ * @author Florian Cramer
+ *
+ */
 public abstract class AbstractModifiersAnalysis {
 
 	private static final String SHOULD_HAVE = "should have modifier \"%s\"";
 	private static final String SHOULD_NOT_HAVE = "should not have modifier \"%s\"";
 
+	/**
+	 * Analyzes the given set of modifiers with the specification.
+	 *
+	 * @param actual
+	 *            the modifiers
+	 * @param spec
+	 *            the specification
+	 * @param checkAbstract
+	 *            whether or not to analyze {@code abstract} modifier
+	 * @return a list of problems found while analyzing
+	 */
 	protected static List<ReportProblem> analyzeModifiers(int actual, ModifiersSpecification spec, boolean checkAbstract) {
 		List<Optional<ReportProblem>> problems = new ArrayList<>();
 
@@ -59,12 +78,12 @@ public abstract class AbstractModifiersAnalysis {
 	}
 
 	/**
-	 * Creates and returns a {@link ReportProblem} if the actual state of the given
-	 * modifiers does not match the given modifier specification state.
+	 * Creates and returns a {@link ReportProblem} if the actual state of the
+	 * given modifiers does not match the given modifier specification state.
 	 *
 	 * @param actual
-	 *            the actual modifier state - {@code true} if the modifier is set,
-	 *            {@code false} otherwise
+	 *            the actual modifier state - {@code true} if the modifier is
+	 *            set, {@code false} otherwise
 	 * @param spec
 	 *            the modifier specification
 	 * @param modifier

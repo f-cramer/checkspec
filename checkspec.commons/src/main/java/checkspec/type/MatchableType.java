@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
@@ -94,7 +96,7 @@ public interface MatchableType {
 	 * type or one of its matches are assignable to this one.
 	 * </p>
 	 * <p>
-	 * The do not match each other if non of the above conditions matches.
+	 * They do not match each other if non of the above conditions matches.
 	 * </p>
 	 *
 	 * @param type

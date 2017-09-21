@@ -20,6 +20,8 @@ package bowling;
  * #L%
  */
 
+
+
 public interface IGame {
 
 	Player addPlayer(String name);

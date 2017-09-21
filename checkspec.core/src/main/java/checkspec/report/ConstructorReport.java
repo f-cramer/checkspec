@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import static checkspec.util.ConstructorUtils.*;
 import static checkspec.util.MessageUtils.*;
 
@@ -29,14 +31,38 @@ import checkspec.specification.ConstructorSpecification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A report for a constructor.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class ConstructorReport extends ExecutableReport<Constructor<?>, ConstructorSpecification> {
 
+	/**
+	 * Creates a new empty {@link ConstructorReport} from the given
+	 * specification.
+	 *
+	 * @param specification
+	 *            the specification
+	 */
 	public ConstructorReport(ConstructorSpecification specification) {
 		super(specification);
 	}
 
+	/**
+	 * Creates a new {@link ConstructorReport} from the given specification,
+	 * implementation and parameters report.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param constructor
+	 *            the implementation
+	 * @param parametersReport
+	 *            the parameters report
+	 */
 	public ConstructorReport(ConstructorSpecification specification, Constructor<?> constructor, ParametersReport parametersReport) {
 		super(specification, constructor, parametersReport);
 	}

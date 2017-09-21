@@ -20,6 +20,8 @@ package checkspec.examples.example3.test;
  * #L%
  */
 
+
+
 public class RegexPackageImpl {
 
 	public int modify() {

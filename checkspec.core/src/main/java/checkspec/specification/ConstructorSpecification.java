@@ -20,11 +20,12 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
 
-import checkspec.analysis.ExceptionSpecification;
 import checkspec.extension.AbstractExtendable;
 import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
@@ -32,6 +33,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for a constructor.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class ConstructorSpecification extends AbstractExtendable<ConstructorSpecification, Constructor<?>> implements ExecutableSpecification<Constructor<?>>, Comparable<ConstructorSpecification> {
@@ -61,6 +68,13 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 	@NonNull
 	private final Constructor<?> rawElement;
 
+	/**
+	 * Creates a new {@link ConstructorSpecification} from the given
+	 * constructor.
+	 *
+	 * @param constructor
+	 *            the constructor
+	 */
 	public ConstructorSpecification(Constructor<?> constructor) {
 		name = constructor.getName();
 		modifiers = new ModifiersSpecification(constructor.getModifiers(), constructor.getAnnotations());

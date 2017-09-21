@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Comparator;
@@ -36,6 +38,12 @@ import checkspec.specification.MethodSpecification;
 import checkspec.type.MatchableType;
 import lombok.Getter;
 
+/**
+ * Analyzes the method(s) of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecification, MethodReport> {
 

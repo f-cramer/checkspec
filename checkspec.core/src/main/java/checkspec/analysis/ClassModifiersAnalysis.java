@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.List;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -30,6 +32,12 @@ import checkspec.specification.ClassSpecification;
 import checkspec.specification.ModifiersSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * Analyzes the modifiers of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ClassModifiersAnalysis extends AbstractModifiersAnalysis implements ClassAnalysis<List<ReportProblem>> {
 
 	@Override

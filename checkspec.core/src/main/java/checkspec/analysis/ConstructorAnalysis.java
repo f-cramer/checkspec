@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 
@@ -31,6 +33,12 @@ import checkspec.report.ParametersReport;
 import checkspec.specification.ClassSpecification;
 import checkspec.specification.ConstructorSpecification;
 
+/**
+ * Analyzes the constructor(s) of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, ConstructorSpecification, ConstructorReport> {
 
 	@Override

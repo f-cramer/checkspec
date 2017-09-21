@@ -20,6 +20,8 @@ package checkspec.util;
  * #L%
  */
 
+
+
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;

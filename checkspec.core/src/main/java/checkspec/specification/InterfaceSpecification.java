@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for an interface that is implemented by a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecification, MatchableType> implements Specification<MatchableType>, Comparable<InterfaceSpecification> {
@@ -49,6 +57,13 @@ public class InterfaceSpecification extends AbstractExtendable<InterfaceSpecific
 	@NonNull
 	private final MatchableType rawElement;
 
+	/**
+	 * Creates a new {@link InterfaceSpecification} from the given interface
+	 * type.
+	 *
+	 * @param interf
+	 *            the interface type
+	 */
 	public InterfaceSpecification(MatchableType interf) {
 		this.name = ClassUtils.getName(interf);
 		rawElement = interf;

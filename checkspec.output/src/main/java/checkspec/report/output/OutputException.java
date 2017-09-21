@@ -20,25 +20,54 @@ package checkspec.report.output;
  * #L%
  */
 
+
+
+/**
+ * Represents an exception that was thrown while performing an output operation
+ * on a {@link checkspec.report.SpecReport}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class OutputException extends Exception {
 
 	private static final long serialVersionUID = 3346155355030336320L;
 
+	/**
+	 * Creates a new {@link OutputException} without any message or cause.
+	 */
 	public OutputException() {
 	}
 
-	public OutputException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
+	/**
+	 * Creates a new {@link OutputException} with the given {@code message} and
+	 * {@code cause}.
+	 *
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 */
 	public OutputException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * Creates a new {@link OutputException} with the given {@code message}.
+	 *
+	 * @param message
+	 *            the message
+	 */
 	public OutputException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Creates a new {@link OutputException} with the given {@code cause}.
+	 *
+	 * @param cause
+	 *            the cause
+	 */
 	public OutputException(Throwable cause) {
 		super(cause);
 	}

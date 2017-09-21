@@ -19,6 +19,8 @@ package bowling;
  * limitations under the License.
  * #L%
  */
+
+
 public class TannenbaumKegeln extends Game {
 
 	private int[][] counts;

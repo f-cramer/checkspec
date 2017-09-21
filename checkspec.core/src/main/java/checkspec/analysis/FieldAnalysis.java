@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,6 +39,12 @@ import checkspec.type.MatchableType;
 import checkspec.util.FieldUtils;
 import lombok.Getter;
 
+/**
+ * Analyzes field(s) of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, FieldReport> {
 

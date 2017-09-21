@@ -20,6 +20,8 @@ package checkspec.util;
  * #L%
  */
 
+
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;

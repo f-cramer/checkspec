@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +32,12 @@ import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import lombok.EqualsAndHashCode;
 
+/**
+ * A report for a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @EqualsAndHashCode(callSuper = true)
 public class ClassReport extends Report<MatchableType, ClassSpecification> {
 
@@ -37,6 +45,15 @@ public class ClassReport extends Report<MatchableType, ClassSpecification> {
 	private List<ConstructorReport> constructorReports = new ArrayList<>();
 	private List<MethodReport> methodReports = new ArrayList<>();
 
+	/**
+	 * Creates a new {@link ClassReport} from the given specification and
+	 * implementation.
+	 *
+	 * @param spec
+	 *            the specification
+	 * @param implementation
+	 *            the implementation
+	 */
 	public ClassReport(ClassSpecification spec, Class<?> implementation) {
 		super(spec, MatchableType.forClass(implementation), ClassUtils.toString(implementation));
 	}
@@ -62,42 +79,100 @@ public class ClassReport extends Report<MatchableType, ClassSpecification> {
 		}
 	}
 
+	/**
+	 * Adds the given {@link FieldReport} to this report.
+	 *
+	 * @param report
+	 *            the field report
+	 */
 	public void addFieldReport(FieldReport report) {
 		fieldReports.add(report);
 	}
 
+	/**
+	 * Adds the given {@link FieldReport}s to this report.
+	 *
+	 * @param reports
+	 *            the field reports
+	 */
 	public void addFieldReports(Collection<? extends FieldReport> reports) {
 		fieldReports.addAll(reports);
 	}
 
+	/**
+	 * Returns the {@link FieldReport}s registered with this class report.
+	 *
+	 * @return the field reports registered with this class report
+	 */
 	public List<FieldReport> getFieldReports() {
 		return Collections.unmodifiableList(fieldReports);
 	}
 
+	/**
+	 * Adds the given {@link ConstructorReport} to this report.
+	 *
+	 * @param report
+	 *            the constructor report
+	 */
 	public void addConstructorReport(ConstructorReport report) {
 		constructorReports.add(report);
 	}
 
+	/**
+	 * Adds the given {@link ConstructorReport}s to this report.
+	 *
+	 * @param reports
+	 *            the constructor reports
+	 */
 	public void addConstructorReports(Collection<? extends ConstructorReport> reports) {
 		this.constructorReports.addAll(reports);
 	}
 
+	/**
+	 * Returns the {@link ConstructorReport}s registered with this class report.
+	 *
+	 * @return the constructor reports registered with this class report
+	 */
 	public List<ConstructorReport> getConstructorReports() {
 		return Collections.unmodifiableList(constructorReports);
 	}
 
+	/**
+	 * Adds the given {@link MethodReport} to this report.
+	 *
+	 * @param report
+	 *            the method report
+	 */
 	public void addMethodReport(MethodReport report) {
 		methodReports.add(report);
 	}
 
+	/**
+	 * Adds the given {@link MethodReport}s to this report.
+	 *
+	 * @param reports
+	 *            the method reports
+	 */
 	public void addMethodReports(Collection<? extends MethodReport> reports) {
 		methodReports.addAll(reports);
 	}
 
+	/**
+	 * Returns the {@link MethodReport}s registered with this class report.
+	 *
+	 * @return the method reports registered with this class report
+	 */
 	public List<MethodReport> getMethodReports() {
 		return Collections.unmodifiableList(methodReports);
 	}
 
+	/**
+	 * Returns whether or not any implementation registered with this report has
+	 * a fitting name.
+	 *
+	 * @return whether or not any implementation registered with this report has
+	 *         a fitting name
+	 */
 	public boolean isAnyImplemenationMatching() {
 		List<Report<?, ?>> subReports = getSubReports();
 		if (subReports.size() == constructorReports.size()) {

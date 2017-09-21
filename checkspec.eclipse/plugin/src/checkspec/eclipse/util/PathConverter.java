@@ -20,6 +20,8 @@ package checkspec.eclipse.util;
  * #L%
  */
 
+
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;

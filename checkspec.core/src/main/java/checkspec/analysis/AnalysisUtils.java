@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import static checkspec.util.ClassUtils.*;
 
 import java.util.Optional;
@@ -33,9 +35,31 @@ import checkspec.type.MatchableType;
 import checkspec.util.MatchingState;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods for analyzing methods.
+ *
+ * @author Florian Cramer
+ *
+ */
 @UtilityClass
 class AnalysisUtils {
 
+	/**
+	 * Compares two {@link MatchableType}s and returns a problem, if one was
+	 * found.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param actual
+	 *            the possible implementation
+	 * @param oldReports
+	 *            the current matches
+	 * @param compatible
+	 *            the operator to apply for minor problem
+	 * @param incompatible
+	 *            the operator to apply for major problem
+	 * @return a problem, if one was found
+	 */
 	public static Optional<ReportProblem> compareTypes(MatchableType specification, MatchableType actual, MultiValuedMap<Class<?>, Class<?>> oldReports, BinaryOperator<String> compatible,
 			BinaryOperator<String> incompatible) {
 		MatchingState state = specification.matches(actual, oldReports);

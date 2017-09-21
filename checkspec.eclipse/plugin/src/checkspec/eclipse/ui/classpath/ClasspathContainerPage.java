@@ -20,6 +20,8 @@ package checkspec.eclipse.ui.classpath;
  * #L%
  */
 
+
+
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;

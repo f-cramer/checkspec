@@ -20,9 +20,17 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A problem in a report.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 public class ReportProblem {
 

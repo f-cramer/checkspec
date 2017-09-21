@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,19 @@ import checkspec.specification.ClassSpecification;
 import checkspec.specification.Specification;
 import checkspec.type.MatchableType;
 
+/**
+ * Abstract analysis for members of a class like fields, constructors and
+ * methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <MemberType>
+ *            the member type
+ * @param <SpecificationType>
+ *            the specification type
+ * @param <ReportType>
+ *            the report type
+ */
 public abstract class MemberAnalysis<MemberType extends Member, SpecificationType extends Specification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		implements ClassAnalysis<Collection<? extends ReportType>> {
 

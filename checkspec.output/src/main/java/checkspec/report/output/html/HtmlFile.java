@@ -20,6 +20,8 @@ package checkspec.report.output.html;
  * #L%
  */
 
+
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,12 @@ import org.apache.commons.text.StringEscapeUtils;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * Represents an HTML file.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 class HtmlFile {
 

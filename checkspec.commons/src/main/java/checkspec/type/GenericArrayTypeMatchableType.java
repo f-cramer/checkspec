@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.util.Optional;
@@ -30,6 +32,13 @@ import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A {@link MatchableType} that was created from an instance of
+ * {@link GenericArrayType}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class GenericArrayTypeMatchableType extends AbstractMatchableType<GenericArrayType, GenericArrayTypeMatchableType> {

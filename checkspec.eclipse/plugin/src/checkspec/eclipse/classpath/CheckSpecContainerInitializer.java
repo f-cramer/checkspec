@@ -20,6 +20,8 @@ package checkspec.eclipse.classpath;
  * #L%
  */
 
+
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;

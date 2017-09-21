@@ -20,10 +20,19 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import checkspec.report.SpecReport;
 import checkspec.report.output.Outputter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Represents an {@link Outputter} that outputs a given {@link SpecReport} via a
+ * GUI.
+ *
+ * @author Florian Cramer
+ *
+ */
 @RequiredArgsConstructor
 public class GuiOutputter implements Outputter {
 

@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Method;
@@ -29,14 +31,37 @@ import checkspec.util.MethodUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A report for a method.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class MethodReport extends ExecutableReport<Method, MethodSpecification> {
 
+	/**
+	 * Creates a new empty {@link MethodReport} from the given specification.
+	 *
+	 * @param specification
+	 *            the specification
+	 */
 	public MethodReport(MethodSpecification specification) {
 		super(specification);
 	}
 
+	/**
+	 * Creates a new {@link MethodReport} from the given specification,
+	 * implementation and parameters report.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param method
+	 *            the implementation
+	 * @param parametersReport
+	 *            the parameters report for the specification and implementation
+	 */
 	public MethodReport(MethodSpecification specification, Method method, ParametersReport parametersReport) {
 		super(specification, method, parametersReport);
 	}

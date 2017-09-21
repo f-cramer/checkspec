@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -29,6 +31,12 @@ import checkspec.report.ReportProblem;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * Analyzes the visibility of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ClassVisibilityAnalysis extends AbstractVisibilityAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	@Override

@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import java.lang.reflect.Executable;
 import java.util.Collections;
 import java.util.List;
@@ -28,17 +30,46 @@ import checkspec.specification.ExecutableSpecification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * An abstract base class for all reports of executables such as constructors
+ * and methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <RawType>
+ *            the executable type
+ * @param <SpecificationType>
+ *            the specification type
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public abstract class ExecutableReport<RawType extends Executable, SpecificationType extends ExecutableSpecification<RawType>> extends MemberReport<RawType, SpecificationType> {
 
 	private final ParametersReport parametersReport;
 
+	/**
+	 * Creates a new empty {@link ExecutableReport} from the given
+	 * specification.
+	 *
+	 * @param specification
+	 *            the specification
+	 */
 	public ExecutableReport(SpecificationType specification) {
 		super(specification);
 		this.parametersReport = new ParametersReport(specification.getParameters());
 	}
 
+	/**
+	 * Creates a new {@link ExecutableReport} from the given specification,
+	 * executable and parameters report.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param executable
+	 *            the executable
+	 * @param parametersReport
+	 *            the parameters report for the executable
+	 */
 	public ExecutableReport(SpecificationType specification, RawType executable, ParametersReport parametersReport) {
 		super(specification, executable);
 		this.parametersReport = parametersReport;

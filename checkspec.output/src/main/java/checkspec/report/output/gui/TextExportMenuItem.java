@@ -20,6 +20,8 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import java.io.File;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -34,6 +36,13 @@ import javax.swing.filechooser.FileFilter;
 import checkspec.report.output.Outputter;
 import checkspec.report.output.text.TextOutputter;
 
+/**
+ * Menu item used to export a {@link checkspec.report.SpecReport SpecReport} to
+ * a text file.
+ *
+ * @author Florian Cramer
+ *
+ */
 class TextExportMenuItem extends AbstractExportMenuItem {
 
 	private static final long serialVersionUID = -3089459732868339613L;

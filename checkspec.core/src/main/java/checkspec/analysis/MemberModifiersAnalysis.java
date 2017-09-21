@@ -20,12 +20,21 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Member;
 import java.util.List;
 
 import checkspec.report.ReportProblem;
 import checkspec.specification.MemberSpecification;
 
+/**
+ * Analyzes the modifiers of members of a class like fields, constructors and
+ * methods.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class MemberModifiersAnalysis extends AbstractModifiersAnalysis implements AnalysisWithoutPayload<Member, MemberSpecification<? extends Member>, List<ReportProblem>> {
 
 	@Override

@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,10 +33,17 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportProblemType;
+import checkspec.specification.ExceptionSpecification;
 import checkspec.specification.ExecutableSpecification;
 import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 
+/**
+ * Analyzes the exceptions a constructor or method can throw.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ExceptionsAnalysis implements Analysis<Executable, ExecutableSpecification<? extends Executable>, List<ReportProblem>, MultiValuedMap<Class<?>, Class<?>>> {
 
 	private static final String SHOULD = "should throw throwable of type \"%s\"";

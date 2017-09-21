@@ -20,8 +20,16 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import checkspec.extension.Extension;
 
+/**
+ * The extension interface for {@link PackageSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface PackageSpecificationExtension extends Extension<PackageSpecification, Package> {
 
 }

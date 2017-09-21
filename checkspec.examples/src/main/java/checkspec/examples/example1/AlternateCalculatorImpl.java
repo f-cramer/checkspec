@@ -20,6 +20,8 @@ package checkspec.examples.example1;
  * #L%
  */
 
+
+
 @SuppressWarnings("unused")
 public abstract class AlternateCalculatorImpl {
 

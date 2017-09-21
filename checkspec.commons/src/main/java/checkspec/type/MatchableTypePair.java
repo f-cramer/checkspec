@@ -20,8 +20,16 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import lombok.Value;
 
+/**
+ * Pair of two {@link MatchableType} classes.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 public class MatchableTypePair {
 

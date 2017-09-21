@@ -20,13 +20,14 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import checkspec.analysis.ExceptionSpecification;
 import checkspec.extension.AbstractExtendable;
 import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
@@ -34,6 +35,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification of a method.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class MethodSpecification extends AbstractExtendable<MethodSpecification, Method> implements ExecutableSpecification<Method>, Comparable<MethodSpecification> {
@@ -66,6 +73,12 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 	@NonNull
 	private final Method rawElement;
 
+	/**
+	 * Creates a new {@link MethodSpecification} from the given method.
+	 *
+	 * @param method
+	 *            the method
+	 */
 	public MethodSpecification(Method method) {
 		name = method.getName();
 		returnType = MatchableType.forMethodReturnType(method);

@@ -20,9 +20,17 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import checkspec.extension.Extension;
 import checkspec.type.MatchableType;
 
+/**
+ * The extension interface for {@link InterfaceSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface InterfaceSpecificationExtension extends Extension<InterfaceSpecification, MatchableType> {
 
 }

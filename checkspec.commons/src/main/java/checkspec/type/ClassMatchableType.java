@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import static org.apache.commons.lang3.ClassUtils.*;
 
 import java.lang.reflect.Type;
@@ -36,6 +38,12 @@ import checkspec.util.MatchingState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A {@link MatchableType} that was created from an instance of {@link Class}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class ClassMatchableType extends AbstractMatchableType<Class<?>, ClassMatchableType> {

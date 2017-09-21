@@ -20,20 +20,48 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import java.lang.reflect.Member;
 
 import checkspec.specification.Specification;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Abstract base class for all reports of members of classes such as field,
+ * constructors and methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <MemberType>
+ *            the member type
+ * @param <SpecificationType>
+ *            the specification type
+ */
 @EqualsAndHashCode(callSuper = true)
 public abstract class MemberReport<MemberType extends Member, SpecificationType extends Specification<MemberType>> extends Report<MemberType, SpecificationType> {
 
-	protected MemberReport(SpecificationType spec) {
-		super(spec);
+	/**
+	 * Creates a new empty {@link MemberReport} from the given specification.
+	 *
+	 * @param specification
+	 *            the specification
+	 */
+	protected MemberReport(SpecificationType specification) {
+		super(specification);
 	}
 
-	protected MemberReport(SpecificationType spec, MemberType implementation) {
-		super(spec, implementation);
+	/**
+	 * Creates a new {@link MemberReport} from the given specification and
+	 * implementation.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param implementation
+	 *            the implementation
+	 */
+	protected MemberReport(SpecificationType specification, MemberType implementation) {
+		super(specification, implementation);
 	}
 
 }

@@ -20,11 +20,21 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import java.util.function.Function;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Result of an export operation.
+ *
+ * @author Florian Cramer
+ *
+ * @param <T>
+ *            result type
+ */
 interface ExportResult<T> {
 
 	<U> ExportResult<U> map(Function<? super T, U> mapper);

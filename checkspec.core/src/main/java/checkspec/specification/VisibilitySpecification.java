@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
@@ -30,6 +32,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for the visibility of a type of class element.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode
 public class VisibilitySpecification implements Specification<Integer> {
@@ -39,6 +47,15 @@ public class VisibilitySpecification implements Specification<Integer> {
 
 	private final Integer rawElement;
 
+	/**
+	 * Creates a new {@link VisibilitySpecification} from the given modifiers
+	 * and annotations.
+	 *
+	 * @param modifiers
+	 *            the modifiers
+	 * @param annotations
+	 *            the annotations
+	 */
 	public VisibilitySpecification(int modifiers, Annotation[] annotations) {
 		Visibility[] vis = Arrays.stream(annotations)
 				.filter(Spec.class::isInstance)
@@ -55,6 +72,13 @@ public class VisibilitySpecification implements Specification<Integer> {
 		rawElement = modifiers;
 	}
 
+	/**
+	 * Returns whether or not the given visibility matches this specification.
+	 *
+	 * @param visibility
+	 *            the visibility
+	 * @return whether or not the given visibility matches this specification
+	 */
 	public boolean matches(Visibility visibility) {
 		return Arrays.stream(visibilities).anyMatch(e -> e == Visibility.IRRELEVANT || e == visibility);
 	}

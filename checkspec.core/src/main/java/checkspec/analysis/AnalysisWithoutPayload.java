@@ -20,8 +20,31 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
+/**
+ * A specific analysis that doesn not have a payload.
+ *
+ * @author Florian Cramer
+ *
+ * @param <RawType>
+ *            the raw type
+ * @param <SpecificationType>
+ *            the specification type
+ * @param <ReturnType>
+ *            the return type
+ */
 public interface AnalysisWithoutPayload<RawType, SpecificationType, ReturnType> extends Analysis<RawType, SpecificationType, ReturnType, Void> {
 
+	/**
+	 * Analyzes the given raw type with the given specification.
+	 *
+	 * @param actual
+	 *            the possible implementation
+	 * @param specification
+	 *            the specification
+	 * @return the return value
+	 */
 	default ReturnType analyze(RawType actual, SpecificationType specification) {
 		return analyze(actual, specification, null);
 	}

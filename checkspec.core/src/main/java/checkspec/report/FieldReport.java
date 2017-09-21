@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import static checkspec.util.MessageUtils.*;
 
 import java.lang.reflect.Field;
@@ -29,16 +31,37 @@ import checkspec.util.FieldUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A report for a field.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class FieldReport extends Report<Field, FieldSpecification> {
 
-	public FieldReport(FieldSpecification specField) {
-		super(specField);
+	/**
+	 * Creates a new empty {@link FieldReport} from the given specification.
+	 *
+	 * @param specification
+	 *            the specification
+	 */
+	public FieldReport(FieldSpecification specification) {
+		super(specification);
 	}
 
-	public FieldReport(FieldSpecification specField, Field implementingField) {
-		super(specField, implementingField);
+	/**
+	 * Creates a new {@link FieldReport} from the given specification and
+	 * implementation.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param implementation
+	 *            the implementation
+	 */
+	public FieldReport(FieldSpecification specification, Field implementation) {
+		super(specification, implementation);
 	}
 
 	@Override

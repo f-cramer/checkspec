@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Executable;
 import java.util.Comparator;
 
@@ -28,6 +30,18 @@ import checkspec.specification.ExecutableSpecification;
 import checkspec.specification.ParametersSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * An abstract analysis for executables like constructors and methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <MemberType>
+ *            the member type
+ * @param <SpecificationType>
+ *            the specification type
+ * @param <ReportType>
+ *            the report type
+ */
 public abstract class ExecutableAnalysis<MemberType extends Executable, SpecificationType extends ExecutableSpecification<MemberType>, ReportType extends Report<MemberType, SpecificationType>>
 		extends MemberAnalysis<MemberType, SpecificationType, ReportType> {
 

@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,6 +37,13 @@ import checkspec.util.TypeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A {@link MatchableType} that was created from an instance of
+ * {@link WildcardType}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class WildcardTypeMatchableType extends AbstractMatchableType<WildcardType, WildcardTypeMatchableType> {

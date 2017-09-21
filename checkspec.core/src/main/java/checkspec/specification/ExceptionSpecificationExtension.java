@@ -1,4 +1,4 @@
-package checkspec.analysis;
+package checkspec.specification;
 
 /*-
  * #%L
@@ -20,9 +20,17 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import checkspec.extension.Extension;
 import checkspec.type.MatchableType;
 
+/**
+ * The extension interface for {@link ExceptionSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface ExceptionSpecificationExtension extends Extension<ExceptionSpecification, MatchableType> {
 
 }

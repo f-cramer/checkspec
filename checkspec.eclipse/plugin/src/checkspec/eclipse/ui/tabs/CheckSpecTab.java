@@ -20,6 +20,8 @@ package checkspec.eclipse.ui.tabs;
  * #L%
  */
 
+
+
 import java.util.Collections;
 import java.util.List;
 

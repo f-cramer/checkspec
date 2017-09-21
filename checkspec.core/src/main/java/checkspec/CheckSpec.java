@@ -20,6 +20,8 @@ package checkspec;
  * #L%
  */
 
+
+
 import static checkspec.util.SecurityUtils.*;
 
 import java.lang.reflect.Modifier;
@@ -52,6 +54,12 @@ import checkspec.util.TypeDiscovery;
 import checkspec.util.UrlUtils;
 import lombok.NonNull;
 
+/**
+ * Main entry point into the framework.
+ *
+ * @author Florian Cramer
+ *
+ */
 @SuppressWarnings("unchecked")
 public final class CheckSpec {
 

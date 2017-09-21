@@ -20,6 +20,8 @@ package checkspec.report.output.text;
  * #L%
  */
 
+
+
 import static org.fusesource.jansi.Ansi.*;
 
 import java.io.IOException;
@@ -39,6 +41,13 @@ import checkspec.report.output.Outputter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Represent an {@link Outputter} that outputs a {@link SpecReport} to a given
+ * writer.
+ *
+ * @author Florian Cramer
+ *
+ */
 @RequiredArgsConstructor
 public class TextOutputter implements Outputter {
 

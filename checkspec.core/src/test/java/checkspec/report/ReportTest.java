@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;

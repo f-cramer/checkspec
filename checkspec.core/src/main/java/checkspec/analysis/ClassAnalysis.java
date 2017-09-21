@@ -20,16 +20,39 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.report.ClassReport;
 import checkspec.specification.ClassSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * An analysis for a class.
+ *
+ * @author Florian Cramer
+ *
+ * @param <ReturnType>
+ *            the return type
+ */
 public interface ClassAnalysis<ReturnType> extends Analysis<MatchableType, ClassSpecification, ReturnType, MultiValuedMap<Class<?>, Class<?>>> {
 
+	/**
+	 * Adds the return type to the given class report.
+	 *
+	 * @param report
+	 *            the report
+	 * @param returnType
+	 *            the return type
+	 */
 	void add(ClassReport report, ReturnType returnType);
 
+	/**
+	 * Returns the priority of the class analysis.
+	 *
+	 * @return the priority
+	 */
 	default int getPriority() {
 		return Integer.MIN_VALUE;
 	}

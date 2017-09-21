@@ -20,10 +20,18 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Field;
 
 import checkspec.extension.Extension;
 
+/**
+ * The extension interface for {@link FieldSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface FieldSpecificationExtension extends Extension<FieldSpecification, Field> {
 
 }

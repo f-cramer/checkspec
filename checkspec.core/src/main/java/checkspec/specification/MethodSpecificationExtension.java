@@ -20,10 +20,18 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Method;
 
 import checkspec.extension.Extension;
 
+/**
+ * The extension interface for {@link MethodSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface MethodSpecificationExtension extends Extension<MethodSpecification, Method> {
 
 }

@@ -20,6 +20,8 @@ package checkspec.test;
  * #L%
  */
 
+
+
 import static checkspec.CheckSpecRunner.*;
 import static org.assertj.core.api.Assertions.*;
 

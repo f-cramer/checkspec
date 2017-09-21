@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +35,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification of a field.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class FieldSpecification extends AbstractExtendable<FieldSpecification, Field> implements MemberSpecification<Field>, Comparable<FieldSpecification> {
@@ -59,6 +67,12 @@ public class FieldSpecification extends AbstractExtendable<FieldSpecification, F
 	@NonNull
 	private final Field rawElement;
 
+	/**
+	 * Creates a new {@link FieldSpecification} from the given field.
+	 *
+	 * @param field
+	 *            the field
+	 */
 	public FieldSpecification(Field field) {
 		name = field.getName();
 		type = FieldUtils.getType(field);

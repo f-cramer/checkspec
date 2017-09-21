@@ -20,6 +20,8 @@ package checkspec.eclipse.ui.tabs;
  * #L%
  */
 
+
+
 import checkspec.eclipse.Constants;
 
 public class ExtensionClasspathTab extends CheckSpecClasspathTab {

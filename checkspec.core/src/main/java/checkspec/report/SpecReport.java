@@ -20,6 +20,8 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +32,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
+/**
+ * A specification report that contains all class reports for a given class
+ * specification.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode
 public class SpecReport {
@@ -40,15 +49,35 @@ public class SpecReport {
 	@NonNull
 	protected final List<ClassReport> classReports;
 
+	/**
+	 * Creates a new specification report from the given specification and class
+	 * reports.
+	 *
+	 * @param specification
+	 *            the specification
+	 * @param classReports
+	 *            the class reports
+	 */
 	public SpecReport(ClassSpecification specification, List<ClassReport> classReports) {
 		this.specification = specification;
 		this.classReports = new ArrayList<>(classReports);
 	}
 
+	/**
+	 * Returns the class reports of this report.
+	 *
+	 * @return the class reports
+	 */
 	public List<ClassReport> getClassReports() {
 		return Collections.unmodifiableList(classReports);
 	}
 
+	/**
+	 * Removes the given class report from this report.
+	 *
+	 * @param report
+	 *            the report
+	 */
 	public void removeClassReport(ClassReport report) {
 		this.classReports.remove(report);
 	}

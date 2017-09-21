@@ -20,7 +20,35 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
+/**
+ * A single analysis for a given raw and specification type. Each analysis has a
+ * payload as well and returns a specific return type.
+ *
+ * @author Florian Cramer
+ *
+ * @param <RawType>
+ *            the raw type
+ * @param <SpecificationType>
+ *            the specification type
+ * @param <ReturnType>
+ *            the return type
+ * @param <Payload>
+ *            the payload type
+ */
 public interface Analysis<RawType, SpecificationType, ReturnType, Payload> {
 
+	/**
+	 * Analyzes the given raw type with the specification and the payload.
+	 *
+	 * @param actual
+	 *            the possible implementation
+	 * @param specification
+	 *            the specification
+	 * @param payload
+	 *            the payload
+	 * @return the return value
+	 */
 	public ReturnType analyze(RawType actual, SpecificationType specification, Payload payload);
 }

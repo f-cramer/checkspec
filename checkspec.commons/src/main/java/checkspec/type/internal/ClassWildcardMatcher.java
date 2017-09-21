@@ -20,6 +20,8 @@ package checkspec.type.internal;
  * #L%
  */
 
+
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
@@ -33,6 +35,14 @@ import checkspec.type.Matcher;
 import checkspec.type.WildcardTypeMatchableType;
 import checkspec.util.MatchingState;
 
+/**
+ * A matcher that matches {@link ClassMatchableType} to
+ * {@link WildcardTypeMatchableType}. Matches for example {@code String} to
+ * {@code ? extends String}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ClassWildcardMatcher implements Matcher {
 
 	@Override

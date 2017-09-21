@@ -20,6 +20,14 @@ package checkspec.report;
  * #L%
  */
 
+
+
+/**
+ * The type of a report.
+ *
+ * @author Florian Cramer
+ *
+ */
 public enum ReportType {
 	SUCCESS, WARNING, ERROR
 }

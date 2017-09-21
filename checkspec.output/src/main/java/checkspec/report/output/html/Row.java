@@ -20,6 +20,8 @@ package checkspec.report.output.html;
  * #L%
  */
 
+
+
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +33,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+/**
+ * Represents a row inside of an HTML file.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @RequiredArgsConstructor
 final class Row {
@@ -55,6 +63,7 @@ final class Row {
 		return new Row(indent + 1, mark, text);
 	}
 
+	@Override
 	public String toString() {
 		StringJoiner spans = new StringJoiner("");
 

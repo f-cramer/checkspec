@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -41,6 +43,12 @@ import checkspec.specification.ParametersSpecification;
 import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 
+/**
+ * Analyzes the parameters of a constructor or a method.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpecification, ParametersReport, MultiValuedMap<Class<?>, Class<?>>> {
 
 	private static final String ADDED = "added parameter of type \"%s\" on index %d";
@@ -50,7 +58,7 @@ public class ParametersAnalysis implements Analysis<Parameter[], ParametersSpeci
 
 	@Override
 	public ParametersReport analyze(Parameter[] actual, ParametersSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
-		ParametersReport report = new ParametersReport(specification, actual);
+		ParametersReport report = new ParametersReport(specification, Arrays.asList(actual));
 
 		int specParameterCount = specification.getCount();
 

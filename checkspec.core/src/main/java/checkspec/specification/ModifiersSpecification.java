@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -35,6 +37,12 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
+/**
+ * A specification of modifiers of a type or class element.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @Accessors(fluent = true, chain = false)
 @EqualsAndHashCode(callSuper = true)
@@ -60,6 +68,15 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 	@Accessors(fluent = false, chain = false)
 	private final Integer rawElement;
 
+	/**
+	 * Creates a new {@link ModifiersSpecification} from the given modifiers and
+	 * annotations.
+	 *
+	 * @param modifiers
+	 *            the modifiers
+	 * @param annotations
+	 *            the annotations
+	 */
 	public ModifiersSpecification(int modifiers, Annotation[] annotations) {
 		isAbstract = get(modifiers, Modifier::isAbstract, annotations, Modifiers::isAbstract);
 		isFinal = get(modifiers, Modifier::isFinal, annotations, Modifiers::isFinal);
@@ -111,6 +128,12 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 		return state ? State.TRUE : State.FALSE;
 	}
 
+	/**
+	 * Represents the state of a specific modifier.
+	 *
+	 * @author Florian Cramer
+	 *
+	 */
 	public static enum State {
 		TRUE(e -> e), FALSE(e -> !e), INSIGNFICANT(e -> true);
 
@@ -120,6 +143,13 @@ public class ModifiersSpecification extends AbstractExtendable<ModifiersSpecific
 			this.matchingFunction = matchingFunction;
 		}
 
+		/**
+		 * Returns whether or not the given boolean state matches this state.
+		 *
+		 * @param state
+		 *            the boolean state
+		 * @return whether or not the given boolean state matches this state
+		 */
 		public final boolean matches(boolean state) {
 			return matchingFunction.apply(state);
 		}

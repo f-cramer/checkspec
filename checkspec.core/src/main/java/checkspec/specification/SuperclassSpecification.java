@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
@@ -30,6 +32,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+/**
+ * A specification for a superclass of a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @ToString
 public class SuperclassSpecification extends AbstractExtendable<SuperclassSpecification, MatchableType> implements Specification<MatchableType> {
@@ -47,10 +55,22 @@ public class SuperclassSpecification extends AbstractExtendable<SuperclassSpecif
 	@NonNull
 	private final MatchableType rawElement;
 
+	/**
+	 * Creates a new {@link SuperclassSpecification} from the given super class.
+	 *
+	 * @param superClass
+	 *            the super class
+	 */
 	public SuperclassSpecification(Class<?> superClass) {
 		this(MatchableType.forClass(superClass));
 	}
 
+	/**
+	 * Creates a new {@link SuperclassSpecification} from the given super class.
+	 *
+	 * @param superType
+	 *            the super class
+	 */
 	public SuperclassSpecification(MatchableType superType) {
 		rawElement = superType;
 		this.name = rawElement == null ? ClassUtils.getName(Object.class) : ClassUtils.getName(rawElement);

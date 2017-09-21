@@ -20,6 +20,8 @@ package checkspec.report.output.gui;
  * #L%
  */
 
+
+
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,6 +64,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Frame that presents one or more {@link SpecReport}s.
+ *
+ * @author Florian Cramer
+ *
+ */
 class CheckSpecFrame extends JFrame {
 
 	private static final long serialVersionUID = -954917589134719758L;

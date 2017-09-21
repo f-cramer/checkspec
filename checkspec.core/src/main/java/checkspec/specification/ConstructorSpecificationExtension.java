@@ -20,10 +20,18 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 
 import checkspec.extension.Extension;
 
+/**
+ * The extension interface for {@link ConstructorSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface ConstructorSpecificationExtension extends Extension<ConstructorSpecification, Constructor<?>> {
 
 }

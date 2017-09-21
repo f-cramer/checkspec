@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import java.lang.reflect.Executable;
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Method;
@@ -37,6 +39,13 @@ import checkspec.util.TypeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A {@link MatchableType} that was created from an instance of
+ * {@link TypeVariable}.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>, TypeVariableMatchableType> {

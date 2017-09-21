@@ -20,6 +20,8 @@ package checkspec.cli;
  * #L%
  */
 
+
+
 /**
  * Represents an output format for the command line.
  *

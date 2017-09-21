@@ -20,12 +20,32 @@ package checkspec.report.output;
  * #L%
  */
 
+
+
 import checkspec.report.SpecReport;
 
+/**
+ * Represents a form of outputting a single {@link SpecReport}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface Outputter {
 
+	/**
+	 * Performs some output operation on the given {@link SpecReport}.
+	 *
+	 * @param report
+	 *            the report
+	 * @throws OutputException
+	 *             if an exception happened while outputting
+	 */
 	void output(SpecReport report) throws OutputException;
 
+	/**
+	 * Called after the last {@link SpecReport} has been output with this
+	 * outputter.
+	 */
 	default void finished() {
 	}
 }

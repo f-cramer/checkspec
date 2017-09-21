@@ -20,6 +20,8 @@ package checkspec.report.output.html;
  * #L%
  */
 
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -39,12 +41,28 @@ import checkspec.report.SpecReport;
 import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
 
+/**
+ * Represents an {@link Outputter} that outputs a {@link SpecReport} as HTML to
+ * a given directory.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class HtmlOutputter implements Outputter {
 
 	private static final String DIR_IS_NO_DIR = "file %s is not a directory";
 
 	private final Path directory;
 
+	/**
+	 * Creates a new {@link HtmlOutputter} that outputs to the given directory.
+	 *
+	 * @param directory
+	 *            the directory
+	 * @throws IOException
+	 *             if the directory is not a directory or an {@link IOException}
+	 *             happens while creating it
+	 */
 	public HtmlOutputter(Path directory) throws IOException {
 		if (!Files.exists(directory)) {
 			Files.createDirectories(directory);

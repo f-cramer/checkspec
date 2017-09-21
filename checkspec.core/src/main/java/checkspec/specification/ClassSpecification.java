@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,6 +38,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class ClassSpecification extends AbstractExtendable<ClassSpecification, MatchableType> implements Specification<MatchableType> {
@@ -78,6 +86,12 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, M
 	@NonNull
 	private final MatchableType rawElement;
 
+	/**
+	 * Creates a new {@link ClassSpecification} for the given class.
+	 *
+	 * @param clazz
+	 *            the class
+	 */
 	public ClassSpecification(Class<?> clazz) {
 		rawElement = MatchableType.forClass(clazz);
 
@@ -109,10 +123,22 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, M
 		performExtensions(EXTENSIONS, this, rawElement);
 	}
 
+	/**
+	 * The package for this specification.
+	 *
+	 * @return the package for this specification
+	 */
 	public PackageSpecification getPackage() {
 		return pkg;
 	}
 
+	/**
+	 * Whether or not a report should be generated for the given class.
+	 *
+	 * @param clazz
+	 *            the class
+	 * @return whether or not a report should be generated for the class
+	 */
 	public static boolean shouldBeGenerated(Class<?> clazz) {
 		return isIncluded(clazz.getAnnotation(Spec.class));
 	}

@@ -20,6 +20,7 @@ package checkspec.api;
  * #L%
  */
 
+
 /**
  * Represents the state of a modifier.
  *
@@ -33,7 +34,7 @@ public enum State {
 	 */
 	TRUE,
 	/**
-	 * The modifier must not be set
+	 * The modifier must not be set.
 	 */
 	FALSE,
 	/**

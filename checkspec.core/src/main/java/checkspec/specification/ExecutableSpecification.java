@@ -20,13 +20,32 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Executable;
 
-import checkspec.analysis.ExceptionSpecification;
-
+/**
+ * The base interface for all specifications of executables such as constructors
+ * and methods.
+ *
+ * @author Florian Cramer
+ *
+ * @param <RawType>
+ *            the raw type
+ */
 public interface ExecutableSpecification<RawType extends Executable> extends MemberSpecification<RawType> {
 
+	/**
+	 * Returns the parameters sub specification of this specification.
+	 *
+	 * @return the parameters specification
+	 */
 	ParametersSpecification getParameters();
 
+	/**
+	 * Returns the exceptions sub specifications of this specification.
+	 *
+	 * @return the exceptions specifications
+	 */
 	ExceptionSpecification[] getExceptions();
 }

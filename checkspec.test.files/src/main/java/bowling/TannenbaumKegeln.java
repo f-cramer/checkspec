@@ -20,16 +20,18 @@ package bowling;
  * #L%
  */
 
+
+
 /**
  * 
- * @author Anna Windt, Nathalie Steubing, Isabell L�mmermann
+ * @author Anna Windt, Nathalie Steubing, Isabell L?mmermann
  *
  */
 public class TannenbaumKegeln extends Game{
 	
 
 	/**
-	 * setzt die n�tigen Attribute 
+	 * setzt die n?tigen Attribute 
 	 * @param max maximale Anzahl an Mitspieler
 	 */
 	public TannenbaumKegeln(int max) {
@@ -126,7 +128,7 @@ public class TannenbaumKegeln extends Game{
 	
 	/**
 	 * berehnet den Score eines Spielers
-	 * @param player �bergebener Spieler
+	 * @param player ?bergebener Spieler
 	 */
 	public void setScore (Player player){
 		int[] list = {0,0,0,0,0,0,0,0,0};

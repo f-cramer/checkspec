@@ -20,6 +20,8 @@ package checkspec.eclipse.util.classpath;
  * #L%
  */
 
+
+
 import org.eclipse.core.runtime.Path;
 
 import checkspec.eclipse.CheckSpecPlugin;

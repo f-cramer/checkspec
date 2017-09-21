@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.Optional;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -31,6 +33,12 @@ import checkspec.specification.ClassSpecification;
 import checkspec.specification.PackageSpecification;
 import checkspec.type.MatchableType;
 
+/**
+ * Analyzes a classes package.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class PackageAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 
 	private static final String FORMAT = "should live in package \"%s\"";

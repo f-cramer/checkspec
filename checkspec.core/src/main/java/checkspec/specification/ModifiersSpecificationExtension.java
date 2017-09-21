@@ -20,8 +20,16 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import checkspec.extension.Extension;
 
+/**
+ * The extension interface for {@link ModifiersSpecification}.
+ *
+ * @author Florian Cramer
+ *
+ */
 public interface ModifiersSpecificationExtension extends Extension<ModifiersSpecification, Integer> {
 
 }

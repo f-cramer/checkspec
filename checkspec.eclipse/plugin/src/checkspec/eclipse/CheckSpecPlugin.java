@@ -20,6 +20,8 @@ package checkspec.eclipse;
  * #L%
  */
 
+
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;

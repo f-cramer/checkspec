@@ -20,6 +20,8 @@ package checkspec.extension;
  * #L%
  */
 
+
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +31,17 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+/**
+ * An abstract implementation of {@link Extendable} that provides methods to
+ * easily add and get extensions.
+ *
+ * @author Florian Cramer
+ *
+ * @param <ExtensionPoint>
+ *            the extension type
+ * @param <Payload>
+ *            the payload type
+ */
 @Getter
 @ToString
 @EqualsAndHashCode

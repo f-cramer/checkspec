@@ -20,6 +20,8 @@ package checkspec.specification;
  * #L%
  */
 
+
+
 import java.lang.reflect.Parameter;
 
 import checkspec.type.MatchableType;
@@ -27,6 +29,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * Specification for a single parameter of a constructor or a method.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode()
 public class ParameterSpecification implements Specification<Parameter> {
@@ -43,6 +51,15 @@ public class ParameterSpecification implements Specification<Parameter> {
 	@NonNull
 	private final Parameter rawElement;
 
+	/**
+	 * Creates a new {@link ParameterSpecification} from the given parameter and
+	 * type.
+	 *
+	 * @param parameter
+	 *            the parameter
+	 * @param type
+	 *            the type
+	 */
 	public ParameterSpecification(Parameter parameter, MatchableType type) {
 		this.type = type;
 		rawElement = parameter;

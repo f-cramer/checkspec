@@ -20,9 +20,17 @@ package checkspec.report;
  * #L%
  */
 
+
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The type of a problem.
+ *
+ * @author Florian Cramer
+ *
+ */
 @RequiredArgsConstructor
 public enum ReportProblemType {
 	WARNING(ReportType.WARNING), ERROR(ReportType.ERROR);
@@ -30,6 +38,11 @@ public enum ReportProblemType {
 	@NonNull
 	private final ReportType reportType;
 
+	/**
+	 * Converts {@code this} type to a {@link ReportType}.
+	 *
+	 * @return the corresponding {@link ReportType}
+	 */
 	public ReportType toReportType() {
 		return reportType;
 	}

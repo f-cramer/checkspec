@@ -1,4 +1,4 @@
-package checkspec.analysis;
+package checkspec.specification;
 
 /*-
  * #%L
@@ -20,16 +20,23 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.List;
 
 import checkspec.extension.AbstractExtendable;
-import checkspec.specification.Specification;
 import checkspec.type.MatchableType;
 import checkspec.util.TypeDiscovery;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * A specification for an exception that is thrown by a constructor or a method.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class ExceptionSpecification extends AbstractExtendable<ExceptionSpecification, MatchableType> implements Specification<MatchableType> {
@@ -44,6 +51,13 @@ public class ExceptionSpecification extends AbstractExtendable<ExceptionSpecific
 	private final String name;
 	private final MatchableType rawElement;
 
+	/**
+	 * Constructs a new {@link ExceptionSpecification} from the given throwable
+	 * type.
+	 *
+	 * @param throwable
+	 *            the throwable type
+	 */
 	public ExceptionSpecification(@NonNull MatchableType throwable) {
 		this.name = throwable.toString();
 		this.rawElement = throwable;

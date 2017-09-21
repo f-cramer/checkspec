@@ -20,9 +20,11 @@ package bowling;
  * #L%
  */
 
+
+
 /**
  * 
- * @author Anna Windt, Nathalie Steubing, Isabell L�mmermann
+ * @author Anna Windt, Nathalie Steubing, Isabell L?mmermann
  *
  */
 public class Bowling extends Game {
@@ -30,7 +32,7 @@ public class Bowling extends Game {
 	int counter;
 	
 	/**
-	 * setzt die n�tigen Attribute
+	 * setzt die n?tigen Attribute
 	 * @param max maximale Anzahl an Mitspielern
 	 */
 	public Bowling(int max) {
@@ -146,7 +148,7 @@ public class Bowling extends Game {
 	}
 	
 	/**
-	 * Hilfsmethode f�r die Runden 1 bis 9
+	 * Hilfsmethode f?r die Runden 1 bis 9
 	 * @param count Anzahl der getroffenen Pins
 	 */
 	public void normal (int count){
@@ -175,7 +177,7 @@ public class Bowling extends Game {
 	}
 	
 	/**
-	 * Hilfsmethode f�r die 10. Runde
+	 * Hilfsmethode f?r die 10. Runde
 	 * @param count Anzahl der getroffenen Pins
 	 */
 	public void last (int count){

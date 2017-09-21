@@ -20,6 +20,8 @@ package checkspec.eclipse;
  * #L%
  */
 
+
+
 import static checkspec.CheckSpecRunner.*;
 
 import java.io.File;

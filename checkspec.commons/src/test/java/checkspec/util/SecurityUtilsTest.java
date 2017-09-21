@@ -20,6 +20,8 @@ package checkspec.util;
  * #L%
  */
 
+
+
 import static checkspec.util.SecurityUtils.*;
 import static org.assertj.core.api.Assertions.*;
 

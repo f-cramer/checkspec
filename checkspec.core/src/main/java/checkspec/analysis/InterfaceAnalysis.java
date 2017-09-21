@@ -20,6 +20,8 @@ package checkspec.analysis;
  * #L%
  */
 
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -39,6 +41,12 @@ import checkspec.type.MatchableType;
 import checkspec.util.ClassUtils;
 import checkspec.util.MatchingState;
 
+/**
+ * Analyzes the interfaces implemented by a class.
+ *
+ * @author Florian Cramer
+ *
+ */
 public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 
 	private static final String SHOULD = "should implement interface \"%s\"";

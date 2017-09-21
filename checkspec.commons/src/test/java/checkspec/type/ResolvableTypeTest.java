@@ -20,6 +20,8 @@ package checkspec.type;
  * #L%
  */
 
+
+
 import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
