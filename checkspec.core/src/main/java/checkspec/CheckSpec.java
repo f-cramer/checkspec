@@ -125,23 +125,6 @@ public final class CheckSpec {
 		return new CheckSpec(reflections, classLoader);
 	}
 
-	/**
-	 * Creates a proxy instance for the given {@link SpecReport}. This proxy
-	 * will try to call the methods that were found to be the best matching in
-	 * the best {@link ClassReport}.
-	 *
-	 * @param <T>
-	 *            the class to proxy
-	 * @param report
-	 *            the non-null {@link SpecReport}
-	 * @return a proxy instance of the given {@link SpecReport}
-	 */
-	public static <T> T createProxy(@NonNull SpecReport report) {
-		Class<?> clazz = report.getSpecification().getRawElement().getRawClass();
-		MethodInvocationHandler handler = StaticChecker.createInvocationHandler(clazz, report);
-		return StaticChecker.createProxy(clazz, handler);
-	}
-
 	private static final String ERROR_FORMAT = "Analysis \"%s\" does not provide a default constructor and thus will not be used%n";
 	private static final ClassAnalysis<?>[] ANALYSES;
 
