@@ -20,10 +20,26 @@ package checkspec.api;
  * #L%
  */
 
+/**
+ * Represents the state of a modifier.
+ *
+ * @author Florian Cramer
+ *
+ */
 public enum State {
 
-	TRUE, FALSE, IRRELEVANT,
-
+	/**
+	 * The modifier has to be set.
+	 */
+	TRUE,
+	/**
+	 * The modifier must not be set
+	 */
+	FALSE,
+	/**
+	 * The modifier can either be set or not.
+	 */
+	IRRELEVANT,
 	/**
 	 * Default value, should not be used directly.
 	 */

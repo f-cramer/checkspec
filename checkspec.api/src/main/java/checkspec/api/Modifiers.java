@@ -20,21 +20,69 @@ package checkspec.api;
  * #L%
  */
 
+/**
+ * Way for setting each modifier for a given specification. Modifiers that are
+ * not supported on a specific element (i.e. {@code abstract} for a field) are
+ * being ignored.
+ *
+ * @author Florian Cramer
+ *
+ */
 public @interface Modifiers {
 
+	/**
+	 * Returns whether or not the element has modifier {@code abstract}.
+	 *
+	 * @return whether or not the element is abstract
+	 */
 	State isAbstract() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code final}.
+	 *
+	 * @return whether or not the element is final
+	 */
 	State isFinal() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code native}.
+	 *
+	 * @return whether or not the element is native
+	 */
 	State isNative() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code static}.
+	 *
+	 * @return whether or not the element is static
+	 */
 	State isStatic() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code strictfp}.
+	 *
+	 * @return whether or not the element is strict
+	 */
 	State isStrict() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code synchronized}.
+	 *
+	 * @return whether or not the element is synchronized
+	 */
 	State isSynchronized() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code volatile}.
+	 *
+	 * @return whether or not the element is volatile
+	 */
 	State isVolatile() default State.NOT_SPECIFIED;
 
+	/**
+	 * Returns whether or not the element has modifier {@code transient}.
+	 *
+	 * @return whether or not the element is transient
+	 */
 	State isTransient() default State.NOT_SPECIFIED;
 }

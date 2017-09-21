@@ -25,6 +25,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Specifies that a specification should be created from the given element and
+ * all of its sub elements.
+ *
+ * @author Florian Cramer
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD })
 public @interface Spec {
@@ -32,12 +39,22 @@ public @interface Spec {
 	/**
 	 * Should be set to false if an element should not be included into the
 	 * generated specification.
-	 * 
+	 *
 	 * @return whether or not the annotated element is part of the specification
 	 */
 	boolean value() default true;
 
+	/**
+	 * Returns the specified visibility of the annotated element.
+	 *
+	 * @return the visibility of the annotated element
+	 */
 	Visibility[] visibility() default {};
 
+	/**
+	 * Returns the specified modifiers for the annotated element.
+	 *
+	 * @return the modifiers for the annotated element
+	 */
 	Modifiers modifiers() default @Modifiers;
 }

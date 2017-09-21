@@ -22,15 +22,39 @@ package checkspec.api;
 
 import java.util.Locale;
 
+/**
+ * Represents the visibility of an element.
+ *
+ * @author Florian Cramer
+ *
+ */
 public enum Visibility {
 
-	IRRELEVANT, PACKAGE {
+	/**
+	 * The visibility is not relevant, can be anything.
+	 */
+	IRRELEVANT,
+	/**
+	 * The element has to have {@code package} or {@code default} visibility.
+	 */
+	PACKAGE {
 		@Override
 		public String toString() {
 			return "";
 		}
 	},
-	PRIVATE, PROTECTED, PUBLIC;
+	/**
+	 * The element has to have {@code private} visibility.
+	 */
+	PRIVATE,
+	/**
+	 * The element has to have {@code protected} visibility.
+	 */
+	PROTECTED,
+	/**
+	 * The element has to have {@code public} visibility.
+	 */
+	PUBLIC;
 
 	@Override
 	public String toString() {
