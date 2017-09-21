@@ -10,6 +10,18 @@
 	<name>CheckSpec</name>
 	<packaging>pom</packaging>
 
+	<licenses>
+		<license>
+			<name>Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<inceptionYear>2017</inceptionYear>
+	<organization>
+		<name>Florian Cramer</name>
+	</organization>
+
 	<developers>
 		<developer>
 			<name>Florian Cramer</name>
@@ -30,6 +42,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<source>${java.version}</source>
+
+		<license.licenseName>apache_v2</license.licenseName>
 
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss</maven.build.timestamp.format>
@@ -55,12 +69,13 @@
 		<cobertura.plugin.version>2.7</cobertura.plugin.version>
 		<dependency.plugin.version>3.0.1</dependency.plugin.version>
 		<findbugs.plugin.version>3.0.4</findbugs.plugin.version>
-		<rename.plugin.version>1.0.1</rename.plugin.version>
-		<resources.plugin.version>3.0.2</resources.plugin.version>
 		<jacoco.plugin.version>0.7.9</jacoco.plugin.version>
 		<javadoc.plugin.version>2.10.4</javadoc.plugin.version>
 		<jxr.plugin.version>2.5</jxr.plugin.version>
+		<license.plugin.version>1.14</license.plugin.version>
 		<lombok.plugin.version>${lombok.version}.0</lombok.plugin.version>
+		<rename.plugin.version>1.0.1</rename.plugin.version>
+		<resources.plugin.version>3.0.2</resources.plugin.version>
 		<shade.plugin.version>3.0.0</shade.plugin.version>
 		<source.plugin.version>3.0.1</source.plugin.version>
 		<versions.plugin.version>2.4</versions.plugin.version>
@@ -279,6 +294,22 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>download-licenses</id>
+						<goals>
+							<goal>download-licenses</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<reporting>
