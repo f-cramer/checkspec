@@ -10,24 +10,77 @@ import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods that are working on instances of {@link Constructor}.
+ * Mainly for internal use within the framework itself.
+ *
+ * @author Florian Cramer
+ * @see Constructor
+ */
 @UtilityClass
 public final class ConstructorUtils {
 
+	/**
+	 * Returns a string representation of the given {@link Constructor}. This
+	 * follows the following pattern:
+	 * <p>
+	 * {@code [visibilty-modifier] <init>([parameter-list])}
+	 * <p>
+	 * E.g. "public &lt;init&gt;();
+	 *
+	 * @param constructor
+	 *            the non-null constructor
+	 * @return the string representation
+	 * @throws NullPointerException
+	 *             if {@code constructor} is {@code null}
+	 */
 	public static String createString(@NonNull Constructor<?> constructor) {
 		Visibility visibility = getVisibility(constructor);
 		String parameterList = getParametersAsString(constructor);
 		return String.format("%s <init>(%s)", visibility, parameterList);
 	}
 
+	/**
+	 * Returns the {@link Visibility} of the given type.
+	 *
+	 * @param constructor
+	 *            the constructor, null not permitted
+	 * @return the visibility
+	 * @throws NullPointerException
+	 *             if {@code constructor} is {@code null}
+	 */
 	public static Visibility getVisibility(@NonNull Constructor<?> constructor) {
 		return MemberUtils.getVisibility(constructor.getModifiers());
 	}
 
+	/**
+	 * Returns the parameters of the given constructor wrapped as instances of
+	 * {@link MatchableType}.
+	 *
+	 * @param constructor
+	 *            the non-null constructor
+	 * @return the parameters
+	 * @throws NullPointerException
+	 *             if {@code constructor} is {@code null}
+	 */
 	public static MatchableType[] getParametersAsResolvableType(@NonNull Constructor<?> constructor) {
 		return getParameterList(constructor)
 				.toArray(MatchableType[]::new);
 	}
 
+	/**
+	 * Returns a string representation of the parameters of the given
+	 * constructor. This uses the method
+	 * {@link ClassUtils#getName(MatchableType)} to create a string
+	 * representation for each parameters and joins them with a comma.
+	 *
+	 * @param constructor
+	 *            the non-null constructor
+	 * @return a string representation of the parameters of the given
+	 *         constructor
+	 * @throws NullPointerException
+	 *             if {@code constructor} is {@code null}
+	 */
 	public static String getParametersAsString(@NonNull Constructor<?> constructor) {
 		return getParameterList(constructor)
 				.map(ClassUtils::getName)

@@ -12,6 +12,12 @@ import org.reflections.Reflections;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods that can be used to perform type discovery.
+ *
+ * @author Florian Cramer
+ *
+ */
 @UtilityClass
 public final class TypeDiscovery {
 
@@ -20,10 +26,23 @@ public final class TypeDiscovery {
 	private static Map<Class<?>, List<?>> INSTANCES = new HashMap<>();
 	private static Comparator<Class<?>> CLASS_COMPARATOR = Comparator.comparing(ClassUtils::getName);
 
+	/**
+	 * Sets the {@link Reflections} instance used by this class.
+	 *
+	 * @param reflections
+	 *            the reflections instance
+	 */
 	public static void setReflections(Reflections reflections) {
 		REFLECTIONS = reflections;
 	}
 
+	/**
+	 * Returns a list of classes that are subtypes of the given class.
+	 *
+	 * @param type
+	 *            the class
+	 * @return list of subclasses of {@code type}
+	 */
 	public static List<Class<?>> getSubTypesOf(Class<?> type) {
 		if (SUB_CLASSES.containsKey(type)) {
 			return SUB_CLASSES.get(type);
@@ -35,10 +54,32 @@ public final class TypeDiscovery {
 		}
 	}
 
+	/**
+	 * Returns a list of new instances of given class. For any class that can be
+	 * found implementing this class exactly one instance will be created.
+	 *
+	 * @param type
+	 *            the class
+	 * @param <T>
+	 *            the class type
+	 * @return list of instances of {@code type}
+	 */
 	public static <T> List<T> getNewInstancesOf(Class<T> type) {
 		return getNewInstancesOf(type, null);
 	}
 
+	/**
+	 * Returns a list of new instances of given class. For any class that can be
+	 * found implementing this class exactly one instance will be created.
+	 *
+	 * @param type
+	 *            the class
+	 * @param errorFormat
+	 *            the format that is used if an error is thrown
+	 * @param <T>
+	 *            the class type
+	 * @return list of instances of {@code type}
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> getNewInstancesOf(Class<T> type, String errorFormat) {
 		return getSubTypesOf(type).stream()
@@ -47,10 +88,36 @@ public final class TypeDiscovery {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns a list of new instances of given class. For any class that can be
+	 * found implementing this class exactly one instance will be created. The
+	 * output of this method is stored in a cache so that the instances can be
+	 * reused.
+	 *
+	 * @param type
+	 *            the class
+	 * @param <T>
+	 *            the class type
+	 * @return list of instances of {@code type}
+	 */
 	public static <T> List<T> getUniqueInstancesOf(Class<T> type) {
 		return getUniqueInstancesOf(type, null);
 	}
 
+	/**
+	 * Returns a list of new instances of given class. For any class that can be
+	 * found implementing this class exactly one instance will be created. The
+	 * output of this method is stored in a cache so that the instances can be
+	 * reused.
+	 *
+	 * @param type
+	 *            the class
+	 * @param errorFormat
+	 *            the format that is used if an error is thrown
+	 * @param <T>
+	 *            the class type
+	 * @return list of instances of {@code type}
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> getUniqueInstancesOf(Class<T> type, String errorFormat) {
 		if (INSTANCES.containsKey(type)) {

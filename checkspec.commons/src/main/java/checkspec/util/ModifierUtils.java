@@ -6,10 +6,28 @@ import checkspec.type.MatchableType;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods for working with modifiers. Mainly for internal use
+ * within the framework itself.
+ *
+ * @author Florian Cramer
+ * @see Class#getModifiers()
+ * @see java.lang.reflect.Member#getModifiers() Member.getModifier()
+ */
 @UtilityClass
 public class ModifierUtils {
 
-	public static String toString(@NonNull MatchableType type) {
+	/**
+	 * Creates a string representation of the modifiers of the given type. The
+	 * modifiers are sorted using the canonical order found in
+	 * {@link java.lang.reflect.Modifier#toString(int)}. Visibility modifiers
+	 * are excluded.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the string representation of the types modifiers
+	 */
+	public static String createString(@NonNull MatchableType type) {
 		int mod = type.getRawClass().getModifiers();
 		boolean isEnum = type.getRawClass().isEnum();
 		boolean isInterface = Modifier.isInterface(mod);

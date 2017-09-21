@@ -49,7 +49,7 @@ import checkspec.util.Wrapper;
 import lombok.NoArgsConstructor;
 
 /**
- * The command line interface for {@code CheckSpec}
+ * The command line interface for {@code CheckSpec}.
  *
  * @author Florian Cramer
  *
@@ -111,7 +111,7 @@ public class CommandLineInterface {
 	}
 
 	/**
-	 * Runs the command line interface
+	 * Runs the command line interface.
 	 *
 	 * @param args
 	 *            the command line arguments

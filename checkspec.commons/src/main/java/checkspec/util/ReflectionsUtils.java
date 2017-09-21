@@ -19,6 +19,13 @@ import org.reflections.util.ConfigurationBuilder;
 import checkspec.api.Spec;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods that work on {@link Reflections} and classpath. Mainly
+ * for internal use within the framework itself.
+ *
+ * @author Florian Cramer
+ *
+ */
 @UtilityClass
 public final class ReflectionsUtils {
 
@@ -29,14 +36,32 @@ public final class ReflectionsUtils {
 	private static volatile URL[] URLS;
 	private static final Object URLS_SYNC = new Object();
 
+	/**
+	 * Creates a new default instance of {@link Reflections}.
+	 *
+	 * @return default instance of {@link Reflections}
+	 */
 	public static Reflections createDefaultReflections() {
 		return createReflections(null);
 	}
 
+	/**
+	 * Creates an instance of {@link Reflections} using all urls from the
+	 * classpath.
+	 *
+	 * @return instance of {@link Reflections}
+	 */
 	public static Reflections createReflectionsFromClasspath() {
 		return createReflections(getUrlsFromClasspath());
 	}
 
+	/**
+	 * Creates an instance of {@link Reflections} using the given {@code urls}.
+	 *
+	 * @param urls
+	 *            the urls
+	 * @return instance of {@link Reflections}
+	 */
 	public static Reflections createReflections(URL[] urls) {
 		ConfigurationBuilder configuration = new ConfigurationBuilder()
 				.forPackages("")
@@ -54,6 +79,11 @@ public final class ReflectionsUtils {
 		return new Reflections(configuration);
 	}
 
+	/**
+	 * Returns all urls found in the current classpath.
+	 *
+	 * @return all urls found in current classpath
+	 */
 	public static URL[] getUrlsFromClasspath() {
 		if (URLS == null) {
 			synchronized (URLS_SYNC) {
@@ -67,6 +97,16 @@ public final class ReflectionsUtils {
 		return Arrays.copyOf(URLS, URLS.length);
 	}
 
+	/**
+	 * Creates a url from the given file path and maps it into a stream. If an
+	 * exception occurres or the file does not exist an empty stream is
+	 * returned.
+	 *
+	 * @param path
+	 *            the file path
+	 * @return a stream containing a url representing the given path or an empty
+	 *         stream if no file could be found on the given path.
+	 */
 	public static Stream<URL> getAsUrlStream(String path) {
 		File file = new File(path);
 		if (file.exists()) {
@@ -80,6 +120,16 @@ public final class ReflectionsUtils {
 		return Stream.empty();
 	}
 
+	/**
+	 * Returns an array of classes that are annotated with a non-disabled
+	 * {@link Spec @Spec}.
+	 *
+	 * @param urls
+	 *            the classpath urls to search
+	 * @param classLoader
+	 *            the classloader for this urls
+	 * @return classes in {@code urls} annotated with {@link Spec @Spec}
+	 */
 	public static Class<?>[] findClassAnnotatedWithEnabledSpec(URL[] urls, ClassLoader classLoader) {
 		// checkspec maven plugin does not seem to like this being inlined
 		return createReflections(urls).getAllTypes().parallelStream()

@@ -24,13 +24,13 @@ public class FieldUtilsTest {
 
 	@Test
 	public void createStringTest() {
-		String result = FieldUtils.toString(FIELD);
+		String result = FieldUtils.createString(FIELD);
 		assertThat(result).isEqualTo("private static final java.lang.reflect.Field FIELD");
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void createStringNullTest() {
-		FieldUtils.toString(null);
+		FieldUtils.createString(null);
 	}
 
 	@Test

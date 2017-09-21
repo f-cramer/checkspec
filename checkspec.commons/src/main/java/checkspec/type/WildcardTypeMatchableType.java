@@ -61,7 +61,7 @@ public class WildcardTypeMatchableType extends AbstractMatchableType<WildcardTyp
 		List<Class<?>> rawClasses = Arrays.stream(upperBounds)
 				.map(MatchableType::getRawClass)
 				.collect(Collectors.toList());
-		return TypeUtils.getLowestCommonSuperType(rawClasses);
+		return TypeUtils.getMostSpecificCommonSuperType(rawClasses);
 	}
 
 	@Override

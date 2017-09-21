@@ -25,11 +25,11 @@ public class MethodReport extends ExecutableReport<Method, MethodSpecification> 
 	public String getTitle() {
 		Method specMethod = getSpecification().getRawElement();
 		if (getImplementation() == null) {
-			return missing(MethodUtils.toString(specMethod));
+			return missing(MethodUtils.createString(specMethod));
 		} else if (getType() == ReportType.SUCCESS) {
-			return MethodUtils.toString(specMethod);
+			return MethodUtils.createString(specMethod);
 		} else {
-			return bestFitting(MethodUtils.toString(getImplementation()), MethodUtils.toString(specMethod));
+			return bestFitting(MethodUtils.createString(getImplementation()), MethodUtils.createString(specMethod));
 		}
 	}
 

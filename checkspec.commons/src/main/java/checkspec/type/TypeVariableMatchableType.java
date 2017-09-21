@@ -45,7 +45,7 @@ public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariabl
 		List<Class<?>> rawClasses = Arrays.stream(bounds)
 				.map(MatchableType::getRawClass)
 				.collect(Collectors.toList());
-		return TypeUtils.getLowestCommonSuperType(rawClasses);
+		return TypeUtils.getMostSpecificCommonSuperType(rawClasses);
 	}
 
 	@Override

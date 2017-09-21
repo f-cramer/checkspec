@@ -10,25 +10,25 @@ public class ModifierUtilsTest {
 
 	@Test
 	public void toStringResolvableTypeTest() {
-		String result = ModifierUtils.toString(MatchableType.forClass(ModifierUtilsTest.class));
+		String result = ModifierUtils.createString(MatchableType.forClass(ModifierUtilsTest.class));
 		assertThat(result).isEqualTo("public");
 
-		result = ModifierUtils.toString(MatchableType.forClass(PublicStaticFinalClass.class));
+		result = ModifierUtils.createString(MatchableType.forClass(PublicStaticFinalClass.class));
 		assertThat(result).isEqualTo("private static final");
 
-		result = ModifierUtils.toString(MatchableType.forClass(ProtectedStaticClass.class));
+		result = ModifierUtils.createString(MatchableType.forClass(ProtectedStaticClass.class));
 		assertThat(result).isEqualTo("protected abstract static");
 
-		result = ModifierUtils.toString(MatchableType.forClass(Interface.class));
+		result = ModifierUtils.createString(MatchableType.forClass(Interface.class));
 		assertThat(result).isEmpty();
 
-		result = ModifierUtils.toString(MatchableType.forClass(Enum.class));
+		result = ModifierUtils.createString(MatchableType.forClass(Enum.class));
 		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void toStringResolvableTypeNullTest() {
-		ModifierUtils.toString(null);
+		ModifierUtils.createString(null);
 	}
 
 	private static final class PublicStaticFinalClass {

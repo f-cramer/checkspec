@@ -15,15 +15,30 @@ import java.util.Set;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Miscellaneous methods that are working on instances of
+ * {@link java.lang.reflect.Type Type}. Mainly for internal use within the
+ * framework itself.
+ *
+ * @author Florian Cramer
+ * @see java.lang.reflect.Type Type
+ */
 @UtilityClass
 public class TypeUtils {
 
-	public static Class<?> getLowestCommonSuperType(@NonNull Iterable<Class<?>> classes) {
-		List<Class<?>> lowestSupers = getLowestCommonSuperTypes(classes);
+	/**
+	 * Returns the most specific common super type for the given types.
+	 *
+	 * @param classes
+	 *            the classes
+	 * @return the most specific common super type for the given types
+	 */
+	public static Class<?> getMostSpecificCommonSuperType(@NonNull Iterable<Class<?>> classes) {
+		List<Class<?>> lowestSupers = getMostSpecificCommonSuperTypes(classes);
 		return lowestSupers.isEmpty() ? null : lowestSupers.get(0);
 	}
 
-	public static List<Class<?>> getLowestCommonSuperTypes(@NonNull Iterable<Class<?>> classes) {
+	private static List<Class<?>> getMostSpecificCommonSuperTypes(@NonNull Iterable<Class<?>> classes) {
 		Collection<Class<?>> commonSupers = getCommonSuperTypes(classes);
 		return getLowestTypes(commonSupers);
 	}

@@ -56,8 +56,8 @@ public final class ClassUtils {
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}
 	 */
-	public static String toString(@NonNull MatchableType type) {
-		String modifiers = ModifierUtils.toString(type);
+	public static String createString(@NonNull MatchableType type) {
+		String modifiers = ModifierUtils.createString(type);
 		String classType = getType(type);
 		String name = getName(type);
 		return String.format(TO_STRING_FORMAT, modifiers, classType, name).replaceAll("\\s+", " ");
@@ -80,7 +80,7 @@ public final class ClassUtils {
 	 *             if {@code type} is {@code null}
 	 */
 	public static String toString(@NonNull Class<?> type) {
-		return toString(MatchableType.forClass(type));
+		return createString(MatchableType.forClass(type));
 	}
 
 	private static String getType(MatchableType type) {
@@ -441,7 +441,7 @@ public final class ClassUtils {
 		if (SYSTEM_CLASS_LOADER == null) {
 			synchronized (SYSTEM_CLASS_LOAD_SYNC) {
 				if (SYSTEM_CLASS_LOADER == null) {
-					SYSTEM_CLASS_LOADER = doPrivileged(() -> ClassLoader.getSystemClassLoader());
+					SYSTEM_CLASS_LOADER = doPrivileged(ClassLoader::getSystemClassLoader);
 				}
 			}
 		}

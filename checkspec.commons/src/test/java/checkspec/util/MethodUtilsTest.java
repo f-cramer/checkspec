@@ -16,7 +16,7 @@ public class MethodUtilsTest {
 
 	static {
 		try {
-			METHOD = MethodUtils.class.getDeclaredMethod("toString", Method.class);
+			METHOD = MethodUtils.class.getDeclaredMethod("createString", Method.class);
 		} catch (NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
@@ -24,14 +24,14 @@ public class MethodUtilsTest {
 
 	@Test
 	public void toStringTest() {
-		String result = MethodUtils.toString(METHOD);
-		assertThat(result).isEqualTo("public static java.lang.String toString(java.lang.reflect.Method)");
+		String result = MethodUtils.createString(METHOD);
+		assertThat(result).isEqualTo("public static java.lang.String createString(java.lang.reflect.Method)");
 
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void toStringNullTest() {
-		MethodUtils.toString(null);
+		MethodUtils.createString(null);
 	}
 
 	@Test

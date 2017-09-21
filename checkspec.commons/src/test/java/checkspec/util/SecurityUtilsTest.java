@@ -21,20 +21,20 @@ public class SecurityUtilsTest {
 	}
 
 	@Test
-	public void doPrivilegedWithExceptionTest() throws Exception {
+	public void doPrivilegedWithExceptionTest() {
 		String result = doPrivilegedWithException(() -> "");
 		assertThat(result).isEmpty();
 	}
 
 	@Test(expected = MalformedURLException.class)
-	public void doPrivilegedWithExceptionExceptionTest() throws Exception {
+	public void doPrivilegedWithExceptionExceptionTest() throws MalformedURLException {
 		doPrivilegedWithException(() -> {
 			throw new MalformedURLException();
 		});
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void doPrivilegedWithExceptionNullTest() throws Exception {
+	public void doPrivilegedWithExceptionNullTest() {
 		doPrivilegedWithException(null);
 	}
 }

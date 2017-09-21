@@ -8,14 +8,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -38,6 +33,7 @@ import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.report.SpecReport;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
+import checkspec.util.StreamUtils;
 import checkspec.util.TypeDiscovery;
 
 /**
@@ -128,7 +124,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 		Bundle bundle = CheckSpecPlugin.getInstance().getBundle();
 
-		String[] libraries = stream(bundle.getEntryPaths("/lib"))
+		String[] libraries = StreamUtils.stream(bundle.getEntryPaths("/lib"))
 				.map(bundle::getEntry)
 				.flatMap(url -> toFilePath(url, false))
 				.toArray(String[]::new);
@@ -163,23 +159,5 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 		} catch (URISyntaxException | IOException e) {
 			return Stream.empty();
 		}
-	}
-
-	private <T> Stream<T> stream(Enumeration<T> e) {
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(e), Spliterator.ORDERED), false);
-	}
-
-	private <T> Iterator<T> iterator(Enumeration<T> e) {
-		return new Iterator<T>() {
-			@Override
-			public boolean hasNext() {
-				return e.hasMoreElements();
-			}
-
-			@Override
-			public T next() {
-				return e.nextElement();
-			}
-		};
 	}
 }

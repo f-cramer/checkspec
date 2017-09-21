@@ -25,11 +25,11 @@ public class FieldReport extends Report<Field, FieldSpecification> {
 	public String getTitle() {
 		Field specField = getSpecification().getRawElement();
 		if (getImplementation() == null) {
-			return missing(FieldUtils.toString(specField));
+			return missing(FieldUtils.createString(specField));
 		} else if (getType() == ReportType.SUCCESS) {
-			return FieldUtils.toString(specField);
+			return FieldUtils.createString(specField);
 		} else {
-			return bestFitting(FieldUtils.toString(getImplementation()), FieldUtils.toString(specField));
+			return bestFitting(FieldUtils.createString(getImplementation()), FieldUtils.createString(specField));
 		}
 	}
 

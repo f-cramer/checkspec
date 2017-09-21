@@ -25,7 +25,7 @@ import lombok.Value;
 
 public class ClassUtilsTest {
 
-	private static final ClassLoader SYSTEM_CLASS_LOADER = SecurityUtils.doPrivileged(() -> ClassLoader.getSystemClassLoader());
+	private static final ClassLoader SYSTEM_CLASS_LOADER = SecurityUtils.doPrivileged(ClassLoader::getSystemClassLoader);
 
 	private static final Class<?> CLASS = ClassUtilsTest.class;
 	private static final MatchableType TYPE = MatchableType.forClass(CLASS);
@@ -50,22 +50,22 @@ public class ClassUtilsTest {
 
 	@Test
 	public void toStringResolvableTypeTest() {
-		String result = ClassUtils.toString(TYPE);
+		String result = ClassUtils.createString(TYPE);
 		assertThat(result).isEqualTo("public class checkspec.util.ClassUtilsTest");
 
-		result = ClassUtils.toString(MatchableType.forClass(Serializable.class));
+		result = ClassUtils.createString(MatchableType.forClass(Serializable.class));
 		assertThat(result).isEqualTo("public interface java.io.Serializable");
 
-		result = ClassUtils.toString(MatchableType.forClass(Override.class));
+		result = ClassUtils.createString(MatchableType.forClass(Override.class));
 		assertThat(result).isEqualTo("public @interface java.lang.Override");
 
-		result = ClassUtils.toString(MatchableType.forClass(TimeUnit.class));
+		result = ClassUtils.createString(MatchableType.forClass(TimeUnit.class));
 		assertThat(result).isEqualTo("public enum java.util.concurrent.TimeUnit");
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void toStringResolvableTypeNullTest() {
-		ClassUtils.toString((MatchableType) null);
+		ClassUtils.createString((MatchableType) null);
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class ClassUtilsTest {
 	@Test
 	public void getClassTest() {
 		Class<?> result = ClassUtils.getClass(CLASS.getName());
-		assertThat(result).isEqualTo((Object) CLASS);
+		assertThat(result).isEqualTo(CLASS);
 
 		result = ClassUtils.getClass(UNDETECTABLE_CLASS_NAME);
 		assertThat(result).isNull();
@@ -172,7 +172,7 @@ public class ClassUtilsTest {
 	public void classSupplierTest() {
 		Function<String, Class<?>> supplier = classSupplier(SYSTEM_CLASS_LOADER);
 		Class<?> result = supplier.apply(CLASS.getName());
-		assertThat(result).isEqualTo((Object) CLASS);
+		assertThat(result).isEqualTo(CLASS);
 
 		result = supplier.apply(UNDETECTABLE_CLASS_NAME);
 		assertThat(result).isNull();
