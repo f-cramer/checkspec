@@ -9,9 +9,9 @@ package checkspec.eclipse.util.classpath;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import checkspec.eclipse.util.PathConverter;
@@ -57,33 +58,42 @@ public class ProjectClassPathEntry implements ClassPathEntry {
 
 	private static List<URL> resolve(IWorkspace workspace, IPath projectPath) {
 		IProject[] projects = workspace.getRoot().getProjects();
-		Optional<IProject> optProject = Arrays.stream(projects)
+		Optional<IProject> project = Arrays.stream(projects)
 				.filter(p -> projectPath.equals(p.getFullPath()))
 				.findAny();
-		if (!optProject.isPresent()) {
+		if (!project.isPresent()) {
 			return Collections.emptyList();
 		}
 
-		IProject project = optProject.get();
-		IJavaProject javaProject = project.getAdapter(IJavaProject.class);
+		return resolve(project.get());
+	}
+
+	private static List<URL> resolve(IProject project) {
+		IJavaProject javaProject = JavaCore.create(project);
 		List<URL> urls = new ArrayList<>();
-		if (javaProject != null) {
-			try {
-				IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
-				for (IClasspathEntry entry : classpath) {
-					switch (entry.getEntryKind()) {
-					case IClasspathEntry.CPE_PROJECT:
-						urls.addAll(resolve(workspace, entry.getPath()));
-						break;
-					case IClasspathEntry.CPE_SOURCE:
-						urls.add(PathConverter.toUrl(entry.getPath()));
-						break;
-					}
+		try {
+			IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
+			addIfNonNull(urls, javaProject.getOutputLocation());
+
+			for (IClasspathEntry entry : classpath) {
+				switch (entry.getEntryKind()) {
+				case IClasspathEntry.CPE_PROJECT:
+					urls.addAll(resolve((IProject) entry));
+					break;
+				case IClasspathEntry.CPE_SOURCE:
+					addIfNonNull(urls, entry.getOutputLocation());
+					break;
 				}
-			} catch (JavaModelException expected) {
 			}
+		} catch (JavaModelException expected) {
 		}
 		return urls;
+	}
+
+	private static void addIfNonNull(List<URL> urls, IPath path) {
+		if (path != null) {
+			urls.add(PathConverter.toUrl(path, true));
+		}
 	}
 
 	@Override
@@ -102,7 +112,6 @@ public class ProjectClassPathEntry implements ClassPathEntry {
 		}
 
 		IProject project = optProject.get();
-		IJavaProject javaProject = project.getAdapter(IJavaProject.class);
-		return javaProject.getElementName();
+		return project.getName();
 	}
 }

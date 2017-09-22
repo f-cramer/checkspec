@@ -9,9 +9,9 @@ package checkspec.eclipse.ui.shortcuts;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,13 +38,13 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -60,7 +60,6 @@ import checkspec.eclipse.CheckSpecPlugin;
 import checkspec.eclipse.Constants;
 import checkspec.eclipse.util.classpath.ClassPath;
 import checkspec.eclipse.util.classpath.ProjectClassPathEntry;
-import checkspec.eclipse.util.classpath.SourceClassPathEntry;
 
 public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 
@@ -111,11 +110,11 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 	}
 
 	private void performLaunch(IJavaElement element, String mode) throws InterruptedException, CoreException {
-		ILaunchConfigurationWorkingCopy temparary = createLaunchConfiguration(element);
-		ILaunchConfiguration config = findExistingLaunchConfiguration(temparary, mode);
+		ILaunchConfigurationWorkingCopy temporary = createLaunchConfiguration(element);
+		ILaunchConfiguration config = findExistingLaunchConfiguration(temporary, mode);
 		if (config == null) {
 			// no existing found: create a new one
-			config = temparary.doSave();
+			config = temporary.doSave();
 		}
 		DebugUITools.launch(config, mode);
 	}
@@ -249,6 +248,8 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 	private IJavaElement adaptToJavaElement(Object o) {
 		if (o instanceof IJavaElement) {
 			return (IJavaElement) o;
+		} else if (o instanceof IProject) {
+			return JavaCore.create((IProject) o);
 		} else if (o instanceof IAdaptable) {
 			return ((IAdaptable) o).getAdapter(IJavaElement.class);
 		}
@@ -273,47 +274,27 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		String configName = getLaunchManager().generateLaunchConfigurationName(suggestLaunchConfigurationName(element));
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, configName);
 
+		ClassPath specificationPath = getSpecificationPath(element.getJavaProject());
 		ClassPath implementationPath = getImplementationPath(element.getJavaProject());
 		String basePackage = "";
 
 		wc.setAttribute(Constants.ATTR_SPECIFICATION_TYPE_NAMES, Arrays.asList(mainTypeQualifiedName));
-		wc.setAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, implementationPath.toStringList());
+		wc.setAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, specificationPath.toStringList());
 		wc.setAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, implementationPath.toStringList());
 		wc.setAttribute(Constants.ATTR_BASE_PACKAGE, basePackage);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
 		return wc;
 	}
 
-	private ClassPath getImplementationPath(IJavaProject project) {
-		IClasspathEntry[] entries;
+	protected ClassPath getSpecificationPath(IJavaProject project) {
 		ClassPath classPath = ClassPath.empty();
-		try {
-			entries = project.getResolvedClasspath(true);
+		classPath.add(new ProjectClassPathEntry(project.getPath()));
+		return classPath;
+	}
 
-			IPath path = project.getOutputLocation();
-			if (path != null) {
-				classPath.add(new SourceClassPathEntry(path));
-			}
-
-			for (IClasspathEntry entry : entries) {
-				CheckSpecPlugin.logError(entry.toString());
-				switch (entry.getEntryKind()) {
-				case IClasspathEntry.CPE_SOURCE:
-					path = entry.getOutputLocation();
-					if (path != null) {
-						classPath.add(new SourceClassPathEntry(path));
-					}
-					break;
-				case IClasspathEntry.CPE_PROJECT:
-					path = entry.getPath();
-					if (path != null) {
-						classPath.add(new ProjectClassPathEntry(path));
-					}
-					break;
-				}
-			}
-		} catch (JavaModelException expected) {
-		}
+	protected ClassPath getImplementationPath(IJavaProject project) {
+		ClassPath classPath = ClassPath.empty();
+		classPath.add(new ProjectClassPathEntry(project.getPath()));
 		return classPath;
 	}
 

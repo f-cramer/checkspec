@@ -29,7 +29,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="checkspec.eclipse.ui.shortcuts.CheckSpecLauncherShortcut"
+            class="checkspec.eclipse.ui.shortcuts.CheckSpecSingleLauncherShortcut"
             icon="img/checkspec.png"
             id="checkspec.eclipse.ui.checkSpecShortcut"
             label="CheckSpec"
@@ -49,7 +49,37 @@
                </with>
            </enablement>
          </contextualLaunch>
-         
+      </shortcut>
+      <shortcut
+            class="checkspec.eclipse.ui.shortcuts.CheckSpecMultipleLauncherShortcut"
+            icon="img/checkspec.png"
+            id="checkspec.eclipse.ui.checkSpecMultipleShortcut"
+            label="CheckSpec on all projects"
+            modes="run, debug">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <and>
+                        <test
+                              property="org.eclipse.debug.ui.matchesPattern"
+                              value="*.java">
+                        </test>
+                        <adapt
+                              type="org.eclipse.jdt.core.IJavaElement">
+                           <test
+                                 property="org.eclipse.jdt.core.isInJavaProject">
+                           </test>
+                        </adapt>
+                     </and>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
       </shortcut>
    </extension>
    <extension
