@@ -9,9 +9,9 @@ package checkspec.analysis;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,8 @@ public class PackageAnalysis implements ClassAnalysis<Optional<ReportProblem>> {
 		PackageSpecification packageSpecification = specification.getPackage();
 		String packageName = packageSpecification.getName();
 
-		String actualPackageName = actual.getRawClass().getPackage().getName();
+		Package actualPackage = actual.getRawClass().getPackage();
+		String actualPackageName = actualPackage == null ? "" : actualPackage.getName();
 		if (!packageName.equals(actualPackageName)) {
 			ReportProblem problem = new ReportProblem(1, String.format(FORMAT, packageName), ReportProblemType.ERROR);
 			return Optional.of(problem);
