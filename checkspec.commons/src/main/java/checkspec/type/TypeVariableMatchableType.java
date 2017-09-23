@@ -48,6 +48,8 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariable<?>, TypeVariableMatchableType> {
 
+	private static final String NOT_FOUND = "Type variable \"%s\" could not be found for generic declaration \"%s\"";
+
 	private final MatchableType genericDeclarationType;
 	private final MatchableType[] bounds;
 	private final int index;
@@ -93,10 +95,11 @@ public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariabl
 	}
 
 	private static int getIndex(TypeVariable<?> variable) {
-		TypeVariable<?>[] parameters = variable.getGenericDeclaration().getTypeParameters();
+		GenericDeclaration genericDeclaration = variable.getGenericDeclaration();
+		TypeVariable<?>[] parameters = genericDeclaration.getTypeParameters();
 		return IntStream.range(0, parameters.length)
 				.filter(index -> parameters[index] == variable)
 				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException(variable.toString()));
+				.orElseThrow(() -> new IllegalArgumentException(String.format(NOT_FOUND, variable, genericDeclaration)));
 	}
 }
