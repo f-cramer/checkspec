@@ -20,7 +20,7 @@ package checkspec.eclipse.util.classpath;
  * #L%
  */
 
-public enum ClassPathType {
+public enum ClasspathType {
 
 	PROJECT, SOURCE;
 }

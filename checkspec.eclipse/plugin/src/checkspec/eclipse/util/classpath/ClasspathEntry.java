@@ -26,11 +26,11 @@ import java.util.List;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jdt.core.IJavaProject;
 
-public interface ClassPathEntry {
+public interface ClasspathEntry {
 
 	List<URL> resolve(IJavaProject project);
 
-	ClassPathType getType();
+	ClasspathType getType();
 
 	String getName(IWorkspace workspace);
 }

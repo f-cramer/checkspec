@@ -49,7 +49,7 @@ import org.osgi.framework.Bundle;
 import checkspec.eclipse.ui.view.ResultView;
 import checkspec.eclipse.util.DisplayUtils;
 import checkspec.eclipse.util.ReverseUrlClassLoader;
-import checkspec.eclipse.util.classpath.ClassPath;
+import checkspec.eclipse.util.classpath.Classpath;
 import checkspec.report.SpecReport;
 import checkspec.util.ClassUtils;
 import checkspec.util.ReflectionsUtils;
@@ -90,11 +90,11 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	}
 
 	private URL[] findSpecificationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return ClassPath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
 	}
 
 	private URL[] findImplementationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return ClassPath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
 	}
 
 	private String findBasePackage(ILaunchConfiguration configuration) throws CoreException {
@@ -102,7 +102,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	}
 
 	private URL[] findExtensionClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return ClassPath.from(configuration.getAttribute(Constants.ATTR_EXTENSION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_EXTENSION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
 	}
 
 	private ResultView findOpenedResultView() throws PartInitException {
@@ -127,7 +127,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 		String implPathString = configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, (String) null);
 		if (implPathString != null) {
-			ClassPath implPath = ClassPath.from(implPathString);
+			Classpath implPath = Classpath.from(implPathString);
 			arguments.add("--implpath");
 			arguments.add("\"" + implPath.resolve(project) + "\"");
 		}

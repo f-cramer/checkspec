@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Path;
 
 import checkspec.eclipse.CheckSpecPlugin;
 
-public final class ClassPathEntrySerializer {
+public final class ClasspathEntrySerializer {
 
 	private static final String SEPARATOR = "\r";
 	private static final String FORMAT = "%s";
@@ -35,27 +35,27 @@ public final class ClassPathEntrySerializer {
 	private static final String SOURCE_ID = "SR";
 	private static final String SOURCE_FORMAT = SOURCE_ID + SEPARATOR + FORMAT;
 
-	private ClassPathEntrySerializer() {
+	private ClasspathEntrySerializer() {
 	}
 
-	public static String toString(ClassPathEntry entry) {
-		if (entry instanceof ProjectClassPathEntry) {
-			return String.format(PROJECT_FORMAT, ((ProjectClassPathEntry) entry).getProjectPath().toPortableString());
-		} else if (entry instanceof SourceClassPathEntry) {
-			CheckSpecPlugin.logInfo(String.valueOf(((SourceClassPathEntry) entry).getPath()));
-			return String.format(SOURCE_FORMAT, ((SourceClassPathEntry) entry).getPath().toPortableString());
+	public static String toString(ClasspathEntry entry) {
+		if (entry instanceof ProjectClasspathEntry) {
+			return String.format(PROJECT_FORMAT, ((ProjectClasspathEntry) entry).getProjectPath().toPortableString());
+		} else if (entry instanceof SourceClasspathEntry) {
+			CheckSpecPlugin.logInfo(String.valueOf(((SourceClasspathEntry) entry).getPath()));
+			return String.format(SOURCE_FORMAT, ((SourceClasspathEntry) entry).getPath().toPortableString());
 		} else {
 			throw new IllegalArgumentException("entry: " + entry);
 		}
 	}
 
-	public static ClassPathEntry from(String entry) {
+	public static ClasspathEntry from(String entry) {
 		if (entry.startsWith(PROJECT_ID)) {
 			String data = getResultingData(entry, PROJECT_ID);
-			return new ProjectClassPathEntry(Path.fromPortableString(data));
+			return new ProjectClasspathEntry(Path.fromPortableString(data));
 		} else if (entry.startsWith(SOURCE_ID)) {
 			String data = getResultingData(entry, SOURCE_ID);
-			return new SourceClassPathEntry(Path.fromPortableString(data));
+			return new SourceClasspathEntry(Path.fromPortableString(data));
 		} else {
 			throw new IllegalArgumentException("entry: " + entry);
 		}

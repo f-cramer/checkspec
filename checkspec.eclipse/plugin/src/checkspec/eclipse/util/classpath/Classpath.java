@@ -31,22 +31,22 @@ import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.IJavaProject;
 
-public final class ClassPath {
+public final class Classpath {
 
 	private static final String ENTRY_SEPARATOR = "\n";
 
-	private final List<ClassPathEntry> entries;
+	private final List<ClasspathEntry> entries;
 
-	private ClassPath(List<ClassPathEntry> entries) {
+	private Classpath(List<ClasspathEntry> entries) {
 		this.entries = new ArrayList<>(entries);
 	}
 
-	public void add(ClassPathEntry entry) {
+	public void add(ClasspathEntry entry) {
 		Objects.requireNonNull(entry);
 		entries.add(entry);
 	}
 
-	public void remove(ClassPathEntry entry) {
+	public void remove(ClasspathEntry entry) {
 		Objects.requireNonNull(entry);
 		entries.remove(entry);
 	}
@@ -71,31 +71,31 @@ public final class ClassPath {
 				.collect(Collectors.toList());
 	}
 
-	public List<ClassPathEntry> getEntries() {
+	public List<ClasspathEntry> getEntries() {
 		return Collections.unmodifiableList(entries);
 	}
 
 	private Stream<String> getEntriesStringStream() {
 		return entries.stream()
-				.map(ClassPathEntrySerializer::toString);
+				.map(ClasspathEntrySerializer::toString);
 	}
 
-	public static ClassPath empty() {
-		return new ClassPath(Collections.emptyList());
+	public static Classpath empty() {
+		return new Classpath(Collections.emptyList());
 	}
 
-	public static ClassPath from(String classpath) {
+	public static Classpath from(String classpath) {
 		Objects.requireNonNull(classpath);
 		String[] split = classpath.split(ENTRY_SEPARATOR);
 		return from(Arrays.asList(split));
 	}
 
-	public static ClassPath from(List<String> entryStrings) {
+	public static Classpath from(List<String> entryStrings) {
 		Objects.requireNonNull(entryStrings);
-		List<ClassPathEntry> entries = entryStrings.stream()
-				.map(ClassPathEntrySerializer::from)
+		List<ClasspathEntry> entries = entryStrings.stream()
+				.map(ClasspathEntrySerializer::from)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
-		return new ClassPath(entries);
+		return new Classpath(entries);
 	}
 }

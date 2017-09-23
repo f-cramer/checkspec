@@ -25,21 +25,21 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 
-import checkspec.eclipse.util.classpath.ClassPath;
-import checkspec.eclipse.util.classpath.ProjectClassPathEntry;
+import checkspec.eclipse.util.classpath.Classpath;
+import checkspec.eclipse.util.classpath.ProjectClasspathEntry;
 
 public class CheckSpecMultipleLauncherShortcut extends CheckSpecLauncherShortcut {
 
 	@Override
-	protected ClassPath getImplementationPath(IJavaProject project) {
+	protected Classpath getImplementationPath(IJavaProject project) {
 		IProject[] projects = project.getProject().getWorkspace().getRoot().getProjects();
-		ClassPath classPath = ClassPath.empty();
+		Classpath classpath = Classpath.empty();
 
 		Arrays.stream(projects)
 				.filter(IProject::isOpen)
 				.map(IProject::getFullPath)
-				.map(ProjectClassPathEntry::new)
-				.forEach(classPath::add);
-		return classPath;
+				.map(ProjectClasspathEntry::new)
+				.forEach(classpath::add);
+		return classpath;
 	}
 }

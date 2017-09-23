@@ -31,11 +31,11 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import checkspec.eclipse.util.PathConverter;
 
-public class SourceClassPathEntry implements ClassPathEntry {
+public class SourceClasspathEntry implements ClasspathEntry {
 
 	private final IPath path;
 
-	public SourceClassPathEntry(IPath path) {
+	public SourceClasspathEntry(IPath path) {
 		Objects.requireNonNull(path, "path");
 		this.path = path;
 	}
@@ -51,8 +51,8 @@ public class SourceClassPathEntry implements ClassPathEntry {
 	}
 
 	@Override
-	public ClassPathType getType() {
-		return ClassPathType.SOURCE;
+	public ClasspathType getType() {
+		return ClasspathType.SOURCE;
 	}
 
 	@Override

@@ -58,8 +58,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import checkspec.eclipse.CheckSpecPlugin;
 import checkspec.eclipse.Constants;
-import checkspec.eclipse.util.classpath.ClassPath;
-import checkspec.eclipse.util.classpath.ProjectClassPathEntry;
+import checkspec.eclipse.util.classpath.Classpath;
+import checkspec.eclipse.util.classpath.ProjectClasspathEntry;
 
 public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 
@@ -274,8 +274,8 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		String configName = getLaunchManager().generateLaunchConfigurationName(suggestLaunchConfigurationName(element));
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, configName);
 
-		ClassPath specificationPath = getSpecificationPath(element.getJavaProject());
-		ClassPath implementationPath = getImplementationPath(element.getJavaProject());
+		Classpath specificationPath = getSpecificationPath(element.getJavaProject());
+		Classpath implementationPath = getImplementationPath(element.getJavaProject());
 		String basePackage = "";
 
 		wc.setAttribute(Constants.ATTR_SPECIFICATION_TYPE_NAMES, Arrays.asList(mainTypeQualifiedName));
@@ -286,16 +286,16 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 		return wc;
 	}
 
-	protected ClassPath getSpecificationPath(IJavaProject project) {
-		ClassPath classPath = ClassPath.empty();
-		classPath.add(new ProjectClassPathEntry(project.getPath()));
-		return classPath;
+	protected Classpath getSpecificationPath(IJavaProject project) {
+		Classpath classpath = Classpath.empty();
+		classpath.add(new ProjectClasspathEntry(project.getPath()));
+		return classpath;
 	}
 
-	protected ClassPath getImplementationPath(IJavaProject project) {
-		ClassPath classPath = ClassPath.empty();
-		classPath.add(new ProjectClassPathEntry(project.getPath()));
-		return classPath;
+	protected Classpath getImplementationPath(IJavaProject project) {
+		Classpath classpath = Classpath.empty();
+		classpath.add(new ProjectClasspathEntry(project.getPath()));
+		return classpath;
 	}
 
 	private IType findTypeToLaunch(ICompilationUnit cu, String mode) throws CoreException, InterruptedException {

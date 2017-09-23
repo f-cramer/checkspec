@@ -44,9 +44,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import checkspec.eclipse.CheckSpecPlugin;
-import checkspec.eclipse.util.classpath.ClassPathEntry;
-import checkspec.eclipse.util.classpath.ClassPathEntrySerializer;
-import checkspec.eclipse.util.classpath.ProjectClassPathEntry;
+import checkspec.eclipse.util.classpath.ClasspathEntry;
+import checkspec.eclipse.util.classpath.ClasspathEntrySerializer;
+import checkspec.eclipse.util.classpath.ProjectClasspathEntry;
 import checkspec.util.StreamUtils;
 
 public abstract class CheckSpecClasspathTab extends JavaLaunchTab {
@@ -100,19 +100,19 @@ public abstract class CheckSpecClasspathTab extends JavaLaunchTab {
 
 		try {
 			List<String> entryStrings = config.getAttribute(attributeName, Collections.emptyList());
-			ClassPathEntry[] entries = entryStrings.stream()
-					.map(ClassPathEntrySerializer::from)
-					.toArray(ClassPathEntry[]::new);
+			ClasspathEntry[] entries = entryStrings.stream()
+					.map(ClasspathEntrySerializer::from)
+					.toArray(ClasspathEntry[]::new);
 
 			setListItems(entries);
 		} catch (CoreException expected) {
 		}
 	}
 
-	private void setListItems(ClassPathEntry[] entries) {
+	private void setListItems(ClasspathEntry[] entries) {
 		List<IPath> selectedPaths = Arrays.stream(entries)
-				.flatMap(StreamUtils.filterClass(ProjectClassPathEntry.class))
-				.map(ProjectClassPathEntry::getProjectPath)
+				.flatMap(StreamUtils.filterClass(ProjectClasspathEntry.class))
+				.map(ProjectClasspathEntry::getProjectPath)
 				.collect(Collectors.toList());
 
 		for (TableItem item : list.getItems()) {
@@ -126,8 +126,8 @@ public abstract class CheckSpecClasspathTab extends JavaLaunchTab {
 		List<String> items = Arrays.stream(tableItems)
 				.filter(TableItem::getChecked)
 				.map(item -> (IPath) item.getData())
-				.map(ProjectClassPathEntry::new)
-				.map(ClassPathEntrySerializer::toString)
+				.map(ProjectClasspathEntry::new)
+				.map(ClasspathEntrySerializer::toString)
 				.collect(Collectors.toList());
 
 		configuration.setAttribute(attributeName, items);

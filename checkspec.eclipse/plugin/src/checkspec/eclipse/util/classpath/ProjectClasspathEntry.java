@@ -38,11 +38,11 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import checkspec.eclipse.util.PathConverter;
 
-public class ProjectClassPathEntry implements ClassPathEntry {
+public class ProjectClasspathEntry implements ClasspathEntry {
 
 	private final IPath projectPath;
 
-	public ProjectClassPathEntry(IPath projectPath) {
+	public ProjectClasspathEntry(IPath projectPath) {
 		Objects.requireNonNull(projectPath);
 		this.projectPath = projectPath;
 	}
@@ -97,8 +97,8 @@ public class ProjectClassPathEntry implements ClassPathEntry {
 	}
 
 	@Override
-	public ClassPathType getType() {
-		return ClassPathType.PROJECT;
+	public ClasspathType getType() {
+		return ClasspathType.PROJECT;
 	}
 
 	@Override
