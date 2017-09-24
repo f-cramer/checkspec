@@ -123,20 +123,6 @@ public class TextOutputter implements Outputter {
 		}
 	}
 
-	private String getTitle(SpecReport report) {
-		Class<?> rawElement = report.getSpecification().getRawElement().getRawClass();
-		return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
-	}
-
-	private String getTitle(Report<?, ?> report) {
-		if (report instanceof ClassReport) {
-			Class<?> rawElement = ((ClassReport) report).getImplementation().getRawClass();
-			return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
-		} else {
-			return report.toString();
-		}
-	}
-
 	private Ansi getGreen(Ansi ansi) {
 		return bright ? ansi.fgBrightGreen() : ansi.fgGreen();
 	}
@@ -147,5 +133,19 @@ public class TextOutputter implements Outputter {
 
 	private Ansi getRed(Ansi ansi) {
 		return bright ? ansi.fgBrightRed() : ansi.fgRed();
+	}
+
+	private static String getTitle(SpecReport report) {
+		Class<?> rawElement = report.getSpecification().getRawElement().getRawClass();
+		return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
+	}
+
+	private static String getTitle(Report<?, ?> report) {
+		if (report instanceof ClassReport) {
+			Class<?> rawElement = ((ClassReport) report).getImplementation().getRawClass();
+			return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
+		} else {
+			return report.toString();
+		}
 	}
 }
