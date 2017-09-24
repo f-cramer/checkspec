@@ -97,11 +97,6 @@ public class ProjectClasspathEntry implements ClasspathEntry {
 	}
 
 	@Override
-	public ClasspathType getType() {
-		return ClasspathType.PROJECT;
-	}
-
-	@Override
 	public String getName(IWorkspace workspace) {
 		IProject[] projects = workspace.getRoot().getProjects();
 		Optional<IProject> optProject = Arrays.stream(projects)
