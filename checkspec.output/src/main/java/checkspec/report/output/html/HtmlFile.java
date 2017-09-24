@@ -9,9 +9,9 @@ package checkspec.report.output.html;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ package checkspec.report.output.html;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import lombok.NonNull;
@@ -42,12 +43,14 @@ class HtmlFile {
 			+ "<head><meta charset=\"UTF-8\"/><link rel=\"stylesheet\" href=\"style.css\"></head>%n"
 			+ "<body>%n%s%n%s%n</body>%n"
 			+ "</html>";
+	private static final String HEADING = "%s%n<h4>%s</h4>";
 	private static final String H1 = "<h1>%s</h1>";
 	private static final String TABLE = "<table>%s</table>";
 	private static final String TR = "<tr>%s</tr>";
 
 	@NonNull
 	private String title;
+	private String subtitle;
 	@NonNull
 	private List<Row> rows;
 
@@ -60,6 +63,7 @@ class HtmlFile {
 				.collect(Collectors.joining());
 
 		String table = String.format(TABLE, entries);
-		return String.format(CONTENT, h1, table);
+		String heading = StringUtils.isBlank(subtitle) ? h1 : String.format(HEADING, h1, subtitle);
+		return String.format(CONTENT, heading, table);
 	}
 }

@@ -9,9 +9,9 @@ package checkspec.report.output.html;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 /**
  * Represents a row inside of an HTML file.
@@ -37,9 +37,10 @@ import lombok.Value;
  * @author Florian Cramer
  *
  */
-@Value
+@Getter
+@EqualsAndHashCode
 @RequiredArgsConstructor
-final class Row {
+class Row {
 
 	private static final String TD = "<td>%s</td>";
 	private static final String SPAN = "<span>%s</span>";
@@ -74,8 +75,12 @@ final class Row {
 			spans.add(String.format(SPAN_CLASS, mark.getClassName(), mark.getText()));
 		}
 
-		spans.add(String.format(SPAN, StringEscapeUtils.escapeHtml4(text)));
+		spans.add(createTextElement());
 		return String.format(TD, spans.toString());
+	}
+
+	protected String createTextElement() {
+		return String.format(SPAN, StringEscapeUtils.escapeHtml4(text));
 	}
 
 	public static final Row EMPTY = new Row(0, null, NO_BREAK_SPACE);

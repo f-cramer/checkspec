@@ -29,6 +29,10 @@ table {
 	margin-right: auto;
 }
 
+td {
+	white-space: pre;
+}
+
 .mark-success {
 	color: green;
 }
