@@ -24,135 +24,45 @@ public class TannenbaumKegeln extends Game {
 
 	public TannenbaumKegeln(int max) {
 		super(max);
-		name = "TannenbaumKegeln";
-		pins = 9;
-		rounds = 100;
-		remainingPins = 9;
-
+		// implementation
 	}
 
 	@Override
 	public Player addPlayer(String name) {
-		if (hasStarted() || activePlayers == maxPlayer) {
-			return null;
-		} else {
-			if (activePlayers == 0) {
-				Player newPlayer = new Player(name, 0);
-
-				players[0] = newPlayer;
-				players[0].points = new int[] { 1, 2, 7, 6, 5, 4, 3, 2, 1 };
-				currentPlayer = newPlayer;
-				activePlayers = 1 + activePlayers;
-				return newPlayer;
-			} else {
-
-				Player newPlayer = new Player(name, activePlayers);
-
-				players[activePlayers] = newPlayer;
-				players[activePlayers].points = new int[] { 1, 2, 7, 6, 5, 4, 3, 2, 1 };
-
-				activePlayers = 1 + activePlayers;
-
-				return newPlayer;
-			}
-		}
+		return null;
+		// implementation
 	}
 
 	@Override
 	public boolean throwBall(int count) {
-
-		if (!hasStarted()) {
-			System.err.println("Game has not started yet");
-			return false;
-		} else if (hasFinished()) {
-			System.err.println("Game has already finished");
-			return false;
-		} else if (count < 0) {
-			System.err.println("No negative amount of pins allowed");
-			return false;
-		} else if (count > remainingPins) {
-			System.err.println("Not enough pins left");
-			return false;
-		} else {
-			if (currentThrow == 2) {
-				remainingPins = remainingPins - count;
-				setScore(currentPlayer);
-				setActivePlayer();
-				setRound();
-
-			}
-
-			else {
-				remainingPins = pins;
-				remainingPins = remainingPins - count;
-				if (remainingPins == 0) {
-					setScore(currentPlayer);
-					currentThrow = 2;
-					setActivePlayer();
-					setRound();
-				} else {
-					currentThrow = 2;
-				}
-			}
-
-			return true;
-
-		}
-
+		return false;
+		// implementation
 	}
 
 	@Override
 	public int[] getScore(Player player) {
-		return player.points;
+		return new int[0];
+		// implementation
 	}
 
 	public void setScore(Player player) {
-		int[] list = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		int score = pins - remainingPins;
-		if (score == 0 || player.points[score - 1] == 0) {
-			player.points = player.points;
-		} else {
-			player.points[score - 1] = player.points[score - 1] - 1;
-			if (player.points.equals(list)) {
-				finishedPlayer = true;
-			}
-		}
+		// implementation
 	}
 
 	public int getPoints(Player player) {
-		int a = 0;
-		for (int i = 0; i < player.points.length; i++) {
-			a = a + player.points[i];
-		}
-		return a;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public Player getWinner() {
-		Player winner = null;
-		if (finishedPlayer) {
-			int[] list = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			for (int i = 0; i < players.length; i++) {
-				if (players[i].points.equals(list)) {
-					winner = players[i];
-				}
-			}
-		} else {
-			for (int i = 0; i < players.length; i++) {
-				if (getPoints(players[i]) <= getPoints(players[i + 1])) {
-					winner = players[i];
-				} else {
-					winner = players[i + 1];
-				}
-			}
-		}
-
-		return winner;
+		return null;
+		// implementation
 	}
 
 	@Override
 	public boolean hasFinished() {
-		return finishedPlayer || finishedRounds;
+		return false;
+		// implementation
 	}
-
 }

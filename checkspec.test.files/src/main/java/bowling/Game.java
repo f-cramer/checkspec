@@ -9,9 +9,9 @@ package bowling;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,111 +23,77 @@ package bowling;
 @SuppressWarnings("all")
 public abstract class Game implements IGame {
 
-	String name;
-	int maxPlayer;
-	int pins;
-	int rounds;
-	Player[] players;
-	int currentRound;
-	int currentThrow;
-	Player currentPlayer;
-	int remainingPins;
-	boolean finishedRounds;
-	boolean finishedPlayer;
-	boolean gameStarted;
-	int activePlayers;
-
 	public Game(int max) {
-		this.maxPlayer = max;
-		players = new Player[max];
-		currentRound = 1;
-		currentThrow = 1;
-		activePlayers = 0;
-		finishedRounds = false;
-		finishedPlayer = false;
-		gameStarted = false;
 	}
 
 	@Override
 	public abstract Player addPlayer(String name);
 
 	public Player[] getActivePlayers() {
-		return players;
+		return new Player[0];
+		// implementation
 	}
 
 	@Override
 	public Player getActivePlayer() {
-		return currentPlayer;
+		return null;
+		// implementation
 	}
 
 	public void setActivePlayer() {
-		if (currentThrow == 1) {
-			currentPlayer = currentPlayer;
-		} else {
-			if (currentPlayer == players[activePlayers - 1]) {
-				currentThrow = 1;
-				currentPlayer = players[0];
-			} else {
-				currentThrow = 1;
-				int b = currentPlayer.getID();
-				currentPlayer = players[b + 1];
-			}
-		}
+		// implementation
 	}
 
 	@Override
 	public int getActivePlayerCount() {
-		return activePlayers;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public int getMaxPlayerCount() {
-		return this.maxPlayer;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return "";
+		// implementation
 	}
 
 	@Override
 	public int getPinCount() {
-		return pins;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public int getPinsLeft() {
-		return remainingPins;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public Player getPlayer(int id) {
-		for (int i = 0; i < players.length; i++) {
-			int a = players[i].getID();
-			if (a == id) {
-				return players[i];
-			}
-		}
 		return null;
+		// implementation
 	}
 
 	@Override
 	public int getRound() {
-		return currentRound;
+		return 0;
+		// implementation
 	}
 
 	public void setRound() {
-		if (players[0] == currentPlayer && currentThrow == 1) {
-			currentRound = currentRound++;
-			if (currentRound > rounds) {
-				finishedRounds = true;
-			}
-		}
+		// implementation
 	}
 
 	@Override
 	public int getRoundCount() {
-		return rounds;
+		return 0;
+		// implementation
 	}
 
 	@Override
@@ -135,7 +101,8 @@ public abstract class Game implements IGame {
 
 	@Override
 	public int getThrow() {
-		return currentThrow;
+		return 0;
+		// implementation
 
 	}
 
@@ -147,21 +114,14 @@ public abstract class Game implements IGame {
 
 	@Override
 	public boolean hasStarted() {
-		return gameStarted;
+		return false;
+		// implementation
 	}
 
 	@Override
 	public boolean startGame() {
-		if (getActivePlayerCount() < 2) {
-			System.err.println("not enough players");
-			return false;
-		} else if (hasStarted()) {
-			System.err.println("Game has already started");
-			return false;
-		} else {
-			gameStarted = true;
-		}
-		return true;
+		return false;
+		// implementation
 	}
 
 	@Override

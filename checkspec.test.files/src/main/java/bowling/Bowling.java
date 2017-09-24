@@ -26,147 +26,52 @@ public class Bowling extends Game {
 
 	public Bowling(int max) {
 		super(max);
-		name = "Bowling";
-		pins = 10;
-		rounds = 10;
-		remainingPins = 10;
-		counter = 0;
+		// implementation
 	}
 
 	@Override
 	public Player addPlayer(String name) {
-
-		if (hasStarted() == true || activePlayers == maxPlayer) {
-			return null;
-		} else {
-			if (activePlayers == 0) {
-				Player newPlayer = new Player(name, 0);
-
-				players[0] = newPlayer;
-				players[0].points = new int[22];
-				currentPlayer = newPlayer;
-				activePlayers = 1 + activePlayers;
-				return newPlayer;
-			} else {
-
-				Player newPlayer = new Player(name, activePlayers);
-
-				players[activePlayers] = newPlayer;
-				players[activePlayers].points = new int[22];
-
-				activePlayers = 1 + activePlayers;
-
-				return newPlayer;
-			}
-		}
+		return null;
+		// implementation
 	}
 
 	@Override
 	public int[] getScore(Player player) {
-		return player.points;
+		return new int[0];
+		// implementation
 	}
 
 	public void setScore(Player player) {
-
 	}
 
 	public int getPoints(Player player) {
-		int a = 0;
-		for (int i = 0; i < player.points.length; i++) {
-			a = a + player.points[i];
-		}
-		return a;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public Player getWinner() {
-
-		Player winner = null;
-		for (int i = 0; i < players.length; i++) {
-			if (getPoints(players[i]) >= getPoints(players[i + 1])) {
-				winner = players[i];
-			} else {
-				winner = players[i + 1];
-			}
-		}
-		return winner;
+		return null;
+		// implementation
 	}
 
 	@Override
 	public boolean hasFinished() {
-		return finishedRounds;
+		return false;
+		// implementation
 	}
 
 	@Override
 	public boolean throwBall(int count) {
-		if (!hasStarted()) {
-			System.err.println("Game has not started yet");
-			return false;
-		} else if (hasFinished()) {
-			System.err.println("Game has already finished");
-			return false;
-		} else if (count < 0) {
-			System.err.println("No negative amount of pins allowed");
-			return false;
-		} else if (count > getPinsLeft()) {
-			System.err.println("Not enough pins left");
-			return false;
-		} else {
-			if (currentRound < rounds) {
-				normal(count);
-
-			}
-			if (currentRound == rounds) {
-				last(count);
-			}
-		}
-		return true;
+		return false;
+		// implementation
 	}
 
 	public void normal(int count) {
-		if (currentThrow == 1) {
-			remainingPins = pins;
-			remainingPins = remainingPins - count;
-			if (remainingPins == 0) {
-				setScore(currentPlayer);
-				currentThrow = 2;
-				setActivePlayer();
-				setRound();
-			}
-
-			else {
-				currentThrow = 2;
-				setScore(currentPlayer);
-
-			}
-		} else {
-			remainingPins = remainingPins - count;
-			setScore(currentPlayer);
-			setActivePlayer();
-			setRound();
-		}
+		// implementation
 	}
 
 	public void last(int count) {
-		if (currentThrow == 1) {
-			remainingPins = pins;
-			remainingPins = remainingPins - count;
-			if (remainingPins == 0) {
-				setScore(currentPlayer);
-				counter = counter + 1;
-			} else {
-				setScore(currentPlayer);
-				currentThrow = 2;
-			}
-		}
-
-		else {
-			remainingPins = remainingPins - count;
-			if (remainingPins == 0) {
-				setScore(currentPlayer);
-
-			}
-
-		}
+		// implementation
 	}
 }

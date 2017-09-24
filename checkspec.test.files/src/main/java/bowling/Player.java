@@ -22,20 +22,17 @@ package bowling;
 
 public class Player {
 
-	String name;
-	int id;
-	int[] points;
-
 	public Player(String name, int id) {
-		this.name = name;
-		this.id = id;
+		// implementation
 	}
 
 	public String getName() {
-		return this.name;
+		return "";
+		// implementation
 	}
 
 	public int getID() {
-		return this.id;
+		return 0;
+		// implementation
 	}
 }

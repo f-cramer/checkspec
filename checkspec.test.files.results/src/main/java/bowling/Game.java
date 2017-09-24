@@ -9,9 +9,9 @@ package bowling;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,164 +22,99 @@ package bowling;
 
 public abstract class Game implements IGame {
 
-	private int activePlayerCount;
-	private int activePlayerID;
-	private int currentRound;
-	private int currentThrow;
-	private boolean hasStarted;
-	private Player players[];
-	private int pinsLeft;
-
 	public Game(int maxPlayerCount) {
-		players = new Player[maxPlayerCount];
-		activePlayerCount = 0;
-		hasStarted = false;
-		activePlayerID = 0;
-		currentRound = 1;
-		currentThrow = 1;
-		resetPins();
+		// implementation
 	}
 
 	protected void overwriteRound(int newRound) {
-		currentRound = newRound;
+		// implementation
 	}
 
 	@Override
 	public Player addPlayer(String name) {
-		if (activePlayerCount == players.length) {
-			System.err.println("max number of players reached");
-			return null;
-		}
-
-		if (hasStarted()) {
-			System.err.println("unable to add more players once game is started");
-			return null;
-		}
-
-		Player player = new Player(name, activePlayerCount++);
-		players[player.getID()] = player;
-		return player;
+		return null;
+		// implementation
 	}
 
 	@Override
 	public Player getActivePlayer() {
-		return getPlayer(activePlayerID);
+		return null;
+		// implementation
 	}
 
 	@Override
 	public int getActivePlayerCount() {
-		return activePlayerCount;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public int getMaxPlayerCount() {
-		return players.length;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public int getPinsLeft() {
-		return pinsLeft;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public Player getPlayer(int id) {
-		if (id >= getActivePlayerCount()) {
-			return null;
-		}
-		return players[id];
+		return null;
+		// implementation
 	}
 
 	@Override
 	public int getRound() {
-		return currentRound;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public int getThrow() {
-		return currentThrow;
+		return 0;
+		// implementation
 	}
 
 	@Override
 	public boolean hasFinished() {
-		return getRound() > getRoundCount();
+		return false;
+		// implementation
 	}
 
 	@Override
 	public boolean hasStarted() {
-		return hasStarted;
+		return false;
+		// implementation
 	}
 
 	protected boolean isValidPlayer(Player player) {
-		if (player == null) {
-			return false;
-		}
-
-		if (player.getID() >= players.length) {
-			return false;
-		}
-
-		return players[player.getID()] == player;
+		return false;
 	}
 
 	protected void nextPlayer() {
-		activePlayerID = (activePlayerID + 1) % getActivePlayerCount();
-		currentThrow = 1;
-		resetPins();
-
-		if (activePlayerID == 0) {
-			nextRound();
-		}
+		// implementation
 	}
 
 	protected void nextRound() {
-		currentRound++;
+		// implementation
 	}
 
 	protected void resetPins() {
-		pinsLeft = getPinCount();
+		// implementation
 	}
 
 	@Override
 	public boolean startGame() {
-		if (hasStarted()) {
-			System.err.println("cannot start game, as it is already started.");
-			return false;
-		}
-
-		if (getActivePlayerCount() < 2) {
-			System.err.println("there have to be at least 2 active players");
-			return false;
-		}
-
-		hasStarted = true;
-		return true;
+		return false;
+		// implementation
 	}
 
 	@Override
 	public boolean throwBall(int count) {
-		if (count < 0) {
-			System.err.println("negative counts not possible");
-			return false;
-		}
-
-		if (count > getPinsLeft()) {
-			System.err.println("more pins hit than possible");
-			return false;
-		}
-
-		if (!hasStarted()) {
-			System.err.println("cannot throw ball if game is not started");
-			return false;
-		}
-
-		if (hasFinished()) {
-			System.err.println("cannot throw ball if game is already finished");
-			return false;
-		}
-
-		pinsLeft -= count;
-		currentThrow++;
-		return true;
+		return false;
+		// implementation
 	}
-
 }
