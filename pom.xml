@@ -126,7 +126,19 @@
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>checkspec.test.files</artifactId>
+				<artifactId>checkspec.test.dummy</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>checkspec.test.implementation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>checkspec.test.specification</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -366,7 +378,8 @@
 		<module>checkspec.output</module>
 		<module>checkspec.eclipse</module>
 		<module>checkspec.test</module>
-		<module>checkspec.test.files</module>
-		<module>checkspec.test.files.results</module>
+		<module>checkspec.test.dummy</module>
+		<module>checkspec.test.implementation</module>
+		<module>checkspec.test.specification</module>
 	</modules>
 </project>

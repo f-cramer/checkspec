@@ -3,8 +3,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec.test.files</artifactId>
-	<name>CheckSpec Test Files</name>
+	<artifactId>checkspec.test.specification</artifactId>
+	<name>CheckSpec Test Files Specifications</name>
 
 	<dependencies>
 		<dependency>
@@ -17,6 +17,17 @@
 			<artifactId>checkspec.core</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>${argLine}</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<parent>
 		<groupId>de.cramer.checkspec</groupId>

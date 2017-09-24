@@ -3,23 +3,18 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec.test</artifactId>
-	<name>CheckSpec Test</name>
+	<artifactId>checkspec.test.implementation</artifactId>
+	<name>CheckSpec Test Files Implementations</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec.cli</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<artifactId>checkspec.api</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec.test.dummy</artifactId>
+			<artifactId>checkspec.core</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -29,5 +24,4 @@
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<description>Integration tests for checkspec framework</description>
 </project>

@@ -24,22 +24,48 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 import checkspec.CheckSpecRunner;
 import checkspec.report.SpecReport;
+import checkspec.report.output.OutputException;
+import checkspec.report.output.Outputter;
+import checkspec.report.output.html.HtmlOutputter;
 
 public abstract class AbstractIntegrationTest {
 
-	private final URL[] getSpecClasspath() {
-		return getClasspath("checkspec.test.files.results", "target", "classes");
-	}
+	private final Outputter outputter;
 
-	private final URL[] getImplementationClasspath() {
-		return getClasspath("checkspec.test.files", "target", "classes");
+	{
+		try {
+			Path path = getFile(getCurrentDirectory().getParentFile(), "target", "html").toPath();
+			System.out.println(path);
+			outputter = new HtmlOutputter(path);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	protected final SpecReport[] generateReports(String basePackage, String... specificationNames) {
-		return CheckSpecRunner.generateReports(specificationNames, getSpecClasspath(), getImplementationClasspath(), basePackage);
+		URL[] specificationClasspath = getSpecificationClasspath();
+		URL[] implementationClasspath = getImplementationClasspath();
+		SpecReport[] reports = CheckSpecRunner.generateReports(specificationNames, specificationClasspath, implementationClasspath, basePackage);
+		Arrays.asList(reports).forEach(this::output);
+		try {
+			outputter.finished();
+		} catch (OutputException expected) {
+		}
+
+		return reports;
+	}
+
+	private final URL[] getSpecificationClasspath() {
+		return getClasspath("checkspec.test.specification", "target", "classes");
+	}
+
+	private final URL[] getImplementationClasspath() {
+		return getClasspath("checkspec.test.implementation", "target", "classes");
 	}
 
 	private final URL[] getClasspath(String... children) {
@@ -52,7 +78,14 @@ public abstract class AbstractIntegrationTest {
 		}
 	}
 
-	protected final File getFile(File parent, String... children) {
+	private final void output(SpecReport report) {
+		try {
+			outputter.output(report);
+		} catch (OutputException expected) {
+		}
+	}
+
+	protected static final File getFile(File parent, String... children) {
 		File file = parent;
 		for (String child : children) {
 			file = new File(file, child);
@@ -60,7 +93,7 @@ public abstract class AbstractIntegrationTest {
 		return file;
 	}
 
-	protected final File getCurrentDirectory() {
+	protected static final File getCurrentDirectory() {
 		try {
 			return new File(".").getCanonicalFile();
 		} catch (IOException e) {

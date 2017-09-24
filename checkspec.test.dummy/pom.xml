@@ -3,31 +3,21 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>checkspec.test.files.results</artifactId>
-	<name>CheckSpec Test Files Results</name>
+	<artifactId>checkspec.test.dummy</artifactId>
+	<name>CheckSpec Test Dummy</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec.api</artifactId>
+			<artifactId>checkspec.test.implementation</artifactId>
+			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 			<groupId>de.cramer.checkspec</groupId>
-			<artifactId>checkspec.core</artifactId>
+			<artifactId>checkspec.test.specification</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<argLine>${argLine}</argLine>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<parent>
 		<groupId>de.cramer.checkspec</groupId>
