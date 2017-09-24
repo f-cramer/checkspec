@@ -9,9 +9,9 @@ package checkspec.report.output.text;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,14 @@ import java.util.stream.Stream;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
+import checkspec.report.ClassReport;
 import checkspec.report.Report;
 import checkspec.report.ReportProblem;
 import checkspec.report.ReportType;
 import checkspec.report.SpecReport;
 import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
+import checkspec.util.ClassUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +50,8 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class TextOutputter implements Outputter {
+
+	private static final String REPORT_FORMAT = "%s - %s";
 
 	@NonNull
 	private final Writer writer;
@@ -78,7 +82,7 @@ public class TextOutputter implements Outputter {
 	private String toString(SpecReport report) {
 		return report.getClassReports().parallelStream()
 				.map(this::toString)
-				.collect(Collectors.joining("\n", report.toString() + "\n", ""))
+				.collect(Collectors.joining("\n", getTitle(report) + "\n", ""))
 				.trim().replace("\n", "\n\t");
 	}
 
@@ -86,7 +90,7 @@ public class TextOutputter implements Outputter {
 		Stream<String> problems = report.getProblems().parallelStream().map(this::toString);
 		Stream<String> subReports = report.getSubReports().parallelStream().map(this::toString);
 
-		String reportString = toString(report.toString(), report.getType());
+		String reportString = toString(getTitle(report), report.getType());
 		String rawString = Stream.concat(problems, subReports)
 				.collect(Collectors.joining("\n", reportString + "\n", ""));
 		while (rawString.endsWith("\n")) {
@@ -116,6 +120,20 @@ public class TextOutputter implements Outputter {
 			return ansi.a(string).toString();
 		} else {
 			return string;
+		}
+	}
+
+	private String getTitle(SpecReport report) {
+		Class<?> rawElement = report.getSpecification().getRawElement().getRawClass();
+		return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
+	}
+
+	private String getTitle(Report<?, ?> report) {
+		if (report instanceof ClassReport) {
+			Class<?> rawElement = ((ClassReport) report).getImplementation().getRawClass();
+			return String.format(REPORT_FORMAT, report, ClassUtils.getLocation(rawElement));
+		} else {
+			return report.toString();
 		}
 	}
 
