@@ -81,7 +81,7 @@ public abstract class CheckSpecClasspathTab extends JavaLaunchTab {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		for (IProject project : workspace.getRoot().getProjects()) {
 			TableItem item = new TableItem(list, SWT.NONE);
-			item.setData(project.getFullPath());
+			item.setData(new ProjectClasspathEntry(project).getProjectPath());
 			item.setText(project.getName());
 			item.setImage(CheckSpecPlugin.getImage("projects.png"));
 		}

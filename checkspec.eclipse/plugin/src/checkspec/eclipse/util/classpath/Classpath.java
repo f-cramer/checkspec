@@ -29,8 +29,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.jdt.core.IJavaProject;
-
 public final class Classpath {
 
 	private static final String ENTRY_SEPARATOR = "\n";
@@ -51,10 +49,9 @@ public final class Classpath {
 		entries.remove(entry);
 	}
 
-	public URL[] resolve(IJavaProject project) {
-		Objects.requireNonNull(project);
+	public URL[] resolve() {
 		return entries.stream()
-				.map(e -> e.resolve(project))
+				.map(ClasspathEntry::resolve)
 				.flatMap(List::stream)
 				.distinct()
 				.toArray(URL[]::new);

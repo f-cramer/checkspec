@@ -1,25 +1,5 @@
 package checkspec.eclipse;
 
-/*-
- * #%L
- * checkspec.eclipse.plugin
- * %%
- * Copyright (C) 2017 Florian Cramer
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import static checkspec.CheckSpecRunner.*;
 
 import java.io.File;
@@ -39,7 +19,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -90,11 +69,11 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	}
 
 	private URL[] findSpecificationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return Classpath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve();
 	}
 
 	private URL[] findImplementationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return Classpath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).resolve();
 	}
 
 	private String findBasePackage(ILaunchConfiguration configuration) throws CoreException {
@@ -102,7 +81,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 	}
 
 	private URL[] findExtensionClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return Classpath.from(configuration.getAttribute(Constants.ATTR_EXTENSION_CLASSPATH, Collections.emptyList())).resolve(getJavaProject(configuration));
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_EXTENSION_CLASSPATH, Collections.emptyList())).resolve();
 	}
 
 	private ResultView findOpenedResultView() throws PartInitException {
@@ -118,8 +97,6 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		IJavaProject project = getJavaProject(configuration);
-
 		StringJoiner arguments = new StringJoiner(" ");
 
 		arguments.add("--spec");
@@ -129,7 +106,7 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 		if (implPathString != null) {
 			Classpath implPath = Classpath.from(implPathString);
 			arguments.add("--implpath");
-			arguments.add("\"" + implPath.resolve(project) + "\"");
+			arguments.add("\"" + implPath.resolve() + "\"");
 		}
 
 		String superArgs = super.getProgramArguments(configuration);

@@ -30,6 +30,8 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -42,6 +44,11 @@ public class ProjectClasspathEntry implements ClasspathEntry {
 
 	private final IPath projectPath;
 
+	public ProjectClasspathEntry(IProject project) {
+		Objects.requireNonNull(project);
+		this.projectPath = project.getFullPath();
+	}
+
 	public ProjectClasspathEntry(IPath projectPath) {
 		Objects.requireNonNull(projectPath);
 		this.projectPath = projectPath;
@@ -52,29 +59,38 @@ public class ProjectClasspathEntry implements ClasspathEntry {
 	}
 
 	@Override
-	public List<URL> resolve(IJavaProject project) {
-		return resolve(project.getProject().getWorkspace(), projectPath);
+	public List<URL> resolve() {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		return Arrays.stream(projects)
+				.filter(p -> projectPath.equals(p.getFullPath()))
+				.findAny()
+				.map(ProjectClasspathEntry::resolve)
+				.orElseGet(Collections::emptyList);
 	}
 
-	private static List<URL> resolve(IWorkspace workspace, IPath projectPath) {
-		IProject[] projects = workspace.getRoot().getProjects();
-		Optional<IProject> project = Arrays.stream(projects)
-				.filter(p -> projectPath.equals(p.getFullPath()))
-				.findAny();
-		if (!project.isPresent()) {
-			return Collections.emptyList();
+	private static boolean hasJavaNature(IProject project) {
+		try {
+			return project.hasNature(JavaCore.NATURE_ID);
+		} catch (CoreException e) {
+			return false;
 		}
-
-		return resolve(project.get());
 	}
 
 	private static List<URL> resolve(IProject project) {
-		IJavaProject javaProject = JavaCore.create(project);
+		if (hasJavaNature(project)) {
+			return resolve(JavaCore.create(project));
+		} else {
+			URL url = PathConverter.toUrl(project.getFullPath(), true);
+			return Collections.singletonList(url);
+		}
+	}
+
+	private static List<URL> resolve(IJavaProject project) {
 		List<URL> urls = new ArrayList<>();
 		try {
-			IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
-			addIfNonNull(urls, javaProject.getOutputLocation());
+			addIfNonNull(urls, project.getOutputLocation());
 
+			IClasspathEntry[] classpath = project.getResolvedClasspath(true);
 			for (IClasspathEntry entry : classpath) {
 				switch (entry.getEntryKind()) {
 				case IClasspathEntry.CPE_PROJECT:

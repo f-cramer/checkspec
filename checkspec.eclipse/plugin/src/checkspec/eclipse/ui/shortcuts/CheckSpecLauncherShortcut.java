@@ -288,13 +288,13 @@ public class CheckSpecLauncherShortcut implements ILaunchShortcut2 {
 
 	protected Classpath getSpecificationPath(IJavaProject project) {
 		Classpath classpath = Classpath.empty();
-		classpath.add(new ProjectClasspathEntry(project.getPath()));
+		classpath.add(new ProjectClasspathEntry(project.getProject()));
 		return classpath;
 	}
 
 	protected Classpath getImplementationPath(IJavaProject project) {
 		Classpath classpath = Classpath.empty();
-		classpath.add(new ProjectClasspathEntry(project.getPath()));
+		classpath.add(new ProjectClasspathEntry(project.getProject()));
 		return classpath;
 	}
 

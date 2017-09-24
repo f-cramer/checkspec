@@ -24,11 +24,10 @@ import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.jdt.core.IJavaProject;
 
 public interface ClasspathEntry {
 
-	List<URL> resolve(IJavaProject project);
+	List<URL> resolve();
 
 	String getName(IWorkspace workspace);
 }
