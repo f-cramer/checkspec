@@ -40,7 +40,6 @@ public abstract class AbstractIntegrationTest {
 	{
 		try {
 			Path path = getFile(getCurrentDirectory().getParentFile(), "target", "html").toPath();
-			System.out.println(path);
 			outputter = new HtmlOutputter(path);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
