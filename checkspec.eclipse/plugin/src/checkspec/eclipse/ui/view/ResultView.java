@@ -83,7 +83,7 @@ public class ResultView extends ViewPart {
 		tree = new Tree(parent, SWT.SINGLE);
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		CheckSpecTableListener tableListener = new CheckSpecTableListener(parent.getShell());
+		CustomTableListener tableListener = new CustomTableListener(parent.getShell());
 		tree.addListener(SWT.Dispose, tableListener);
 		tree.addListener(SWT.KeyDown, tableListener);
 		tree.addListener(SWT.MouseMove, tableListener);
@@ -132,7 +132,7 @@ public class ResultView extends ViewPart {
 	private void addReport(Report<?, ?> report, TreeItem parent) {
 		TreeItem item = new TreeItem(parent, 0);
 		item.setText(report.toString());
-		item.setImage(CheckSpecPlugin.getImage(getImageName(report)));
+		item.setImage(CheckSpecPlugin.getImage(getImageName(report.getType())));
 		if (report instanceof ClassReport) {
 			Class<?> rawClass = ((ClassReport) report).getImplementation().getRawClass();
 			item.setData(TOOLTIP, getPath(rawClass));
@@ -144,7 +144,7 @@ public class ResultView extends ViewPart {
 	private void addProblem(ReportProblem problem, TreeItem parent) {
 		TreeItem item = new TreeItem(parent, 0);
 		item.setText(problem.toString());
-		item.setImage(CheckSpecPlugin.getImage(getImageName(problem)));
+		item.setImage(CheckSpecPlugin.getImage(getImageName(problem.getType().toReportType())));
 	}
 
 	private void expand(TreeItem[] items) {
@@ -152,14 +152,6 @@ public class ResultView extends ViewPart {
 			item.setExpanded(true);
 			expand(item.getItems());
 		}
-	}
-
-	private String getImageName(Report<?, ?> report) {
-		return getImageName(report.getType());
-	}
-
-	private String getImageName(ReportProblem problem) {
-		return getImageName(problem.getType().toReportType());
 	}
 
 	private String getImageName(ReportType type) {
@@ -182,13 +174,13 @@ public class ResultView extends ViewPart {
 		return path.toOSString();
 	}
 
-	private class CheckSpecTableListener implements Listener {
+	private class CustomTableListener implements Listener {
 
 		private Shell tip = null;
 		private Label label = null;
 		private final Shell shell;
 
-		public CheckSpecTableListener(Shell shell) {
+		public CustomTableListener(Shell shell) {
 			this.shell = shell;
 		}
 
@@ -197,7 +189,7 @@ public class ResultView extends ViewPart {
 			switch (event.type) {
 			case SWT.Dispose:
 			case SWT.KeyDown:
-			case SWT.MouseMove: {
+			case SWT.MouseMove:
 				if (tip == null) {
 					break;
 				}
@@ -205,8 +197,7 @@ public class ResultView extends ViewPart {
 				tip = null;
 				label = null;
 				break;
-			}
-			case SWT.MouseHover: {
+			case SWT.MouseHover:
 				TreeItem item = tree.getItem(new Point(event.x, event.y));
 				Object tooltip = item.getData(TOOLTIP);
 				if (item != null && tooltip != null) {
@@ -227,7 +218,6 @@ public class ResultView extends ViewPart {
 					tip.setBounds(pt.x, pt.y, size.x, size.y);
 					tip.setVisible(true);
 				}
-			}
 			}
 		}
 	};
