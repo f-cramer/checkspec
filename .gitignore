@@ -87,3 +87,5 @@ local.properties
 
 report/
 !**/checkspec/report
+
+.polyglot.build.properties
