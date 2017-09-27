@@ -94,7 +94,7 @@ public class ProjectClasspathEntry implements ClasspathEntry {
 			for (IClasspathEntry entry : classpath) {
 				switch (entry.getEntryKind()) {
 				case IClasspathEntry.CPE_PROJECT:
-					urls.addAll(resolve((IProject) entry));
+					urls.addAll(resolve(getProject(entry.getPath())));
 					break;
 				case IClasspathEntry.CPE_SOURCE:
 					addIfNonNull(urls, entry.getOutputLocation());
@@ -104,6 +104,13 @@ public class ProjectClasspathEntry implements ClasspathEntry {
 		} catch (JavaModelException expected) {
 		}
 		return urls;
+	}
+
+	private static IProject getProject(IPath path) {
+		return Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects())
+				.filter(project -> project.getFullPath().equals(path))
+				.findAny()
+				.get();
 	}
 
 	private static void addIfNonNull(List<URL> urls, IPath path) {
