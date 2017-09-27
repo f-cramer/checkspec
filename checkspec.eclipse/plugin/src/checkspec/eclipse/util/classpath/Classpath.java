@@ -81,6 +81,10 @@ public final class Classpath {
 		return new Classpath(Collections.emptyList());
 	}
 
+	public static Classpath from(ClasspathEntry entry) {
+		return new Classpath(Collections.singletonList(entry));
+	}
+
 	public static Classpath from(String classpath) {
 		Objects.requireNonNull(classpath);
 		String[] split = classpath.split(ENTRY_SEPARATOR);
