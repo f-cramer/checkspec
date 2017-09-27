@@ -24,14 +24,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 
 import checkspec.CheckSpecRunner;
+import checkspec.report.ClassReport;
 import checkspec.report.SpecReport;
 import checkspec.report.output.OutputException;
 import checkspec.report.output.Outputter;
-import checkspec.report.output.html.HtmlOutputter;
 
 public abstract class AbstractIntegrationTest {
 
@@ -39,9 +39,12 @@ public abstract class AbstractIntegrationTest {
 
 	{
 		try {
-			Path path = getFile(getCurrentDirectory().getParentFile(), "target", "html").toPath();
-			outputter = new HtmlOutputter(path);
-		} catch (IOException e) {
+			// Path path = getFile(getCurrentDirectory().getParentFile(),
+			// "target", "html").toPath();
+			// outputter = new HtmlOutputter(path);
+			outputter = report -> {
+			};
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -57,6 +60,24 @@ public abstract class AbstractIntegrationTest {
 		}
 
 		return reports;
+	}
+
+	protected final SpecReport findReportForSpecificationClass(SpecReport[] reports, String specificationClassName) {
+		return Arrays.stream(reports)
+				.filter(report -> report.getSpecification().getRawElement().getRawClass().getName().equals(specificationClassName))
+				.findAny()
+				.orElseThrow(() -> new IllegalArgumentException(specificationClassName));
+	}
+
+	protected final List<ClassReport> findClassReportsForSpecificationClass(SpecReport[] reports, String specificationClassName) {
+		return findReportForSpecificationClass(reports, specificationClassName).getClassReports();
+	}
+
+	protected final String getNameOfBestImplementation(List<ClassReport> classReports) {
+		if (classReports.isEmpty()) {
+			throw new IllegalArgumentException("given spec report does not contain any implementations");
+		}
+		return classReports.get(0).getImplementation().getRawClass().getName();
 	}
 
 	private final URL[] getSpecificationClasspath() {
