@@ -9,9 +9,9 @@ package checkspec;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,7 @@ import static checkspec.util.SecurityUtils.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import checkspec.report.SpecReport;
@@ -56,6 +57,23 @@ public class CheckSpecRunner {
 	 * @return the generated reports
 	 */
 	public static SpecReport[] generateReports(String[] specClassNames, URL[] specClasspath, URL[] implClasspath, String basePackage) {
+		return generateReports(specClassNames, specClasspath, Collections.singletonList(implClasspath), basePackage);
+	}
+
+	/**
+	 * Generates reports for the given parameters.
+	 *
+	 * @param specClassNames
+	 *            the class names for which specification should be created
+	 * @param specClasspath
+	 *            the classpath from which specifications are loaded
+	 * @param implClasspaths
+	 *            the classpaths from which implementations are loaded
+	 * @param basePackage
+	 *            the base package for all implementations
+	 * @return the generated reports
+	 */
+	public static SpecReport[] generateReports(String[] specClassNames, URL[] specClasspath, List<URL[]> implClasspaths, String basePackage) {
 		ClassLoader specificationClassLoader;
 		if (specClasspath == null || specClasspath.length == 0) {
 			specificationClassLoader = getBaseClassLoader();
@@ -77,13 +95,19 @@ public class CheckSpecRunner {
 				.toArray(ClassSpecification[]::new);
 
 		CheckSpec checkSpec;
-		if (implClasspath == null || implClasspath.length == 0) {
+		if (implClasspaths == null || implClasspaths.size() == 0 || deepCount(implClasspaths) == 0) {
 			checkSpec = CheckSpec.getDefaultInstance();
 		} else {
-			checkSpec = CheckSpec.getInstanceForClassPath(implClasspath);
+			checkSpec = CheckSpec.getInstanceForClasspaths(implClasspaths);
 		}
 
 		List<SpecReport> ret = checkSpec.checkSpec(Arrays.asList(specifications), basePackage);
 		return ret.toArray(new SpecReport[ret.size()]);
+	}
+
+	private static <T> long deepCount(List<T[]> list) {
+		return list.stream()
+				.flatMap(Arrays::stream)
+				.count();
 	}
 }

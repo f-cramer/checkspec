@@ -9,9 +9,9 @@ package checkspec;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,9 +34,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
@@ -50,7 +52,9 @@ import checkspec.util.ReflectionsUtils;
 import checkspec.util.StreamUtils;
 import checkspec.util.TypeDiscovery;
 import checkspec.util.UrlUtils;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Main entry point into the framework.
@@ -59,6 +63,7 @@ import lombok.NonNull;
  *
  */
 @SuppressWarnings("unchecked")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CheckSpec {
 
 	private static final String JAR_SUFFIX = ".jar";
@@ -98,7 +103,7 @@ public final class CheckSpec {
 	 *
 	 * @return {@code CheckSpec} instance excluding .jar-files
 	 */
-	public static CheckSpec getInstanceForClassPathWithoutJars() {
+	public static CheckSpec getInstanceForClasspathWithoutJars() {
 		if (LIBRARY_LESS_INSTANCE == null) {
 			synchronized (LIBRARY_LESS_SYNC) {
 				if (LIBRARY_LESS_INSTANCE == null) {
@@ -125,10 +130,31 @@ public final class CheckSpec {
 	 *            the classpath, null not permitted
 	 * @return an instance created using the given urls as classpath
 	 */
-	public static CheckSpec getInstanceForClassPath(@NonNull URL[] urls) {
+	public static CheckSpec getInstanceForClasspath(@NonNull URL[] urls) {
 		Reflections reflections = ReflectionsUtils.createReflections(urls);
-		ClassLoader classLoader = doPrivileged(() -> new URLClassLoader(urls, ClassUtils.getBaseClassLoader()));
+		ClassLoader classLoader = createUrlClassLoader(urls);
 		return new CheckSpec(reflections, classLoader);
+	}
+
+	/**
+	 * Returns an instance of {@link CheckSpec} that is created using the given
+	 * {@link URL}s as different classpaths. This method uses
+	 * {@link ReflectionsUtils#createReflections(URL[])
+	 * createReflections(URL[])} to create instances of {@link Reflections}.
+	 *
+	 * @param urlsList
+	 *            the classpaths, null not permitted
+	 * @return an insatnce created using the given urls as classpaths
+	 */
+	public static CheckSpec getInstanceForClasspaths(@NonNull List<URL[]> urlsList) {
+		List<Pair<ClassLoader, Reflections>> list = urlsList.stream()
+				.map(urls -> Pair.of(createUrlClassLoader(urls), ReflectionsUtils.createReflections(urls)))
+				.collect(Collectors.toList());
+		return new CheckSpec(list);
+	}
+
+	private static ClassLoader createUrlClassLoader(URL[] urls) {
+		return doPrivileged(() -> new URLClassLoader(urls, ClassUtils.getBaseClassLoader()));
 	}
 
 	private static final String ERROR_FORMAT = "Analysis \"%s\" does not provide a default constructor and thus will not be used%n";
@@ -166,14 +192,10 @@ public final class CheckSpec {
 				.toArray(length -> new ClassAnalysis<?>[length]);
 	}
 
-	private final Reflections reflections;
-	private final ClassLoader classLoader;
+	private final List<Pair<ClassLoader, Reflections>> classLoaderReflectionsPairs;
 
 	private CheckSpec(Reflections reflections, ClassLoader classLoader) {
-		this.reflections = reflections;
-		this.classLoader = classLoader;
-
-		this.reflections.expandSuperTypes();
+		this(Collections.singletonList(Pair.of(classLoader, reflections)));
 	}
 
 	/**
@@ -281,13 +303,6 @@ public final class CheckSpec {
 		analysis.add(report, returnValue);
 	}
 
-	private boolean loadedFromValidLocation(@NonNull Class<?> clazz) {
-		Set<URL> urls = reflections.getConfiguration().getUrls();
-		URL location = ClassUtils.getLocation(clazz);
-
-		return urls.parallelStream().anyMatch(url -> UrlUtils.isParent(location, url));
-	}
-
 	private static MultiValuedMap<Class<?>, Class<?>> convert(List<SpecReport> reports) {
 		HashSetValuedHashMap<Class<?>, Class<?>> map = new HashSetValuedHashMap<>();
 		reports.forEach(report -> map.putAll(report.getSpecification().getRawElement().getRawClass(), getImplementationClasses(report)));
@@ -305,16 +320,28 @@ public final class CheckSpec {
 		List<URL> specLocations = specs.parallelStream()
 				.map(spec -> ClassUtils.getLocation(spec.getRawElement().getRawClass()))
 				.collect(Collectors.toList());
-		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
 		String basePackage = basePackageName.toLowerCase();
+		return classLoaderReflectionsPairs.stream()
+				.flatMap(pair -> getPossibleClasses(pair.getLeft(), pair.getRight(), specLocations, basePackage))
+				.collect(Collectors.toList());
+	}
+
+	private static Stream<Class<?>> getPossibleClasses(ClassLoader classLoader, Reflections reflections, Collection<URL> specLocations, String basePackage) {
+		Collection<String> classNames = reflections.getStore().get(SubTypesScanner.class.getSimpleName()).values();
 
 		return classNames.parallelStream()
 				.filter(e -> ClassUtils.getPackage(e).toLowerCase().startsWith(basePackage))
 				.flatMap(ClassUtils.classStreamSupplier(classLoader))
 				.filter(StreamUtils.inPredicate(specLocations, ClassUtils::getLocation).negate())
-				.filter(this::loadedFromValidLocation)
-				.distinct()
-				.collect(Collectors.toList());
+				.filter(clazz -> loadedFromValidLocation(reflections, clazz))
+				.distinct();
+	}
+
+	private static boolean loadedFromValidLocation(Reflections reflections, Class<?> clazz) {
+		Set<URL> urls = reflections.getConfiguration().getUrls();
+		URL location = ClassUtils.getLocation(clazz);
+
+		return urls.parallelStream().anyMatch(url -> UrlUtils.isParent(location, url));
 	}
 
 	private static SpecReport filterImproperClassReports(SpecReport report) {

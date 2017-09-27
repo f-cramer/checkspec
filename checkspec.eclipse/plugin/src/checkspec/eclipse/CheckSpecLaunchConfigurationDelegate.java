@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
@@ -54,10 +55,10 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 
 		String[] specificationClassNames = findSpecificationClassNames(configuration);
 		URL[] specificationClasspath = findSpecificationClasspath(configuration);
-		URL[] implementationClasspath = findImplementationClasspath(configuration);
+		List<URL[]> implementationClasspaths = findImplementationClasspaths(configuration);
 		String basePackage = findBasePackage(configuration);
 
-		SpecReport[] reports = generateReports(specificationClassNames, specificationClasspath, implementationClasspath, basePackage);
+		SpecReport[] reports = generateReports(specificationClassNames, specificationClasspath, implementationClasspaths, basePackage);
 		ResultView resultView = DisplayUtils.getWithException(() -> findOpenedResultView());
 		DisplayUtils.asyncExec(() -> resultView.setReports(reports));
 		ClassUtils.setBaseClassLoader(null);
@@ -72,8 +73,11 @@ public class CheckSpecLaunchConfigurationDelegate extends AbstractJavaLaunchConf
 		return Classpath.from(configuration.getAttribute(Constants.ATTR_SPECIFICATION_CLASSPATH, Collections.emptyList())).resolve();
 	}
 
-	private URL[] findImplementationClasspath(ILaunchConfiguration configuration) throws CoreException {
-		return Classpath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).resolve();
+	private List<URL[]> findImplementationClasspaths(ILaunchConfiguration configuration) throws CoreException {
+		return Classpath.from(configuration.getAttribute(Constants.ATTR_IMPLEMENTATION_CLASSPATH, Collections.emptyList())).getEntries().stream()
+				.map(Classpath::from)
+				.map(Classpath::resolve)
+				.collect(Collectors.toList());
 	}
 
 	private String findBasePackage(ILaunchConfiguration configuration) throws CoreException {
