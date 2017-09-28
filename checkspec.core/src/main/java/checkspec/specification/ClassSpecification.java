@@ -57,29 +57,29 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, M
 	private final String name;
 
 	@NonNull
-	@Getter(AccessLevel.NONE)
-	private final PackageSpecification pkg;
-
-	@NonNull
 	private final ModifiersSpecification modifiers;
 
 	@NonNull
 	private final VisibilitySpecification visibility;
 
 	@NonNull
-	private final SuperclassSpecification superclassSpecification;
+	@Getter(AccessLevel.NONE)
+	private final PackageSpecification pkg;
 
 	@NonNull
-	private final InterfaceSpecification[] interfaceSpecifications;
+	private final SuperclassSpecification superclass;
 
 	@NonNull
-	private final FieldSpecification[] fieldSpecifications;
+	private final InterfaceSpecification[] interfaces;
 
 	@NonNull
-	private final MethodSpecification[] methodSpecifications;
+	private final FieldSpecification[] fields;
 
 	@NonNull
-	private final ConstructorSpecification[] constructorSpecifications;
+	private final MethodSpecification[] methods;
+
+	@NonNull
+	private final ConstructorSpecification[] constructors;
 
 	@NonNull
 	private final MatchableType rawElement;
@@ -97,35 +97,30 @@ public class ClassSpecification extends AbstractExtendable<ClassSpecification, M
 		pkg = new PackageSpecification(clazz.getPackage(), clazz.getAnnotations());
 		modifiers = new ModifiersSpecification(clazz.getModifiers(), clazz.getAnnotations());
 		visibility = new VisibilitySpecification(clazz.getModifiers(), clazz.getAnnotations());
-		superclassSpecification = new SuperclassSpecification(rawElement.getSuperType());
+		superclass = new SuperclassSpecification(rawElement.getSuperType());
 
-		interfaceSpecifications = Arrays.stream(rawElement.getInterfaces()).parallel()
+		interfaces = Arrays.stream(rawElement.getInterfaces()).parallel()
 				.map(InterfaceSpecification::new)
 				.toArray(InterfaceSpecification[]::new);
 
-		fieldSpecifications = Arrays.stream(clazz.getDeclaredFields()).parallel()
+		fields = Arrays.stream(clazz.getDeclaredFields()).parallel()
 				.filter(ClassSpecification::isIncluded)
 				.map(FieldSpecification::new)
 				.toArray(FieldSpecification[]::new);
 
-		methodSpecifications = Arrays.stream(clazz.getDeclaredMethods()).parallel()
-				.filter(ClassSpecification::isIncluded)
-				.map(MethodSpecification::new)
-				.toArray(MethodSpecification[]::new);
-
-		constructorSpecifications = Arrays.stream(clazz.getDeclaredConstructors()).parallel()
+		constructors = Arrays.stream(clazz.getDeclaredConstructors()).parallel()
 				.filter(ClassSpecification::isIncluded)
 				.map(ConstructorSpecification::new)
 				.toArray(ConstructorSpecification[]::new);
 
+		methods = Arrays.stream(clazz.getDeclaredMethods()).parallel()
+				.filter(ClassSpecification::isIncluded)
+				.map(MethodSpecification::new)
+				.toArray(MethodSpecification[]::new);
+
 		performExtensions(EXTENSIONS, this, rawElement);
 	}
 
-	/**
-	 * The package for this specification.
-	 *
-	 * @return the package for this specification
-	 */
 	public PackageSpecification getPackage() {
 		return pkg;
 	}

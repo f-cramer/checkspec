@@ -90,8 +90,8 @@ public class ConstructorSpecification extends AbstractExtendable<ConstructorSpec
 
 	@Override
 	public int compareTo(ConstructorSpecification other) {
-		List<ParameterSpecification> parameterSpecifications = parameters.getParameterSpecifications();
-		List<ParameterSpecification> otherParameterSpecifications = other.parameters.getParameterSpecifications();
+		List<ParameterSpecification> parameterSpecifications = parameters.getParameters();
+		List<ParameterSpecification> otherParameterSpecifications = other.parameters.getParameters();
 		int length = Math.min(parameterSpecifications.size(), otherParameterSpecifications.size());
 		for (int i = 0; i < length; i++) {
 			Class<?> thisClass = parameterSpecifications.get(i).getType().getRawClass();

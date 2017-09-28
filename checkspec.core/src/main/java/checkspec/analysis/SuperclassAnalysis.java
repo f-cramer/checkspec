@@ -49,7 +49,7 @@ public class SuperclassAnalysis implements ClassAnalysis<Optional<ReportProblem>
 
 	@Override
 	public Optional<ReportProblem> analyze(MatchableType actual, ClassSpecification specification, MultiValuedMap<Class<?>, Class<?>> oldReports) {
-		MatchableType specificationSuperType = specification.getSuperclassSpecification().getRawElement();
+		MatchableType specificationSuperType = specification.getSuperclass().getRawElement();
 		MatchableType actualSuperType = actual.getSuperType();
 
 		MatchingState state = specificationSuperType.matches(actualSuperType, oldReports);

@@ -53,7 +53,7 @@ public class MethodAnalysis extends ExecutableAnalysis<Method, MethodSpecificati
 
 	@Override
 	protected MethodSpecification[] getMemberSpecifications(ClassSpecification spec) {
-		return spec.getMethodSpecifications();
+		return spec.getMethods();
 	}
 
 	@Override

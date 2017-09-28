@@ -43,7 +43,7 @@ import lombok.Value;
 public class ParametersSpecification implements Specification<List<Parameter>> {
 
 	@Getter(AccessLevel.PACKAGE)
-	private final List<ParameterSpecification> parameterSpecifications;
+	private final List<ParameterSpecification> parameters;
 
 	/**
 	 * Creates a new {@link ParametersSpecification} from the given parameters
@@ -55,21 +55,21 @@ public class ParametersSpecification implements Specification<List<Parameter>> {
 	 *            the type generator
 	 */
 	public ParametersSpecification(Parameter[] parameters, IntFunction<MatchableType> typeGenerator) {
-		parameterSpecifications = IntStream.range(0, parameters.length)
+		this.parameters = IntStream.range(0, parameters.length)
 				.mapToObj(i -> new ParameterSpecification(parameters[i], typeGenerator.apply(i)))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public String getName() {
-		return parameterSpecifications.parallelStream()
+		return parameters.parallelStream()
 				.map(ParameterSpecification::getName)
 				.collect(Collectors.joining("(", ", ", ")"));
 	}
 
 	@Override
 	public List<Parameter> getRawElement() {
-		return parameterSpecifications.parallelStream()
+		return parameters.parallelStream()
 				.map(ParameterSpecification::getRawElement)
 				.collect(Collectors.toList());
 	}
@@ -80,7 +80,7 @@ public class ParametersSpecification implements Specification<List<Parameter>> {
 	 * @return the number of parameters
 	 */
 	public int getCount() {
-		return parameterSpecifications.size();
+		return parameters.size();
 	}
 
 	/**
@@ -94,6 +94,6 @@ public class ParametersSpecification implements Specification<List<Parameter>> {
 	 *             getCount())}
 	 */
 	public ParameterSpecification get(int index) {
-		return parameterSpecifications.get(index);
+		return parameters.get(index);
 	}
 }

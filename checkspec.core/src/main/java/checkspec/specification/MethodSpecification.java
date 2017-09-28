@@ -54,17 +54,17 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 	private final String name;
 
 	@NonNull
-	private final MatchableType returnType;
-
-	@NonNull
-	private final ParametersSpecification parameters;
-
-	@NonNull
 	private final ModifiersSpecification modifiers;
 
 	@NonNull
 	private final VisibilitySpecification visibility;
 
+	@NonNull
+	private final MatchableType returnType;
+
+	@NonNull
+	private final ParametersSpecification parameters;
+	
 	@NonNull
 	private final ExceptionSpecification[] exceptions;
 
@@ -101,8 +101,8 @@ public class MethodSpecification extends AbstractExtendable<MethodSpecification,
 			return nameComp;
 		}
 
-		List<ParameterSpecification> parameterSpecifications = parameters.getParameterSpecifications();
-		List<ParameterSpecification> otherParameterSpecifications = other.parameters.getParameterSpecifications();
+		List<ParameterSpecification> parameterSpecifications = parameters.getParameters();
+		List<ParameterSpecification> otherParameterSpecifications = other.parameters.getParameters();
 		int length = Math.min(parameterSpecifications.size(), otherParameterSpecifications.size());
 		for (int i = 0; i < length; i++) {
 			Class<?> thisClass = parameterSpecifications.get(i).getType().getRawClass();

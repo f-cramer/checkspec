@@ -41,7 +41,7 @@ public class ConstructorAnalysis extends ExecutableAnalysis<Constructor<?>, Cons
 
 	@Override
 	protected ConstructorSpecification[] getMemberSpecifications(ClassSpecification spec) {
-		return spec.getConstructorSpecifications();
+		return spec.getConstructors();
 	}
 
 	@Override

@@ -59,7 +59,7 @@ public class InterfaceAnalysis implements ClassAnalysis<List<ReportProblem>> {
 				// needs to be mutable
 				.collect(Collectors.toCollection(ArrayList::new));
 
-		InterfaceSpecification[] specifications = spec.getInterfaceSpecifications();
+		InterfaceSpecification[] specifications = spec.getInterfaces();
 
 		for (InterfaceSpecification specification : specifications) {
 			Optional<Pair<MatchableType, MatchingState>> interf = notFoundInterfaces.parallelStream()

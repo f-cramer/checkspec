@@ -54,7 +54,7 @@ public class FieldAnalysis extends MemberAnalysis<Field, FieldSpecification, Fie
 
 	@Override
 	protected FieldSpecification[] getMemberSpecifications(ClassSpecification spec) {
-		return spec.getFieldSpecifications();
+		return spec.getFields();
 	}
 
 	@Override
