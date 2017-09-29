@@ -60,7 +60,7 @@ public class WildcardTypeMatchableType extends AbstractMatchableType<WildcardTyp
 	}
 
 	@Override
-	public Optional<MatchingState> matchesImpl(WildcardTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	protected Optional<MatchingState> matchesImpl(WildcardTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		// match wildcard to wildcard, i.e. "?" to "?"
 		MatchableType[] oUpperBounds = type.getUpperBounds();
 		MatchableType[] oLowerBounds = type.getLowerBounds();

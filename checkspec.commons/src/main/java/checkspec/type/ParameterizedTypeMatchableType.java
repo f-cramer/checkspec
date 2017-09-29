@@ -57,7 +57,7 @@ public class ParameterizedTypeMatchableType extends AbstractMatchableType<Parame
 	}
 
 	@Override
-	public Optional<MatchingState> matchesImpl(ParameterizedTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	protected Optional<MatchingState> matchesImpl(ParameterizedTypeMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		MatchingState state = MatchingState.FULL_MATCH;
 		MatchableType oTypeWithoutGenerics = type.getTypeWithoutGenerics();
 		state = state.merge(typeWithoutGenerics.matches(oTypeWithoutGenerics, matches));

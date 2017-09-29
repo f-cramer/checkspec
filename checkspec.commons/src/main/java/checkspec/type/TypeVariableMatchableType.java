@@ -34,6 +34,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 
 import checkspec.util.MatchingState;
 import checkspec.util.TypeUtils;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -52,6 +53,8 @@ public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariabl
 
 	private final MatchableType genericDeclarationType;
 	private final MatchableType[] bounds;
+
+	@Getter(AccessLevel.NONE)
 	private final int index;
 
 	TypeVariableMatchableType(final TypeVariable<?> rawType) {
@@ -64,7 +67,7 @@ public class TypeVariableMatchableType extends AbstractMatchableType<TypeVariabl
 	}
 
 	@Override
-	public Optional<MatchingState> matchesImpl(TypeVariableMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
+	protected Optional<MatchingState> matchesImpl(TypeVariableMatchableType type, MultiValuedMap<Class<?>, Class<?>> matches) {
 		MatchableType oGenericDeclarationType = type.getGenericDeclarationType();
 		return Optional.of(genericDeclarationType.matches(oGenericDeclarationType, matches));
 	}
